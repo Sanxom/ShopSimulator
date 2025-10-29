@@ -11,23 +11,28 @@ public class StockObject : MonoBehaviour
     #endregion
 
     #region Serialized Private Fields
-    [SerializeField] private Collider col;
-    [SerializeField] private float moveSpeed;
     #endregion
 
     #region Private Fields
+    private const float moveSpeed = 10f;
+
     private bool _isPlaced;
     #endregion
 
     #region Public Properties
+    [field: SerializeField] public StockInfo Info { get; private set; }
+
     public Rigidbody Rb { get; private set; }
+    public Collider Col { get; private set; }
     public string InteractionPrompt { get; set; }
+    public bool IsPlaced { get => _isPlaced; private set => _isPlaced = value; }
     #endregion
 
     #region Unity Callbacks
     private void Awake()
     {
         Rb = GetComponent<Rigidbody>();
+        Col = GetComponent<Collider>();
         InteractionPrompt = gameObject.name;
     }
 
@@ -51,21 +56,21 @@ public class StockObject : MonoBehaviour
     {
         Rb.isKinematic = true;
         transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-        col.enabled = false;
+        Col.enabled = false;
         _isPlaced = false;
     }
 
-    public void Place()
+    public void MakePlaced()
     {
         _isPlaced = true;
         Rb.isKinematic = true;
-        col.enabled = true;
+        Col.enabled = false;
     }
 
     public void Release()
     {
         Rb.isKinematic = false;
-        col.enabled = true;
+        Col.enabled = true;
     }
     #endregion
 

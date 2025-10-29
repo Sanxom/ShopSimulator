@@ -106,11 +106,20 @@ public class PlayerController : MonoBehaviour
 
         if (_heldObject == null)
         {
-            if (interactAction.action.WasPressedThisFrame())
+            if (interactAction.action.WasPressedThisFrame() 
+                && Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
             {
-                if (Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
+                _heldObject = hit.collider.GetComponent<StockObject>();
+                _heldObject.transform.SetParent(_holdPoint);
+                _heldObject.Pickup();
+            }
+
+            if (interactAction.action.WasPressedThisFrame() 
+                && Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+            {
+                _heldObject = hit.collider.GetComponent<ShelfSpaceController>().GetStock();
+                if (_heldObject != null)
                 {
-                    _heldObject = hit.collider.GetComponent<StockObject>();
                     _heldObject.transform.SetParent(_holdPoint);
                     _heldObject.Pickup();
                 }
@@ -122,18 +131,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
                 {
-                    //_heldObject.transform.position = hit.transform.position;
-                    //_heldObject.transform.rotation = hit.transform.rotation;
+                    hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
 
-                    //collider.enabled = true;
-                    //rb.isKinematic = true;
-
-                    //_heldObject.transform.SetParent(null);
-                    //_heldObject = null;
-
-                    _heldObject.Place();
-                    _heldObject.transform.SetParent(hit.transform);
-                    _heldObject = null;
+                    if (_heldObject.IsPlaced)
+                        _heldObject = null;
                 }
             }
 
