@@ -153,5 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
   <Info>k__BackingField:
+    stockObject: {fileID: 0}
     typeOfStock: 0
-    name: Granola
+    name: Granola Cereal
+    price: 3.99

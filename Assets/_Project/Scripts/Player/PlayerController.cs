@@ -113,8 +113,7 @@ public class PlayerController : MonoBehaviour
                 _heldObject.transform.SetParent(_holdPoint);
                 _heldObject.Pickup();
             }
-
-            if (interactAction.action.WasPressedThisFrame() 
+            else if (interactAction.action.WasPressedThisFrame() 
                 && Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
             {
                 _heldObject = hit.collider.GetComponent<ShelfSpaceController>().GetStock();
@@ -127,15 +126,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (interactAction.action.WasPressedThisFrame())
+            if (interactAction.action.WasPressedThisFrame()
+                && Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
             {
-                if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
-                {
-                    hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
+                hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
 
-                    if (_heldObject.IsPlaced)
-                        _heldObject = null;
-                }
+                if (_heldObject.IsPlaced)
+                    _heldObject = null;
             }
 
             if (dropHeldItemAction.action.WasPressedThisFrame())

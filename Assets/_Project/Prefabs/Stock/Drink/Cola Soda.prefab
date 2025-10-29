@@ -154,5 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
   <Info>k__BackingField:
+    stockObject: {fileID: 0}
     typeOfStock: 1
-    name: Cola
+    name: Cola Soda
+    price: 3.99
