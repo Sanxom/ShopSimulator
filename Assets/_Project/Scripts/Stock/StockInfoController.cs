@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class StockInfoController : MonoBehaviour
@@ -36,6 +37,14 @@ public class StockInfoController : MonoBehaviour
 
         allStock.AddRange(drinkInfo);
         allStock.AddRange(foodInfo);
+
+        for (int i = 0; i < allStock.Count; i++)
+        {
+            if (allStock[i].currentPrice == 0)
+            {
+                allStock[i].currentPrice = allStock[i].basePrice;
+            }
+        }
     }
     #endregion
 
@@ -53,6 +62,28 @@ public class StockInfoController : MonoBehaviour
         }
 
         return infoToReturn;
+    }
+
+    public void UpdatePrice(string stockName, float newPrice)
+    {
+        for (int i = 0; i < allStock.Count; i++)
+        {
+            if (allStock[i].name == stockName)
+            {
+                allStock[i].currentPrice = newPrice;
+            }
+        }
+
+        List<ShelfSpaceController> shelves = new();
+        shelves.AddRange(FindObjectsByType<ShelfSpaceController>(FindObjectsSortMode.None)); // TODO: Need to refactor this eventually
+
+        foreach (ShelfSpaceController shelf in shelves)
+        {
+            if(shelf.Info.name == stockName)
+            {
+                shelf.SetShelfLabelText(newPrice);
+            }
+        }
     }
     #endregion
 

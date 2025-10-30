@@ -2,28 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class StockInfo
+public class PriceLabel : MonoBehaviour
 {
-    public enum StockType
-    {
-        Cereal,
-        BigDrink,
-        TubeChips,
-        Fruit,
-        FruitLarge,
-        Vegetable
-    }
-
     #region Event Fields
     #endregion
 
     #region Public Fields
-    public string name;
-    public StockObject stockObject;
-    public StockType typeOfStock;
-    public float basePrice;
-    public float currentPrice;
     #endregion
 
     #region Serialized Private Fields

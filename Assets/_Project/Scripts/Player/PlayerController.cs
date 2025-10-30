@@ -1,3 +1,4 @@
+using masonbell;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance { get; private set; }
+
     #region Event Fields
+    public static event Action OnUIPanelClosedWithCancelAction;
     #endregion
 
     #region Public Fields
@@ -13,11 +17,6 @@ public class PlayerController : MonoBehaviour
 
     #region Serialized Private Fields
     [Header("References")]
-    [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private InputActionReference lookAction;
-    [SerializeField] private InputActionReference jumpAction;
-    [SerializeField] private InputActionReference interactAction;
-    [SerializeField] private InputActionReference dropHeldItemAction;
     [SerializeField] private CharacterController controller;
     [SerializeField] private Camera cameraTransform;
 
@@ -25,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform _holdPoint;
     [SerializeField] private LayerMask whatIsStock;
     [SerializeField] private LayerMask whatIsShelf;
+    [SerializeField] private LayerMask whatIsPriceLabel;
     [SerializeField] private float interactionRange;
     [SerializeField] private float throwForce;
 
@@ -37,6 +37,16 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Private Fields
+    [Header("Input")]
+    private InputSystem_Actions _gameInput;
+    private InputAction _moveAction;
+    private InputAction _lookAction;
+    private InputAction _jumpAction;
+    private InputAction _playerMapInteractAction;
+    private InputAction _playerMapDropAction;
+    private InputAction _uiMapSubmitAction;
+    private InputAction _uiMapCancelAction;
+
     [Header("Interaction")]
     private StockObject _heldObject;
 
@@ -51,6 +61,38 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Unity Callbacks
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
+
+            _gameInput = new();
+        _gameInput.Enable();
+        #region Player Map Actions
+        _moveAction = _gameInput.Player.Move;
+        _lookAction = _gameInput.Player.Look;   
+        _jumpAction = _gameInput.Player.Jump;
+        _playerMapInteractAction = _gameInput.Player.Interact;
+        _playerMapDropAction = _gameInput.Player.DropHeldItem;
+        #endregion
+
+        #region UI Map Actions
+        _uiMapSubmitAction = _gameInput.UI.Submit;
+        _uiMapCancelAction = _gameInput.UI.Cancel;
+        #endregion
+    }
+
+    private void OnEnable()
+    {
+        _playerMapInteractAction.performed += CheckForInteraction;
+        _playerMapDropAction.performed += CheckForDrop;
+        _uiMapSubmitAction.performed += UIApplyWithSubmit;
+        _uiMapCancelAction.performed += UICloseWithCancelAction;
+        UIController.OnUIPanelClosed += DisableUIEnablePlayer;
+    }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -60,20 +102,42 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         Rotate();
-        CheckForInteraction();
+    }
+
+    private void OnDisable()
+    {
+        _playerMapInteractAction.performed -= CheckForInteraction;
+        _playerMapDropAction.performed -= CheckForDrop;
+        _uiMapSubmitAction.performed -= UIApplyWithSubmit;
+        _uiMapCancelAction.performed -= UICloseWithCancelAction;
+        UIController.OnUIPanelClosed -= DisableUIEnablePlayer;
     }
     #endregion
 
     #region Public Methods
+    public void DisableUIEnablePlayer()
+    {
+        _gameInput.UI.Disable();
+        _gameInput.Player.Enable();
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void DisablePlayerEnableUI()
+    {
+        _gameInput.Player.Disable();
+        _gameInput.UI.Enable();
+        Cursor.lockState = CursorLockMode.None;
+    }
     #endregion
 
     #region Private Methods
     private void Move()
     {
-        Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
+        Vector2 moveInput = _moveAction.ReadValue<Vector2>();
         Vector3 verticalMove = transform.forward * moveInput.y;
         Vector3 horizontalMove = transform.right * moveInput.x;
         Vector3 moveAmount = (horizontalMove + verticalMove).normalized;
+
         moveAmount *= moveSpeed;
         if (controller.isGrounded) 
             _ySpeed = 0f;
@@ -85,7 +149,7 @@ public class PlayerController : MonoBehaviour
 
     private void Rotate()
     {
-        Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
+        Vector2 lookInput = _lookAction.ReadValue<Vector2>();
         _horizontalRotation += lookInput.x * Time.deltaTime * lookSpeed;
         transform.rotation = Quaternion.Euler(0f, _horizontalRotation, 0f);
         _verticalRotation -= lookInput.y * Time.deltaTime * lookSpeed;
@@ -95,54 +159,66 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (jumpAction.action.IsPressed()  && controller.isGrounded)
+        if (_jumpAction.IsPressed() && controller.isGrounded)
+        {
             _ySpeed = jumpForce;
+        }
     }
 
-    private void CheckForInteraction()
+    private void CheckForInteraction(InputAction.CallbackContext context)
     {
         Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
         RaycastHit hit;
 
         if (_heldObject == null)
         {
-            if (interactAction.action.WasPressedThisFrame() 
-                && Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
             {
                 _heldObject = hit.collider.GetComponent<StockObject>();
-                _heldObject.transform.SetParent(_holdPoint);
-                _heldObject.Pickup();
+                _heldObject.Pickup(_holdPoint);
             }
-            else if (interactAction.action.WasPressedThisFrame() 
-                && Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+            else if (Physics.Raycast(ray, out hit, interactionRange, whatIsPriceLabel))
+            {
+                hit.collider.GetComponentInParent<ShelfSpaceController>().StartPriceUpdate();
+            }
+            else if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
             {
                 _heldObject = hit.collider.GetComponent<ShelfSpaceController>().GetStock();
                 if (_heldObject != null)
-                {
-                    _heldObject.transform.SetParent(_holdPoint);
-                    _heldObject.Pickup();
-                }
+                    _heldObject.Pickup(_holdPoint);
             }
         }
         else
         {
-            if (interactAction.action.WasPressedThisFrame()
-                && Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
             {
                 hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
 
                 if (_heldObject.IsPlaced)
                     _heldObject = null;
             }
-
-            if (dropHeldItemAction.action.WasPressedThisFrame())
-            {
-                _heldObject.Release();
-                _heldObject.Rb.AddForce(cameraTransform.transform.forward * throwForce, ForceMode.Impulse);
-                _heldObject.transform.SetParent(null);
-                _heldObject = null;
-            }
         }
+    }
+    
+    private void CheckForDrop(InputAction.CallbackContext context)
+    {
+        if (_heldObject == null) return;
+
+        _heldObject.Release();
+        _heldObject.Rb.AddForce(cameraTransform.transform.forward * throwForce, ForceMode.Impulse);
+        _heldObject.transform.SetParent(null);
+        _heldObject = null;
+    }
+
+    private void UIApplyWithSubmit(InputAction.CallbackContext context)
+    {
+        UIController.Instance.ApplyPriceUpdate();
+    }
+
+    private void UICloseWithCancelAction(InputAction.CallbackContext context)
+    {
+        OnUIPanelClosedWithCancelAction?.Invoke();
+        DisableUIEnablePlayer();
     }
     #endregion
 }

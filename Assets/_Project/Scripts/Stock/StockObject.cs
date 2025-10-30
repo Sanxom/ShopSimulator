@@ -36,14 +36,14 @@ public class StockObject : MonoBehaviour
         InteractionPrompt = gameObject.name;
     }
 
-    private void Start()
-    {
-        Info = StockInfoController.Instance.GetStockInfo(Info.name);
-    }
-
     private void OnEnable()
     {
         _isPlaced = false;
+    }
+
+    private void Start()
+    {
+        Info = StockInfoController.Instance.GetStockInfo(Info.name);
     }
 
     private void Update()
@@ -57,19 +57,20 @@ public class StockObject : MonoBehaviour
     #endregion
 
     #region Public Methods
-    public void Pickup()
-    {
-        Rb.isKinematic = true;
-        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-        Col.enabled = false;
-        _isPlaced = false;
-    }
-
     public void MakePlaced()
     {
         _isPlaced = true;
         Rb.isKinematic = true;
         Col.enabled = false;
+    }
+
+    public void Pickup(Transform holdPoint)
+    {
+        Rb.isKinematic = true;
+        transform.SetParent(holdPoint);
+        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        Col.enabled = false;
+        _isPlaced = false;
     }
 
     public void Release()

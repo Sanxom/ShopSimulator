@@ -19,10 +19,10 @@ public class ShelfSpaceController : MonoBehaviour
     public TMP_Text shelfNameText;
     public TMP_Text shelfPriceText;
     public TMP_Text shelfCountText;
+    public StockInfo Info;
     #endregion
 
     #region Serialized Private Fields
-    [SerializeField] private StockInfo info;
     #endregion
 
     #region Private Fields
@@ -34,7 +34,12 @@ public class ShelfSpaceController : MonoBehaviour
     #region Unity Callbacks
     private void OnEnable()
     {
-        SetShelfLabelText();
+        SetShelfLabelText(Info.currentPrice);
+    }
+
+    private void Start()
+    {
+        SetShelfLabelText(Info.currentPrice);
     }
     #endregion
 
@@ -47,11 +52,11 @@ public class ShelfSpaceController : MonoBehaviour
         {
             objectToReturn = objectsOnShelf[^1];
             objectsOnShelf.RemoveAt(objectsOnShelf.Count - 1);
-            SetShelfLabelText();
+            SetShelfLabelText(Info.currentPrice);
         }
         else if (objectsOnShelf.Count == 0)
         {
-            SetShelfLabelText();
+            SetShelfLabelText(Info.currentPrice);
         }
 
         return objectToReturn;
@@ -62,14 +67,14 @@ public class ShelfSpaceController : MonoBehaviour
         bool preventPlacing = true;
         if (objectsOnShelf.Count == 0)
         {
-            info = objectToPlace.Info;
+            Info = objectToPlace.Info;
             preventPlacing = false;
         }
-        else if (info.name == objectToPlace.Info.name)
+        else if (Info.name == objectToPlace.Info.name)
         {
             preventPlacing = false;
 
-            switch (info.typeOfStock)
+            switch (Info.typeOfStock)
             {
                 case StockInfo.StockType.BigDrink:
                     if (objectsOnShelf.Count >= bigDrinkPoints.Count)
@@ -115,7 +120,7 @@ public class ShelfSpaceController : MonoBehaviour
         {
             objectToPlace.MakePlaced();
 
-            switch (info.typeOfStock)
+            switch (Info.typeOfStock)
             {
                 case StockInfo.StockType.BigDrink:
                         objectToPlace.transform.SetParent(bigDrinkPoints[objectsOnShelf.Count]);
@@ -138,13 +143,19 @@ public class ShelfSpaceController : MonoBehaviour
             }
 
             objectsOnShelf.Add(objectToPlace);
-            SetShelfLabelText();
+            SetShelfLabelText(Info.currentPrice);
         }
     }
-    #endregion
 
-    #region Private Methods
-    private void SetShelfLabelText()
+    public void StartPriceUpdate()
+    {
+        if (objectsOnShelf.Count <= 0) return;
+
+        PlayerController.Instance.DisablePlayerEnableUI();
+        UIController.Instance.OnOpenUpdatePricePanel(Info);
+    }
+
+    public void SetShelfLabelText(float newPrice)
     {
         if (objectsOnShelf.Count == 0)
         {
@@ -154,10 +165,14 @@ public class ShelfSpaceController : MonoBehaviour
         }
         else if (objectsOnShelf.Count > 0)
         {
+            Info.currentPrice = newPrice;
             shelfNameText.text = $"{objectsOnShelf[0].Info.name}";
-            shelfPriceText.text = $"${objectsOnShelf[0].Info.price}";
+            shelfPriceText.text = "$" + Info.currentPrice.ToString("F2");
             shelfCountText.text = $"{objectsOnShelf.Count}";
         }
     }
+    #endregion
+
+    #region Private Methods
     #endregion
 }
