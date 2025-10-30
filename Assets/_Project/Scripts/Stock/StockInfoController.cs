@@ -1,3 +1,4 @@
+using masonbell;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -20,6 +21,7 @@ public class StockInfoController : MonoBehaviour
 
     #region Private Fields
     private List<StockInfo> allStock = new();
+    private int _initialPooledObjectSize = 50; // TODO: Update this accordingly
     #endregion
 
     #region Public Properties
@@ -37,14 +39,20 @@ public class StockInfoController : MonoBehaviour
 
         allStock.AddRange(drinkInfo);
         allStock.AddRange(foodInfo);
+    }
 
+    private void Start()
+    {
         for (int i = 0; i < allStock.Count; i++)
         {
             if (allStock[i].currentPrice == 0)
             {
                 allStock[i].currentPrice = allStock[i].basePrice;
             }
+
+            ObjectPool<StockObject>.Initialize(allStock[i].stockObject, _initialPooledObjectSize, 0, transform.GetChild(i));
         }
+
     }
     #endregion
 

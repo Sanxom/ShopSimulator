@@ -78,6 +78,12 @@ public class StockObject : MonoBehaviour
         Rb.isKinematic = false;
         Col.enabled = true;
     }
+
+    public void PlaceInBox()
+    {
+        Rb.isKinematic = true;
+        Col.enabled = false;
+    }
     #endregion
 
     #region Private Methods

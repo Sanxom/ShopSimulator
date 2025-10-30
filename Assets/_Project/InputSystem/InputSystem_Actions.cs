@@ -120,6 +120,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""OpenBox"",
+                    ""type"": ""Button"",
+                    ""id"": ""2fb732a3-4f87-45c9-843d-1ca66d1fcf33"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""DropHeldItem"",
                     ""type"": ""Button"",
                     ""id"": ""24f0e180-25c6-4897-ab70-ad4f26bc8be2"",
@@ -513,6 +522,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""DropHeldItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d007b5d6-6dd1-4aee-9192-0334bbc25cae"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""OpenBox"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b4e36fc-881a-42e5-8d2c-10a777b90c1e"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""OpenBox"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1103,6 +1134,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_OpenBox = m_Player.FindAction("OpenBox", throwIfNotFound: true);
         m_Player_DropHeldItem = m_Player.FindAction("DropHeldItem", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
@@ -1205,6 +1237,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_OpenBox;
     private readonly InputAction m_Player_DropHeldItem;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Jump;
@@ -1234,6 +1267,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Interact".
         /// </summary>
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/OpenBox".
+        /// </summary>
+        public InputAction @OpenBox => m_Wrapper.m_Player_OpenBox;
         /// <summary>
         /// Provides access to the underlying input action "Player/DropHeldItem".
         /// </summary>
@@ -1293,6 +1330,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @OpenBox.started += instance.OnOpenBox;
+            @OpenBox.performed += instance.OnOpenBox;
+            @OpenBox.canceled += instance.OnOpenBox;
             @DropHeldItem.started += instance.OnDropHeldItem;
             @DropHeldItem.performed += instance.OnDropHeldItem;
             @DropHeldItem.canceled += instance.OnDropHeldItem;
@@ -1331,6 +1371,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @OpenBox.started -= instance.OnOpenBox;
+            @OpenBox.performed -= instance.OnOpenBox;
+            @OpenBox.canceled -= instance.OnOpenBox;
             @DropHeldItem.started -= instance.OnDropHeldItem;
             @DropHeldItem.performed -= instance.OnDropHeldItem;
             @DropHeldItem.canceled -= instance.OnDropHeldItem;
@@ -1670,6 +1713,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OpenBox" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenBox(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "DropHeldItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

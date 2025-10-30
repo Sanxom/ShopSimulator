@@ -34,6 +34,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "OpenBox",
+                    "type": "Button",
+                    "id": "2fb732a3-4f87-45c9-843d-1ca66d1fcf33",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "DropHeldItem",
                     "type": "Button",
                     "id": "24f0e180-25c6-4897-ab70-ad4f26bc8be2",
@@ -427,6 +436,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "DropHeldItem",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d007b5d6-6dd1-4aee-9192-0334bbc25cae",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "OpenBox",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b4e36fc-881a-42e5-8d2c-10a777b90c1e",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "OpenBox",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

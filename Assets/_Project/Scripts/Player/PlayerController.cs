@@ -22,9 +22,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Interaction")]
     [SerializeField] private Transform _holdPoint;
+    [SerializeField] private StockBoxController heldBox;
+    [SerializeField] private Transform boxHoldPoint;
     [SerializeField] private LayerMask whatIsStock;
     [SerializeField] private LayerMask whatIsShelf;
     [SerializeField] private LayerMask whatIsPriceLabel;
+    [SerializeField] private LayerMask whatIsStockBox;
     [SerializeField] private float interactionRange;
     [SerializeField] private float throwForce;
 
@@ -39,16 +42,20 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
     [Header("Input")]
     private InputSystem_Actions _gameInput;
-    private InputAction _moveAction;
-    private InputAction _lookAction;
-    private InputAction _jumpAction;
+    private InputAction _playerMapMoveAction;
+    private InputAction _playerMapLookAction;
+    private InputAction _playerMapJumpAction;
     private InputAction _playerMapInteractAction;
     private InputAction _playerMapDropAction;
+    private InputAction _playerMapOpenBoxAction;
+
     private InputAction _uiMapSubmitAction;
     private InputAction _uiMapCancelAction;
 
     [Header("Interaction")]
     private StockObject _heldObject;
+    private float _placeStockCounter;
+    private bool _canPlaceBoxObjectFast;
 
     [Header("Movement")]
     private float _ySpeed;
@@ -57,6 +64,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Public Properties
+    
+    [field: SerializeField, Header("Properties")] public float WaitToPlaceStock { get; private set; }
+
     public bool HasHeldObject => _heldObject != null;
     #endregion
 
@@ -71,11 +81,12 @@ public class PlayerController : MonoBehaviour
             _gameInput = new();
         _gameInput.Enable();
         #region Player Map Actions
-        _moveAction = _gameInput.Player.Move;
-        _lookAction = _gameInput.Player.Look;   
-        _jumpAction = _gameInput.Player.Jump;
+        _playerMapMoveAction = _gameInput.Player.Move;
+        _playerMapLookAction = _gameInput.Player.Look;   
+        _playerMapJumpAction = _gameInput.Player.Jump;
         _playerMapInteractAction = _gameInput.Player.Interact;
         _playerMapDropAction = _gameInput.Player.DropHeldItem;
+        _playerMapOpenBoxAction = _gameInput.Player.OpenBox;
         #endregion
 
         #region UI Map Actions
@@ -87,7 +98,10 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         _playerMapInteractAction.performed += CheckForInteraction;
+        _playerMapInteractAction.canceled += CheckForInteractionCancel;
         _playerMapDropAction.performed += CheckForDrop;
+        _playerMapOpenBoxAction.performed += CheckForOpenCloseBox;
+
         _uiMapSubmitAction.performed += UIApplyWithSubmit;
         _uiMapCancelAction.performed += UICloseWithCancelAction;
         UIController.OnUIPanelClosed += DisableUIEnablePlayer;
@@ -102,12 +116,20 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         Rotate();
+
+        if (_canPlaceBoxObjectFast)
+        {
+            PlaceBoxObjectsFast();
+        }
     }
 
     private void OnDisable()
     {
         _playerMapInteractAction.performed -= CheckForInteraction;
+        _playerMapInteractAction.canceled -= CheckForInteractionCancel;
         _playerMapDropAction.performed -= CheckForDrop;
+        _playerMapOpenBoxAction.performed -= CheckForOpenCloseBox;
+
         _uiMapSubmitAction.performed -= UIApplyWithSubmit;
         _uiMapCancelAction.performed -= UICloseWithCancelAction;
         UIController.OnUIPanelClosed -= DisableUIEnablePlayer;
@@ -133,7 +155,7 @@ public class PlayerController : MonoBehaviour
     #region Private Methods
     private void Move()
     {
-        Vector2 moveInput = _moveAction.ReadValue<Vector2>();
+        Vector2 moveInput = _playerMapMoveAction.ReadValue<Vector2>();
         Vector3 verticalMove = transform.forward * moveInput.y;
         Vector3 horizontalMove = transform.right * moveInput.x;
         Vector3 moveAmount = (horizontalMove + verticalMove).normalized;
@@ -149,7 +171,7 @@ public class PlayerController : MonoBehaviour
 
     private void Rotate()
     {
-        Vector2 lookInput = _lookAction.ReadValue<Vector2>();
+        Vector2 lookInput = _playerMapLookAction.ReadValue<Vector2>();
         _horizontalRotation += lookInput.x * Time.deltaTime * lookSpeed;
         transform.rotation = Quaternion.Euler(0f, _horizontalRotation, 0f);
         _verticalRotation -= lookInput.y * Time.deltaTime * lookSpeed;
@@ -159,7 +181,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (_jumpAction.IsPressed() && controller.isGrounded)
+        if (_playerMapJumpAction.IsPressed() && controller.isGrounded)
         {
             _ySpeed = jumpForce;
         }
@@ -170,44 +192,130 @@ public class PlayerController : MonoBehaviour
         Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
         RaycastHit hit;
 
-        if (_heldObject == null)
+        if (_heldObject == null && heldBox == null)
         {
             if (Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
             {
                 _heldObject = hit.collider.GetComponent<StockObject>();
                 _heldObject.Pickup(_holdPoint);
+                return;
             }
-            else if (Physics.Raycast(ray, out hit, interactionRange, whatIsPriceLabel))
+
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsStockBox))
+            {
+                heldBox = hit.collider.GetComponent<StockBoxController>();
+                heldBox.Pickup(boxHoldPoint);
+
+                if (!heldBox.OpenBox) // TODO: You can remove this if you don't want to Open box immediately when picking up
+                    heldBox.OpenClose();
+                return;
+            }
+
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsPriceLabel))
             {
                 hit.collider.GetComponentInParent<ShelfSpaceController>().StartPriceUpdate();
+                return;
             }
-            else if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+            
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
             {
                 _heldObject = hit.collider.GetComponent<ShelfSpaceController>().GetStock();
                 if (_heldObject != null)
                     _heldObject.Pickup(_holdPoint);
+                return;
             }
         }
         else
         {
-            if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+            if (_heldObject != null)
             {
-                hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
+                if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+                {
+                    hit.collider.GetComponent<ShelfSpaceController>().PlaceStock(_heldObject);
 
-                if (_heldObject.IsPlaced)
-                    _heldObject = null;
+                    if (_heldObject.IsPlaced)
+                        _heldObject = null;
+                    return;
+                }
+            }
+
+            if (heldBox != null)
+            {
+                if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+                {
+                    heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
+                    _placeStockCounter = WaitToPlaceStock;
+                    _canPlaceBoxObjectFast = true;
+                }
+            }
+        }
+    }
+
+    private void CheckForInteractionCancel(InputAction.CallbackContext context)
+    {
+        if (_heldObject == null && heldBox != null)
+        {
+            if (_canPlaceBoxObjectFast)
+                _canPlaceBoxObjectFast = false;
+        }
+    }
+
+    private void PlaceBoxObjectsFast()
+    {
+        if (_heldObject == null && heldBox != null)
+        {
+            Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
+
+            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, whatIsShelf))
+            {
+                _placeStockCounter -= Time.deltaTime;
+                if (_placeStockCounter <= 0 && _playerMapInteractAction.IsPressed())
+                {
+                    heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
+                    _placeStockCounter = WaitToPlaceStock;
+                }
             }
         }
     }
     
     private void CheckForDrop(InputAction.CallbackContext context)
     {
-        if (_heldObject == null) return;
+        if (_heldObject != null)
+        {
+            _heldObject.Release();
+            _heldObject.Rb.AddForce(cameraTransform.transform.forward * throwForce, ForceMode.Impulse);
+            _heldObject.transform.SetParent(null);
+            _heldObject = null;
+            return;
+        }
 
-        _heldObject.Release();
-        _heldObject.Rb.AddForce(cameraTransform.transform.forward * throwForce, ForceMode.Impulse);
-        _heldObject.transform.SetParent(null);
-        _heldObject = null;
+        if (heldBox != null)
+        {
+            heldBox.Release();
+            heldBox.Rb.AddForce(cameraTransform.transform.forward * throwForce, ForceMode.Impulse);
+            heldBox.transform.SetParent(null);
+            heldBox = null;
+            return;
+        }
+    }
+
+    private void CheckForOpenCloseBox(InputAction.CallbackContext obj)
+    {
+        if (heldBox == null)
+        {
+            Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsStockBox))
+            {
+                hit.collider.GetComponent<StockBoxController>().OpenClose();
+                return;
+            }
+        }
+        else
+        {
+            heldBox.OpenClose();
+        }
     }
 
     private void UIApplyWithSubmit(InputAction.CallbackContext context)
