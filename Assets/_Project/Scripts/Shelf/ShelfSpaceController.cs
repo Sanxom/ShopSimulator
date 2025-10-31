@@ -167,7 +167,7 @@ public class ShelfSpaceController : MonoBehaviour
         {
             Info.currentPrice = newPrice;
             shelfNameText.text = $"{objectsOnShelf[0].Info.name}";
-            shelfPriceText.text = "$" + Info.currentPrice.ToString("F2");
+            shelfPriceText.text = $"${Info.currentPrice:0.00}";
             shelfCountText.text = $"{objectsOnShelf.Count}";
         }
     }

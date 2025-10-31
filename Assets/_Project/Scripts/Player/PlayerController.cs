@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask whatIsShelf;
     [SerializeField] private LayerMask whatIsPriceLabel;
     [SerializeField] private LayerMask whatIsStockBox;
+    [SerializeField] private LayerMask whatIsTrash;
     [SerializeField] private float interactionRange;
     [SerializeField] private float throwForce;
 
@@ -227,7 +228,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (_heldObject != null)
+            if (_heldObject != null) // Holding Stock
             {
                 if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
                 {
@@ -239,13 +240,25 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (heldBox != null)
+            if (heldBox != null) // Holding Box
             {
-                if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+                if (heldBox.stockInBox.Count > 0) // Interact with Shelf
                 {
-                    heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
-                    _placeStockCounter = WaitToPlaceStock;
-                    _canPlaceBoxObjectFast = true;
+                    if (Physics.Raycast(ray, out hit, interactionRange, whatIsShelf))
+                    {
+                        heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
+                        _placeStockCounter = WaitToPlaceStock;
+                        _canPlaceBoxObjectFast = true;
+                    }
+                }
+                else // Detect Trash Can
+                {
+                    if (Physics.Raycast(ray, out hit, interactionRange, whatIsTrash))
+                    {
+                        heldBox.Release();
+                        ObjectPool<StockBoxController>.ReturnToPool(heldBox);
+                        heldBox = null;
+                    }
                 }
             }
         }

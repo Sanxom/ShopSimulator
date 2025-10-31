@@ -17,9 +17,12 @@ public class StockInfoController : MonoBehaviour
     #endregion
 
     #region Serialized Private Fields
+    [SerializeField] private StockBoxController boxPrefab;
     #endregion
 
     #region Private Fields
+    private const string POOLED_BOX_GAMEOBJECT_NAME = "PooledBoxes";
+
     private List<StockInfo> allStock = new();
     private int _initialPooledObjectSize = 50; // TODO: Update this accordingly
     #endregion
@@ -39,10 +42,8 @@ public class StockInfoController : MonoBehaviour
 
         allStock.AddRange(drinkInfo);
         allStock.AddRange(foodInfo);
-    }
 
-    private void Start()
-    {
+        ObjectPool<StockBoxController>.Initialize(boxPrefab, _initialPooledObjectSize, 0, transform.Find(POOLED_BOX_GAMEOBJECT_NAME));
         for (int i = 0; i < allStock.Count; i++)
         {
             if (allStock[i].currentPrice == 0)
@@ -52,7 +53,6 @@ public class StockInfoController : MonoBehaviour
 
             ObjectPool<StockObject>.Initialize(allStock[i].stockObject, _initialPooledObjectSize, 0, transform.GetChild(i));
         }
-
     }
     #endregion
 

@@ -9,7 +9,7 @@ public class StockBoxController : MonoBehaviour
     #endregion
 
     #region Public Fields
-    public StockInfo info;
+    public StockInfo stockInfo;
     public List<Transform> bigDrinkPoints;
     public List<Transform> cerealPoints;
     public List<Transform> tubeChipPoints;
@@ -50,7 +50,7 @@ public class StockBoxController : MonoBehaviour
         if (testFill)
         {
             testFill = false;
-            SetupBox(info);
+            SetupBox(stockInfo);
         }
 
         if (_isHeld)
@@ -62,13 +62,43 @@ public class StockBoxController : MonoBehaviour
     #endregion
 
     #region Public Methods
+    public int GetStockAmount(StockInfo.StockType type)
+    {
+        int toReturn = 0;
+
+        switch (type)
+        {
+            case StockInfo.StockType.Cereal:
+                toReturn = cerealPoints.Count;
+                break;
+            case StockInfo.StockType.BigDrink:
+                toReturn = bigDrinkPoints.Count;
+                break;
+            case StockInfo.StockType.TubeChips:
+                toReturn = tubeChipPoints.Count;
+                break;
+            case StockInfo.StockType.Fruit:
+                toReturn = fruitPoints.Count;
+                break;
+            case StockInfo.StockType.FruitLarge:
+                toReturn = largeFruitPoints.Count;
+                break;
+            case StockInfo.StockType.Vegetable:
+                toReturn = vegetablePoints.Count;
+                break;
+            default:
+                break;
+        }
+
+        return toReturn;
+    }
     public void SetupBox(StockInfo stockType)
     {
-        info = stockType;
+        stockInfo = stockType;
 
         List<Transform> activePoints = new();
 
-        switch (info.typeOfStock)
+        switch (stockInfo.typeOfStock)
         {
             case StockInfo.StockType.BigDrink:
                 activePoints.AddRange(bigDrinkPoints);
