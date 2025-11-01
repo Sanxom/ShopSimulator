@@ -22,13 +22,20 @@ public class PlayerController : MonoBehaviour
 
     [Header("Interaction")]
     [SerializeField] private Transform _holdPoint;
+
     [SerializeField] private StockBoxController heldBox;
     [SerializeField] private Transform boxHoldPoint;
+
+    [SerializeField] private FurnitureController _heldFurniture;
+    [SerializeField] private Transform _furnitureHoldPoint;
+
     [SerializeField] private LayerMask whatIsStock;
     [SerializeField] private LayerMask whatIsShelf;
     [SerializeField] private LayerMask whatIsPriceLabel;
     [SerializeField] private LayerMask whatIsStockBox;
     [SerializeField] private LayerMask whatIsTrash;
+    [SerializeField] private LayerMask whatIsFurniture;
+
     [SerializeField] private float interactionRange;
     [SerializeField] private float throwForce;
 
@@ -49,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private InputAction _playerMapInteractAction;
     private InputAction _playerMapDropAction;
     private InputAction _playerMapOpenBoxAction;
+    private InputAction _playerMapPickupFurnitureAction;
 
     private InputAction _uiMapSubmitAction;
     private InputAction _uiMapCancelAction;
@@ -88,6 +96,7 @@ public class PlayerController : MonoBehaviour
         _playerMapInteractAction = _gameInput.Player.Interact;
         _playerMapDropAction = _gameInput.Player.DropHeldItem;
         _playerMapOpenBoxAction = _gameInput.Player.OpenBox;
+        _playerMapPickupFurnitureAction = _gameInput.Player.PickupFurniture;
         #endregion
 
         #region UI Map Actions
@@ -102,6 +111,7 @@ public class PlayerController : MonoBehaviour
         _playerMapInteractAction.canceled += CheckForInteractionCancel;
         _playerMapDropAction.performed += CheckForDrop;
         _playerMapOpenBoxAction.performed += CheckForOpenCloseBox;
+        _playerMapPickupFurnitureAction.performed += CheckForFurniturePickup;
 
         _uiMapSubmitAction.performed += UIApplyWithSubmit;
         _uiMapCancelAction.performed += UICloseWithCancelAction;
@@ -122,6 +132,9 @@ public class PlayerController : MonoBehaviour
         {
             PlaceBoxObjectsFast();
         }
+
+        if (_heldFurniture != null)
+            KeepHeldFurnitureAboveGround(); // TODO: Maybe come up with a better way to do this?
     }
 
     private void OnDisable()
@@ -188,12 +201,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void CheckForInteraction(InputAction.CallbackContext context)
+    #region Input Callbacks
+    private void CheckForInteraction(InputAction.CallbackContext context) // Interact Key Performed
     {
         Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
         RaycastHit hit;
 
-        if (_heldObject == null && heldBox == null)
+        if (_heldObject == null && heldBox == null && _heldFurniture == null)
         {
             if (Physics.Raycast(ray, out hit, interactionRange, whatIsStock))
             {
@@ -238,6 +252,12 @@ public class PlayerController : MonoBehaviour
                         _heldObject = null;
                     return;
                 }
+
+                if (Physics.Raycast(ray, out hit, interactionRange, whatIsTrash))
+                {
+                    _heldObject.TrashObject();
+                    _heldObject = null;
+                }
             }
 
             if (heldBox != null) // Holding Box
@@ -253,13 +273,18 @@ public class PlayerController : MonoBehaviour
                 }
                 else // Detect Trash Can
                 {
-                    if (Physics.Raycast(ray, out hit, interactionRange, whatIsTrash))
+                    if (Physics.Raycast(ray, out _, interactionRange, whatIsTrash))
                     {
                         heldBox.Release();
-                        ObjectPool<StockBoxController>.ReturnToPool(heldBox);
+                        heldBox.TrashObject();
                         heldBox = null;
                     }
                 }
+            }
+
+            if (_heldFurniture != null) // Holding Furniture
+            {
+                SetFurnitureDownAndNull();
             }
         }
     }
@@ -270,24 +295,6 @@ public class PlayerController : MonoBehaviour
         {
             if (_canPlaceBoxObjectFast)
                 _canPlaceBoxObjectFast = false;
-        }
-    }
-
-    private void PlaceBoxObjectsFast()
-    {
-        if (_heldObject == null && heldBox != null)
-        {
-            Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
-
-            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, whatIsShelf))
-            {
-                _placeStockCounter -= Time.deltaTime;
-                if (_placeStockCounter <= 0 && _playerMapInteractAction.IsPressed())
-                {
-                    heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
-                    _placeStockCounter = WaitToPlaceStock;
-                }
-            }
         }
     }
     
@@ -331,6 +338,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void CheckForFurniturePickup(InputAction.CallbackContext context)
+    {
+        Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, interactionRange, whatIsFurniture))
+        {
+            _heldFurniture = hit.transform.GetComponent<FurnitureController>();
+            hit.collider.enabled = false;
+            _heldFurniture.transform.SetParent(_furnitureHoldPoint);
+            _heldFurniture.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            _heldFurniture.MakePlaceable();
+            return;
+        }
+
+        if (_heldFurniture != null) // Press Pickup Button while holding already to set down
+        {
+            SetFurnitureDownAndNull();
+        }
+    }
+
     private void UIApplyWithSubmit(InputAction.CallbackContext context)
     {
         UIController.Instance.ApplyPriceUpdate();
@@ -341,5 +368,42 @@ public class PlayerController : MonoBehaviour
         OnUIPanelClosedWithCancelAction?.Invoke();
         DisableUIEnablePlayer();
     }
+    #endregion
+
+    #region Box Methods
+    private void PlaceBoxObjectsFast()
+    {
+        if (_heldObject == null && heldBox != null)
+        {
+            Ray ray = cameraTransform.ViewportPointToRay(new(0.5f, 0.5f, 0f));
+
+            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, whatIsShelf))
+            {
+                _placeStockCounter -= Time.deltaTime;
+                if (_placeStockCounter <= 0 && _playerMapInteractAction.IsPressed())
+                {
+                    heldBox.PlaceStockOnShelf(hit.collider.GetComponent<ShelfSpaceController>());
+                    _placeStockCounter = WaitToPlaceStock;
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Furniture Methods
+    private void KeepHeldFurnitureAboveGround()
+    {
+        _heldFurniture.transform.position = new(_furnitureHoldPoint.position.x, -1f, _furnitureHoldPoint.position.z);
+        _heldFurniture.transform.LookAt(new Vector3(transform.position.x, -1f, transform.position.z));
+    }
+
+    private void SetFurnitureDownAndNull()
+    {
+        if (_heldFurniture == null) return;
+
+        _heldFurniture.PlaceObject();
+        _heldFurniture = null;
+    }
+    #endregion
     #endregion
 }

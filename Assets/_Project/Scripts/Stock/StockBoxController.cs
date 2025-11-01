@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StockBoxController : MonoBehaviour
+public class StockBoxController : MonoBehaviour, ITrashable
 {
     #region Event Fields
     #endregion
@@ -167,6 +167,11 @@ public class StockBoxController : MonoBehaviour
 
         if (!OpenBox)
             OpenClose();
+    }
+
+    public void TrashObject()
+    {
+        ObjectPool<StockBoxController>.ReturnToPool(this);
     }
     #endregion
 

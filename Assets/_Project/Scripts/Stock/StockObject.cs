@@ -1,8 +1,9 @@
+using masonbell;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StockObject : MonoBehaviour
+public class StockObject : MonoBehaviour, ITrashable
 {
     #region Event Fields
     #endregion
@@ -83,6 +84,11 @@ public class StockObject : MonoBehaviour
     {
         Rb.isKinematic = true;
         Col.enabled = false;
+    }
+
+    public void TrashObject()
+    {
+        ObjectPool<StockObject>.ReturnToPool(this);
     }
     #endregion
 
