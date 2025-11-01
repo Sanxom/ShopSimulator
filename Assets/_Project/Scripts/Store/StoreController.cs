@@ -12,6 +12,7 @@ public class StoreController : MonoBehaviour
 
     #region Public Fields
     public Transform stockSpawnPoint;
+    public Transform furnitureSpawnPoint;
     public float currentMoney = 1000f;
     #endregion
 

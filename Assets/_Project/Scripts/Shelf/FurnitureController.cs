@@ -11,6 +11,7 @@ public class FurnitureController : MonoBehaviour, IPlaceable
     public GameObject mainObject;
     public GameObject placingObject;
     public Collider col;
+    public float price;
     #endregion
 
     #region Serialized Private Fields
