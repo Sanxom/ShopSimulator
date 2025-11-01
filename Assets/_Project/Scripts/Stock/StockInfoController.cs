@@ -18,11 +18,13 @@ public class StockInfoController : MonoBehaviour
 
     #region Serialized Private Fields
     [SerializeField] private StockBoxController boxPrefab;
-    [SerializeField] private FurnitureController furniturePrefab;
+    [SerializeField] private List<StockBoxController> allBoxPrefabs;
+    [SerializeField] private List<FurnitureController> allFurniturePrefabs;
     [SerializeField] private int initialPooledObjectSize = 50; // TODO: Update this accordingly
     #endregion
 
     #region Private Fields
+    private const string POOLED_STOCK_GAMEOBJECT_NAME = "PooledStock";
     private const string POOLED_BOX_GAMEOBJECT_NAME = "PooledBoxes";
     private const string POOLED_FURNITURE_GAMEOBJECT_NAME = "PooledFurniture";
 
@@ -48,9 +50,7 @@ public class StockInfoController : MonoBehaviour
 
     private void Start()
     {
-        // TODO: Maybe place this in a new Script for Initializing ObjectPools instead of doing it here
-        ObjectPool<StockBoxController>.Initialize(boxPrefab, initialPooledObjectSize, 0, transform.Find(POOLED_BOX_GAMEOBJECT_NAME));
-        ObjectPool<FurnitureController>.Initialize(furniturePrefab, initialPooledObjectSize, 0, transform.Find(POOLED_FURNITURE_GAMEOBJECT_NAME));
+        // TODO: Maybe place this in a new Script for Initializing ObjectPools instead of doing it here and find a better way to do this
         for (int i = 0; i < allStock.Count; i++)
         {
             if (allStock[i].currentPrice == 0)
@@ -58,7 +58,18 @@ public class StockInfoController : MonoBehaviour
                 allStock[i].currentPrice = allStock[i].basePrice;
             }
 
-            ObjectPool<StockObject>.Initialize(allStock[i].stockObject, initialPooledObjectSize, 0, transform.GetChild(i));
+            ObjectPool<StockObject>.Initialize(allStock[i].stockObject, initialPooledObjectSize, 0, transform.Find(POOLED_STOCK_GAMEOBJECT_NAME).GetChild(i));
+        }
+
+        // Initialize ALL furniture objects, and set their parents to specific objects in the hierarchy
+        for (int i = 0; i < allFurniturePrefabs.Count; i++)
+        {
+            ObjectPool<FurnitureController>.Initialize(allFurniturePrefabs[i], initialPooledObjectSize, 0, transform.Find(POOLED_FURNITURE_GAMEOBJECT_NAME).GetChild(i));
+        }
+
+        for(int i = 0; i < allBoxPrefabs.Count; i++)
+        {
+            ObjectPool<StockBoxController>.Initialize(allBoxPrefabs[i], initialPooledObjectSize, 0, transform.Find(POOLED_BOX_GAMEOBJECT_NAME).GetChild(i));
         }
     }
     #endregion
