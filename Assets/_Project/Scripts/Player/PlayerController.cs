@@ -147,6 +147,9 @@ public class PlayerController : MonoBehaviour
         _uiMapSubmitAction.performed -= UIApplyWithSubmit;
         _uiMapCancelAction.performed -= UICloseWithCancelAction;
         UIController.OnUIPanelClosed -= DisableUIEnablePlayer;
+
+        _gameInput.UI.Disable();
+        _gameInput.Player.Disable();
     }
     #endregion
 
@@ -393,8 +396,8 @@ public class PlayerController : MonoBehaviour
     #region Furniture Methods
     private void KeepHeldFurnitureAboveGround()
     {
-        _heldFurniture.transform.position = new(_furnitureHoldPoint.position.x, -1f, _furnitureHoldPoint.position.z);
-        _heldFurniture.transform.LookAt(new Vector3(transform.position.x, -1f, transform.position.z));
+        _heldFurniture.transform.position = new(_furnitureHoldPoint.position.x, 0f, _furnitureHoldPoint.position.z);
+        _heldFurniture.transform.LookAt(new Vector3(transform.position.x, 0f, transform.position.z));
     }
 
     private void SetFurnitureDownAndNull()
