@@ -62,12 +62,43 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4067967277755032798}
-  - {fileID: 7030145870574488750}
-  - {fileID: 6222838110758716712}
   - {fileID: 7181919812870196142}
+  - {fileID: 6222838110758716712}
+  - {fileID: 7030145870574488750}
   - {fileID: 1587421860504913317}
   m_Father: {fileID: 9140553905540937760}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &7502640396395663081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1509228054634866357}
+  m_Layer: 12
+  m_Name: Customer Stand Point Front
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1509228054634866357
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7502640396395663081}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9140553905540937760}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8052226486703065909
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,6 +132,7 @@ Transform:
   m_Children:
   - {fileID: 6961778276983435913}
   - {fileID: 2360901884398081260}
+  - {fileID: 1509228054634866357}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!65 &4265983518423994648
@@ -136,8 +168,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
+  frontShelves:
+  - {fileID: 8484662376781955487}
+  - {fileID: 4633970045046443801}
+  - {fileID: 8612225072474064543}
+  - {fileID: 5482969818451860}
+  backShelves: []
+  allShelves: []
   mainObject: {fileID: 5758687114845008415}
   placingObject: {fileID: 3101996458634370896}
+  customerStandPointFront: {fileID: 1509228054634866357}
+  customerStandPointBack: {fileID: 0}
   col: {fileID: 4265983518423994648}
   price: 250
 --- !u!1001 &398743829631746266
@@ -202,6 +243,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7359956435744295796, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
   m_PrefabInstance: {fileID: 398743829631746266}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8484662376781955487 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+  m_PrefabInstance: {fileID: 398743829631746266}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
 --- !u!1001 &555008241938335706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268,6 +320,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7359956435744295796, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
   m_PrefabInstance: {fileID: 555008241938335706}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8612225072474064543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+  m_PrefabInstance: {fileID: 555008241938335706}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
 --- !u!1001 &3492584566402240092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -325,6 +388,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+--- !u!114 &4633970045046443801 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+  m_PrefabInstance: {fileID: 3492584566402240092}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
 --- !u!4 &6222838110758716712 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7359956435744295796, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
@@ -457,6 +531,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+--- !u!114 &5482969818451860 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
+  m_PrefabInstance: {fileID: 8080714094177832657}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
 --- !u!4 &1587421860504913317 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7359956435744295796, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}

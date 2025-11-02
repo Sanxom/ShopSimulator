@@ -11578,7 +11578,7 @@ Transform:
   m_GameObject: {fileID: 3177838811784692331}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.00000061094755}
-  m_LocalPosition: {x: -0, y: 1.275, z: 0.627}
+  m_LocalPosition: {x: 0, y: 1.275, z: 0.627}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18694,7 +18694,7 @@ Transform:
   m_GameObject: {fileID: 4821799290087909406}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.00000061094755}
-  m_LocalPosition: {x: -0, y: 1.878, z: 0.627}
+  m_LocalPosition: {x: 0, y: 1.878, z: 0.627}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -23307,7 +23307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7803597149057752864}
   - component: {fileID: 706750778177861806}
-  - component: {fileID: 2733572579191373253}
+  - component: {fileID: 1190635766200293680}
   m_Layer: 12
   m_Name: Shelving Case - 1x4 Double-Sided
   m_TagString: Untagged
@@ -23330,6 +23330,8 @@ Transform:
   m_Children:
   - {fileID: 743142456702444986}
   - {fileID: 2464743892503405790}
+  - {fileID: 1142768384022763401}
+  - {fileID: 5392278453235014779}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!65 &706750778177861806
@@ -23353,7 +23355,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.4949462, y: 2.4483545, z: 1.2765639}
   m_Center: {x: -0.0044995546, y: 1.2191235, z: 0.003476262}
---- !u!114 &2733572579191373253
+--- !u!114 &1190635766200293680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23365,8 +23367,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
+  frontShelves:
+  - {fileID: 564734060865651673}
+  - {fileID: 3035857784716050410}
+  - {fileID: 508685060355173782}
+  - {fileID: 561015472265986402}
+  backShelves:
+  - {fileID: 8199089682117282755}
+  - {fileID: 4535432933653038943}
+  - {fileID: 5203318592999217795}
+  - {fileID: 554671234955606398}
+  allShelves: []
   mainObject: {fileID: 7553578155465291315}
   placingObject: {fileID: 3608061666132502892}
+  customerStandPointFront: {fileID: 1142768384022763401}
+  customerStandPointBack: {fileID: 5392278453235014779}
   col: {fileID: 706750778177861806}
   price: 500
 --- !u!1 &6097391155830132337
@@ -29146,13 +29161,13 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8232700429323087319}
-  - {fileID: 7151702581412649515}
-  - {fileID: 4758487411081815441}
   - {fileID: 262063967739152385}
+  - {fileID: 4758487411081815441}
+  - {fileID: 7151702581412649515}
   - {fileID: 2852552148722007957}
-  - {fileID: 7429001332492854191}
-  - {fileID: 4651756695700326512}
   - {fileID: 4591170123549868568}
+  - {fileID: 4651756695700326512}
+  - {fileID: 7429001332492854191}
   - {fileID: 8961910402211263311}
   m_Father: {fileID: 7803597149057752864}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -30151,6 +30166,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9098339706467503778}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!1 &7842090864248399082
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5392278453235014779}
+  m_Layer: 12
+  m_Name: Customer Stand Point Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5392278453235014779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7842090864248399082}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7803597149057752864}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7848387607083441067
 GameObject:
   m_ObjectHideFlags: 0
@@ -32143,6 +32189,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5918037165846392539}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8289843179031133195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142768384022763401}
+  m_Layer: 12
+  m_Name: Customer Stand Point Front
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1142768384022763401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8289843179031133195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7803597149057752864}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8291734222487409718
 GameObject:
   m_ObjectHideFlags: 0
