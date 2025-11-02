@@ -1,3 +1,4 @@
+using masonbell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,11 +6,21 @@ using UnityEngine;
 
 public class Customer : MonoBehaviour
 {
+    public enum CustomerState
+    {
+        Entering,
+        Browsing,
+        Queueing,
+        AtCheckout,
+        Leaving
+    }
+
     #region Event Fields
     #endregion
 
     #region Public Fields
     public List<NavPoint> navPoints = new();
+    public CustomerState currentState;  
     public float moveSpeed;
     #endregion
 
@@ -42,20 +53,47 @@ public class Customer : MonoBehaviour
             _currentWaitTime = navPoints[0].waitTime;
         }
 
-        navPoints.AddRange(CustomerManager.Instance.GetExitPoints());
+        //navPoints.AddRange(CustomerManager.Instance.GetExitPoints());
     }
 
     private void Update()
     {
-        if (navPoints.Count > 0)
+        switch (currentState)
         {
-            MoveToPoint();
+            case CustomerState.Entering:
+                if (navPoints.Count > 0)
+                {
+                    MoveToPoints();
+                }
+                else
+                {
+                    StartLeaving();
+                }
+                    break;
+            case CustomerState.Browsing:
+                break;
+            case CustomerState.Queueing:
+                break;
+            case CustomerState.AtCheckout:
+                break;
+            case CustomerState.Leaving:
+                if (navPoints.Count > 0)
+                {
+                    MoveToPoints();
+                }
+                else
+                {
+                    ObjectPool<Customer>.ReturnToPool(this);
+                }
+                break;
+            default:
+                break;
         }
     }
     #endregion
 
     #region Public Methods
-    public void MoveToPoint()
+    public void MoveToPoints()
     {
         bool isMoving = true;
         Vector3 targetPosition = new(navPoints[0].point.position.x, transform.position.y, navPoints[0].point.position.z);
@@ -88,6 +126,15 @@ public class Customer : MonoBehaviour
                 _currentWaitTime = navPoints[0].waitTime;
             }
         }
+    }
+
+    public void StartLeaving()
+    {
+        currentState = CustomerState.Leaving;
+
+        navPoints.Clear();
+
+        navPoints.AddRange(CustomerManager.Instance.GetExitPoints());
     }
     #endregion
 
