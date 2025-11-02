@@ -19,6 +19,7 @@ public class CustomerManager : MonoBehaviour
 
     #region Serialized Private Fields
     [SerializeField] private Transform pooledObjectParent;
+    [SerializeField] private Transform customersSpawnParent;
     [SerializeField] private int initialPooledObjectSize = 50;
     #endregion
 
@@ -60,7 +61,7 @@ public class CustomerManager : MonoBehaviour
     #region Public Methods
     public void SpawnCustomer()
     {
-        ObjectPool<Customer>.GetFromPool(customersToSpawn[UnityEngine.Random.Range(0, customersToSpawn.Count)]);
+        ObjectPool<Customer>.GetFromPool(customersToSpawn[UnityEngine.Random.Range(0, customersToSpawn.Count)], customersSpawnParent);
         _spawnCounter = timeBetweenCustomers * UnityEngine.Random.Range(0.75f, 1.25f);
     }
 

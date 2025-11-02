@@ -3060,10 +3060,11 @@ Transform:
   - {fileID: 874870680}
   - {fileID: 1221905688}
   - {fileID: 1312865860}
-  - {fileID: 458550077}
-  - {fileID: 452179361}
   - {fileID: 1551545916}
+  - {fileID: 458550077}
+  - {fileID: 1724691721}
   - {fileID: 794629912}
+  - {fileID: 452179361}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &740935957
@@ -5447,7 +5448,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerManager
   customersToSpawn:
+  - {fileID: 2579402313560615986, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+  - {fileID: 6444650553509415309, guid: 7ed2e8444839b9449b0496fa2b5756c5, type: 3}
+  - {fileID: 6444650553509415309, guid: 0e2d5db46db9edd4f88267248807592b, type: 3}
+  - {fileID: 6444650553509415309, guid: bfd514111e527d04180479c2e2fb7c7c, type: 3}
+  - {fileID: 6444650553509415309, guid: 28580ccb0de04fc4ea2f9b9b35ee74b8, type: 3}
   - {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+  - {fileID: 2685964855620270629, guid: d14088fd4b6c0104d9e216a4d5b425d0, type: 3}
+  - {fileID: 2685964855620270629, guid: 29dc93d72ebf2e64c840b2495b95d330, type: 3}
+  - {fileID: 2685964855620270629, guid: 0067a645127ed66458c52bd92dd5a77e, type: 3}
+  - {fileID: 2685964855620270629, guid: e494948eadc02f5449cd85cdd1a2adb4, type: 3}
+  - {fileID: 2685964855620270629, guid: 7259e5e1e1acc864cb87341a87d9a355, type: 3}
+  - {fileID: 2685964855620270629, guid: f8c42b402b70094468d84a43526ac2f9, type: 3}
+  - {fileID: 2685964855620270629, guid: 66601278a687ad842a2ba0763c297983, type: 3}
+  - {fileID: 2685964855620270629, guid: 3be9d58d37eec8f4ea80d261cf348a91, type: 3}
+  - {fileID: 2685964855620270629, guid: a7c0855aaffd5c248baa32e5342cc378, type: 3}
+  - {fileID: 2685964855620270629, guid: 4a8cb0ba1f825ea46bef39fc5f609839, type: 3}
   entryPointsLeft:
   - point: {fileID: 2057375465}
     waitTime: 0
@@ -5468,6 +5484,7 @@ MonoBehaviour:
     waitTime: 1
   timeBetweenCustomers: 5
   pooledObjectParent: {fileID: 539274380}
+  customersSpawnParent: {fileID: 1724691721}
   initialPooledObjectSize: 50
 --- !u!1001 &1542020737
 PrefabInstance:
@@ -6027,6 +6044,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 471836023069485021, guid: 1adfc47e21f0fc54282516cb1132a623, type: 3}
+--- !u!1 &1724691720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1724691721}
+  m_Layer: 0
+  m_Name: Customers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724691721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1724691720}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 731858510}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1753036079
 GameObject:
   m_ObjectHideFlags: 0
