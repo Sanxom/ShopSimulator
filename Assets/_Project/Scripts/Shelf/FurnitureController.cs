@@ -24,10 +24,10 @@ public class FurnitureController : MonoBehaviour, IPlaceable
     #endregion
 
     #region Private Fields
-    private bool _isDoubleSided = false;
     #endregion
 
     #region Public Properties
+    public bool IsDoubleSided { get; private set; } = false;
     #endregion
 
     #region Unity Callbacks
@@ -36,7 +36,7 @@ public class FurnitureController : MonoBehaviour, IPlaceable
         allShelves.AddRange(frontShelves);
         if (backShelves.Count > 0)
         {
-            _isDoubleSided = true;
+            IsDoubleSided = true;
             allShelves.AddRange(backShelves);
         }
     }
@@ -48,7 +48,7 @@ public class FurnitureController : MonoBehaviour, IPlaceable
         }
 
         // TODO: Make this more efficient.  Right now, we are adding two copies of this instance to StoreController List if this is double-sided
-        if (_isDoubleSided)
+        if (IsDoubleSided)
         {
             StoreController.Instance.shelvingCases.Add(this);
         }

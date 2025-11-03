@@ -294,7 +294,7 @@ MonoBehaviour:
   - {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
   allFurniturePrefabs:
   - {fileID: 6419496879619822556, guid: acf3f72a017c6534ebc7e8032800a132, type: 3}
-  - {fileID: 2733572579191373253, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
+  - {fileID: 1190635766200293680, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
   initialPooledObjectSize: 50
 --- !u!1 &2007581844930465666
 GameObject:

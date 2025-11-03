@@ -4873,7 +4873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098c3be0b48aa024c9e2428de3de6289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuyFurnitureFrameController
-  furniture: {fileID: 2733572579191373253, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
+  furniture: {fileID: 1190635766200293680, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
   priceText: {fileID: 6487015935473775296}
 --- !u!1 &7694405513621110558
 GameObject:
