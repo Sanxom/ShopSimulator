@@ -388,6 +388,9 @@ MonoBehaviour:
   whatIsFurniture:
     serializedVersion: 2
     m_Bits: 4096
+  whatIsCheckout:
+    serializedVersion: 2
+    m_Bits: 16384
   interactionRange: 2
   throwForce: 8
   moveSpeed: 5

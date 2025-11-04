@@ -50,7 +50,8 @@ public class ShelfSpaceController : MonoBehaviour
 
         if (objectsOnShelf.Count > 0)
         {
-            objectToReturn = objectsOnShelf[^1];
+            print("Removing Stock");
+            objectToReturn = objectsOnShelf[objectsOnShelf.Count - 1];
             objectsOnShelf.RemoveAt(objectsOnShelf.Count - 1);
             SetShelfLabelText(Info.currentPrice);
         }

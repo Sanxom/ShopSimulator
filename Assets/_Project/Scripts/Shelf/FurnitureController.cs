@@ -8,14 +8,11 @@ public class FurnitureController : MonoBehaviour, IPlaceable
     #endregion
 
     #region Public Fields
-    public List<ShelfSpaceController> frontShelves;
-    public List<ShelfSpaceController> backShelves;
-    public List<ShelfSpaceController> allShelves;
+    public List<ShelfSpaceController> shelves;
 
     public GameObject mainObject;
     public GameObject placingObject;
-    public Transform customerStandPointFront;
-    public Transform customerStandPointBack;
+    public Transform customerStandPoint;
     public Collider col;
     public float price;
     #endregion
@@ -27,28 +24,12 @@ public class FurnitureController : MonoBehaviour, IPlaceable
     #endregion
 
     #region Public Properties
-    public bool IsDoubleSided { get; private set; } = false;
     #endregion
 
     #region Unity Callbacks
-    private void Awake()
-    {
-        allShelves.AddRange(frontShelves);
-        if (backShelves.Count > 0)
-        {
-            IsDoubleSided = true;
-            allShelves.AddRange(backShelves);
-        }
-    }
     private void Start()
     {
-        if (allShelves.Count > 0)
-        {
-            StoreController.Instance.shelvingCases.Add(this);
-        }
-
-        // TODO: Make this more efficient.  Right now, we are adding two copies of this instance to StoreController List if this is double-sided
-        if (IsDoubleSided)
+        if (shelves.Count > 0)
         {
             StoreController.Instance.shelvingCases.Add(this);
         }

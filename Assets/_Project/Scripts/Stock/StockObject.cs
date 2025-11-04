@@ -17,7 +17,9 @@ public class StockObject : MonoBehaviour, ITrashable
     #region Private Fields
     private const float moveSpeed = 10f;
 
+    private Transform _bagPositionInWorld;
     private bool _isPlaced;
+    private bool _isInBag;
     #endregion
 
     #region Public Properties
@@ -54,6 +56,13 @@ public class StockObject : MonoBehaviour, ITrashable
             transform.SetLocalPositionAndRotation(Vector3.MoveTowards(transform.localPosition, Vector3.zero, moveSpeed * Time.deltaTime), 
                 Quaternion.Slerp(transform.localRotation, Quaternion.identity, moveSpeed * Time.deltaTime));
         }
+
+        if (_isInBag)
+        {
+            transform.SetPositionAndRotation(Vector3.MoveTowards(transform.position, _bagPositionInWorld.position, moveSpeed * Time.deltaTime),
+                Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime));
+            transform.localScale = Vector3.MoveTowards(transform.localScale, Vector3.zero, Time.deltaTime);
+        }
     }
     #endregion
 
@@ -84,6 +93,13 @@ public class StockObject : MonoBehaviour, ITrashable
     {
         Rb.isKinematic = true;
         Col.enabled = false;
+    }
+
+    public void PlaceInBag(Transform bagPosition)
+    {
+        _bagPositionInWorld = bagPosition;
+        _isInBag = true;
+        MakePlaced();
     }
 
     public void TrashObject()

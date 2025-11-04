@@ -23308,6 +23308,7 @@ GameObject:
   - component: {fileID: 7803597149057752864}
   - component: {fileID: 706750778177861806}
   - component: {fileID: 1190635766200293680}
+  - component: {fileID: 8660149621548177129}
   m_Layer: 12
   m_Name: Shelving Case - 1x4 Double-Sided
   m_TagString: Untagged
@@ -23323,7 +23324,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6092054901375401870}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.00000058114523}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: -1, z: -2.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -23333,7 +23334,7 @@ Transform:
   - {fileID: 1142768384022763401}
   - {fileID: 5392278453235014779}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &706750778177861806
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23367,21 +23368,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  frontShelves:
-  - {fileID: 564734060865651673}
-  - {fileID: 3035857784716050410}
-  - {fileID: 508685060355173782}
-  - {fileID: 561015472265986402}
-  backShelves:
+  shelves:
   - {fileID: 8199089682117282755}
   - {fileID: 4535432933653038943}
   - {fileID: 5203318592999217795}
   - {fileID: 554671234955606398}
-  allShelves: []
   mainObject: {fileID: 7553578155465291315}
   placingObject: {fileID: 3608061666132502892}
-  customerStandPointFront: {fileID: 1142768384022763401}
-  customerStandPointBack: {fileID: 5392278453235014779}
+  customerStandPoint: {fileID: 1142768384022763401}
+  col: {fileID: 706750778177861806}
+  price: 500
+--- !u!114 &8660149621548177129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6092054901375401870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
+  shelves:
+  - {fileID: 564734060865651673}
+  - {fileID: 3035857784716050410}
+  - {fileID: 508685060355173782}
+  - {fileID: 561015472265986402}
+  mainObject: {fileID: 7553578155465291315}
+  placingObject: {fileID: 3608061666132502892}
+  customerStandPoint: {fileID: 5392278453235014779}
   col: {fileID: 706750778177861806}
   price: 500
 --- !u!1 &6097391155830132337
@@ -29155,7 +29171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7553578155465291315}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -29170,7 +29186,7 @@ Transform:
   - {fileID: 7429001332492854191}
   - {fileID: 8961910402211263311}
   m_Father: {fileID: 7803597149057752864}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7556813327317093791
 GameObject:
   m_ObjectHideFlags: 0

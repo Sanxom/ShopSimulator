@@ -50,7 +50,8 @@ public class StockInfoController : MonoBehaviour
 
     private void Start()
     {
-        // TODO: Maybe place this in a new Script for Initializing ObjectPools instead of doing it here and find a better way to do this
+        // TODO: Maybe place this in a new Script for Initializing ObjectPools instead of doing it here and find a better way to do this. We're
+        //       using transform.Find to look for a specific GameObject which is pretty unsafe if we delete that object or move them around
         for (int i = 0; i < allStock.Count; i++)
         {
             if (allStock[i].currentPrice == 0)
@@ -71,6 +72,17 @@ public class StockInfoController : MonoBehaviour
         {
             ObjectPool<StockBoxController>.Initialize(allBoxPrefabs[i], initialPooledObjectSize, 0, transform.Find(POOLED_BOX_GAMEOBJECT_NAME).GetChild(i));
         }
+    }
+
+    // TODO: Not sure if this is necessary. Should look at profiler to see if this prevents some Garbage from hanging around.
+    private void OnDisable()
+    {
+        ObjectPool<StockObject>.ReturnAllToPool();
+        ObjectPool<StockBoxController>.ReturnAllToPool();
+        ObjectPool<FurnitureController>.ReturnAllToPool();
+        ObjectPool<FurnitureController>.ClearAllPools();
+        ObjectPool<StockBoxController>.ClearAllPools();
+        ObjectPool<StockObject>.ClearAllPools();
     }
     #endregion
 

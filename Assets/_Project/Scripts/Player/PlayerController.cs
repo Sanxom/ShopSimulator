@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask whatIsStockBox;
     [SerializeField] private LayerMask whatIsTrash;
     [SerializeField] private LayerMask whatIsFurniture;
+    [SerializeField] private LayerMask whatIsCheckout;
 
     [SerializeField] private float interactionRange;
     [SerializeField] private float throwForce;
@@ -240,6 +241,12 @@ public class PlayerController : MonoBehaviour
                 _heldObject = hit.collider.GetComponent<ShelfSpaceController>().GetStock();
                 if (_heldObject != null)
                     _heldObject.Pickup(_holdPoint);
+                return;
+            }
+
+            if (Physics.Raycast(ray, out hit, interactionRange, whatIsCheckout))
+            {
+                hit.collider.GetComponent<Checkout>().CheckoutCustomer();
                 return;
             }
         }

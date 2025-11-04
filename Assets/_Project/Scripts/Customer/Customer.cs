@@ -1,5 +1,4 @@
 using masonbell;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -31,11 +30,13 @@ public class Customer : MonoBehaviour
     #endregion
 
     #region Serialized Private Fields
+    [SerializeField] private List<StockObject> stockInBag = new();
     #endregion
 
     #region Private Fields
     private const string IS_MOVING_ANIMATOR_NAME = "isMoving";
 
+    private Vector3 queuePoint;
     private float _currentWaitTime = 0f;
     private int _browsePointsRemaining;
     private bool _hasGrabbedItem;
@@ -60,8 +61,6 @@ public class Customer : MonoBehaviour
             transform.position = navPoints[0].point.position;
             _currentWaitTime = navPoints[0].waitTime;
         }
-
-        //navPoints.AddRange(CustomerManager.Instance.GetExitPoints());
     }
 
     private void Update()
@@ -75,9 +74,8 @@ public class Customer : MonoBehaviour
                 }
                 else
                 {
-                    //StartLeaving();
                     currentState = CustomerState.Browsing;
-                    _browsePointsRemaining = UnityEngine.Random.Range(1, maxBrowsePoints + 1);
+                    _browsePointsRemaining = Random.Range(1, maxBrowsePoints + 1);
                     _browsePointsRemaining = Mathf.Clamp(_browsePointsRemaining, 1, StoreController.Instance.shelvingCases.Count);
                     GetBrowsePoint();
                 }
@@ -88,11 +86,12 @@ public class Customer : MonoBehaviour
                 if (navPoints.Count == 0)
                 {
                     if (!_hasGrabbedItem)
+                    {
                         GrabStock();
+                    }
                     else
                     {
                         _hasGrabbedItem = false;
-
                         _browsePointsRemaining--;
                         if (_browsePointsRemaining > 0)
                         {
@@ -100,13 +99,30 @@ public class Customer : MonoBehaviour
                         }
                         else
                         {
-                            StartLeaving(); // TODO: Change this; testing for now
+                            if (stockInBag.Count > 0)
+                            {
+                                Checkout.Instance.AddCustomerToQueue(this);
+                                currentState = CustomerState.Queueing;
+                            }
+                            else
+                            {
+                                StartLeaving();
+                            }
                         }
                     }
                 }
                 break;
             case CustomerState.Queueing:
-                break;
+                transform.position = Vector3.MoveTowards(transform.position, queuePoint, moveSpeed * Time.deltaTime);
+                if (Vector3.Distance(transform.position, queuePoint) > 0.1f)
+                {
+                    Anim.SetBool(IS_MOVING_ANIMATOR_NAME, true);
+                }
+                else
+                {
+                    Anim.SetBool(IS_MOVING_ANIMATOR_NAME, false);
+                }
+                    break;
             case CustomerState.AtCheckout:
                 break;
             case CustomerState.Leaving:
@@ -128,25 +144,30 @@ public class Customer : MonoBehaviour
     #region Public Methods
     public void MoveToPoints()
     {
-        bool isMoving = true;
-        currentStandPoint = navPoints[0].point;
-        Vector3 targetPosition = new(navPoints[0].point.position.x, transform.position.y, navPoints[0].point.position.z);
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        transform.LookAt(targetPosition);
-
-        if (Vector3.Distance(transform.position, targetPosition) < 0.25f)
+        if (navPoints.Count > 0)
         {
-            isMoving = false;
+            bool isMoving = true;
+            Vector3 targetPosition = new(navPoints[0].point.position.x, transform.position.y, navPoints[0].point.position.z);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            transform.LookAt(targetPosition);
 
-            _currentWaitTime -= Time.deltaTime;
-
-            if (_currentWaitTime <= 0)
+            if (Vector3.Distance(transform.position, targetPosition) < 0.25f)
             {
-                StartNextPoint();
-            }
-        }
+                isMoving = false;
 
-        Anim.SetBool(IS_MOVING_ANIMATOR_NAME, isMoving);
+                _currentWaitTime -= Time.deltaTime;
+
+                if (_currentWaitTime <= 0)
+                {
+                    StartNextPoint();
+                }
+            }
+            Anim.SetBool(IS_MOVING_ANIMATOR_NAME, isMoving);
+        }
+        else
+        {
+            StartNextPoint();
+        }
     }
 
     public void StartNextPoint()
@@ -173,15 +194,41 @@ public class Customer : MonoBehaviour
 
     public void GrabStock()
     {
-        shoppingBag.SetActive(true);
         _hasGrabbedItem = true;
 
-        navPoints.Clear();
-        navPoints.Add(new NavPoint());
+        int shelf = Random.Range(0, currentShelfCase.shelves.Count);
+        StockObject stock = currentShelfCase.shelves[shelf].GetStock();
 
-        navPoints[0].point = currentStandPoint;
-        navPoints[0].waitTime = waitAfterGrabbing * UnityEngine.Random.Range(0.75f, 1.25f);
-        _currentWaitTime = navPoints[0].waitTime;
+        if (stock != null)
+        {
+            stock.transform.SetParent(shoppingBag.transform);
+            stockInBag.Add(stock);
+            stock.PlaceInBag(shoppingBag.transform);
+            shoppingBag.SetActive(true);
+            navPoints.Clear();
+            navPoints.Add(new NavPoint());
+            navPoints[0].point = currentShelfCase.customerStandPoint;
+            navPoints[0].waitTime = waitAfterGrabbing * Random.Range(0.75f, 1.25f);
+            _currentWaitTime = navPoints[0].waitTime;
+        }
+    }
+
+    public void UpdateQueuePoint(Vector3 newPoint)
+    {
+        queuePoint = newPoint;
+        transform.LookAt(queuePoint);
+    }
+
+    public float GetTotalSpendAmount()
+    {
+        float total = 0f;
+
+        foreach (StockObject stock in stockInBag)
+        {
+            total += stock.Info.currentPrice;
+        }
+
+        return total;
     }
     #endregion
 
@@ -189,32 +236,18 @@ public class Customer : MonoBehaviour
     private void GetBrowsePoint()
     {
         navPoints.Clear();
-        // TODO: Fix this because right now, it is a little messy trying to select between one side of a double-sided shelf or the other
-        int selectedShelf = UnityEngine.Random.Range(0, StoreController.Instance.shelvingCases.Count);
-        FurnitureController temp = StoreController.Instance.shelvingCases[selectedShelf];
+        int selectedShelf = Random.Range(0, StoreController.Instance.shelvingCases.Count);
+        currentShelfCase = StoreController.Instance.shelvingCases[selectedShelf];
         navPoints.Add(new NavPoint());
-        if (!temp.IsDoubleSided)
-        {
-            navPoints[0].point = temp.customerStandPointFront;
-        }
-        else
-        {
-            float tempRandom = UnityEngine.Random.Range(0f, 1f);
-            if (tempRandom > 0.5f)
-                navPoints[0].point = temp.customerStandPointBack;
-            else
-                navPoints[0].point = temp.customerStandPointFront;
+        navPoints[0].point = currentShelfCase.customerStandPoint;
 
-            currentStandPoint = navPoints[0].point;
-            navPoints[0].waitTime = browseTime * UnityEngine.Random.Range(0.75f, 1.25f);
-            _currentWaitTime = navPoints[0].waitTime;
-            currentShelfCase = temp;
-        }
+        navPoints[0].waitTime = browseTime * Random.Range(0.75f, 1.25f);
+        _currentWaitTime = navPoints[0].waitTime;
     }
     #endregion
 }
 
-[Serializable]
+[System.Serializable]
 public class NavPoint
 {
     public Transform point;
