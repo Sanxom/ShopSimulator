@@ -45,16 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f30807eb700f3254cb8b45999d34ab6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Customer
-  navPoints: []
-  currentShelfCase: {fileID: 0}
-  currentStandPoint: {fileID: 0}
-  shoppingBag: {fileID: 7154214772295996412}
-  currentState: 0
-  moveSpeed: 3
-  browseTime: 2
-  waitAfterGrabbing: 0.5
-  maxBrowsePoints: 5
-  <Anim>k__BackingField: {fileID: 8950892786007486733}
+  _navPoints: []
+  _moveSpeed: 10
+  _browseTime: 3
+  _waitAfterGrabbing: 0.5
+  _maxBrowsePoints: 5
+  _animator: {fileID: 8950892786007486733}
+  _shoppingBag: {fileID: 7154214772295996412}
+  _stockInBag: []
 --- !u!1001 &8037106466160848557
 PrefabInstance:
   m_ObjectHideFlags: 0

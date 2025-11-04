@@ -802,18 +802,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e604fbba2f5724fa85d4999e617ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuyStockFrameController
-  stockInfo:
-    name: Green Apple
+  _stockInfo:
+    name: 
     stockObject: {fileID: 0}
     typeOfStock: 0
     basePrice: 0
     currentPrice: 0
-  nameText: {fileID: 740149226387300218}
-  priceText: {fileID: 6638077970704709371}
-  amountInBoxText: {fileID: 9030445031964369141}
-  boxPriceText: {fileID: 7931512756060530277}
-  buttonText: {fileID: 4902138473996451815}
-  boxToSpawn: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
+  _nameText: {fileID: 740149226387300218}
+  _priceText: {fileID: 6638077970704709371}
+  _amountInBoxText: {fileID: 9030445031964369141}
+  _boxPriceText: {fileID: 7931512756060530277}
+  _buttonText: {fileID: 4902138473996451815}
+  _boxToSpawn: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
 --- !u!1 &8396094202194170135
 GameObject:
   m_ObjectHideFlags: 0

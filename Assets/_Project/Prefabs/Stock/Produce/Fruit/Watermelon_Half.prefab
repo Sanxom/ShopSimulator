@@ -153,7 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  <Info>k__BackingField:
-    typeOfStock: 4
+  _info:
     name: Half Watermelon
-    price: 1.5
+    stockObject: {fileID: 1402404629388094591}
+    typeOfStock: 4
+    basePrice: 1.5
+    currentPrice: 0

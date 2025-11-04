@@ -153,7 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  <Info>k__BackingField:
-    typeOfStock: 1
+  _info:
     name: Lime Soda
-    price: 3.99
+    stockObject: {fileID: 1153738974391467683}
+    typeOfStock: 1
+    basePrice: 1.99
+    currentPrice: 0

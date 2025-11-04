@@ -1,3 +1,4 @@
+#region Claude Code v1
 using masonbell;
 using System;
 using System.Collections.Generic;
@@ -412,8 +413,7 @@ public class PlayerInteraction
 
         if (TryRaycast(_config.StockBoxLayer, out RaycastHit hit))
         {
-            var box = hit.collider.GetComponent<StockBoxController>();
-            if (box != null)
+            if (hit.collider.TryGetComponent(out StockBoxController box))
             {
                 box.OpenClose();
             }
@@ -438,10 +438,10 @@ public class PlayerInteraction
     #region Pickup Logic
     private void TryPickupObject()
     {
+        if (TryInteractWithPriceLabel()) return;
         if (TryPickupStock()) return;
         if (TryPickupStockBox()) return;
         if (TryTakeStockFromShelf()) return;
-        if (TryInteractWithPriceLabel()) return;
         if (TryInteractWithCheckout()) return;
     }
 
@@ -482,8 +482,7 @@ public class PlayerInteraction
     {
         if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
         {
-            var shelf = hit.collider.GetComponent<ShelfSpaceController>();
-            if (shelf != null)
+            if (hit.collider.TryGetComponent(out ShelfSpaceController shelf))
             {
                 _heldStock = shelf.GetStock();
             }
@@ -515,8 +514,7 @@ public class PlayerInteraction
     {
         if (TryRaycast(_config.CheckoutLayer, out RaycastHit hit))
         {
-            var checkout = hit.collider.GetComponent<Checkout>();
-            if (checkout != null)
+            if (hit.collider.TryGetComponent(out Checkout checkout))
             {
                 checkout.CheckoutCustomer();
             }
@@ -547,8 +545,7 @@ public class PlayerInteraction
     {
         if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
         {
-            var shelf = hit.collider.GetComponent<ShelfSpaceController>();
-            if (shelf != null)
+            if (hit.collider.TryGetComponent(out ShelfSpaceController shelf))
             {
                 shelf.PlaceStock(_heldStock);
             }
@@ -569,7 +566,7 @@ public class PlayerInteraction
 
     private void HandleHeldBox()
     {
-        if (_heldBox.stockInBox.Count > 0)
+        if (_heldBox.StockInBox.Count > 0)
         {
             if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
             {
@@ -657,7 +654,9 @@ public class PlayerInteraction
     #endregion
 }
 #endregion
+#endregion
 
+#region James' Code
 //using masonbell;
 //using System;
 //using System.Collections.Generic;
@@ -1077,3 +1076,4 @@ public class PlayerInteraction
 //    #endregion
 //    #endregion
 //}
+#endregion

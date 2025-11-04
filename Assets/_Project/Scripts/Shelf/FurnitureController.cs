@@ -1,59 +1,133 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FurnitureController : MonoBehaviour, IPlaceable
 {
-    #region Event Fields
+    #region Serialized Fields
+    [Header("Furniture Settings")]
+    [SerializeField] private float _price;
+    [SerializeField] private List<ShelfSpaceController> _shelves;
+
+    [Header("References")]
+    [SerializeField] private GameObject _mainObject;
+    [SerializeField] private GameObject _placingObject;
+    [SerializeField] private Transform _customerStandPoint;
+    [SerializeField] private Collider _collider;
     #endregion
 
-    #region Public Fields
-    public List<ShelfSpaceController> shelves;
-
-    public GameObject mainObject;
-    public GameObject placingObject;
-    public Transform customerStandPoint;
-    public Collider col;
-    public float price;
+    #region Properties
+    public List<ShelfSpaceController> Shelves => _shelves;
+    public Transform CustomerStandPoint => _customerStandPoint;
+    public float Price => _price;
     #endregion
 
-    #region Serialized Private Fields
-    #endregion
-
-    #region Private Fields
-    #endregion
-
-    #region Public Properties
-    #endregion
-
-    #region Unity Callbacks
+    #region Unity Lifecycle
     private void Start()
     {
-        if (shelves.Count > 0)
+        RegisterWithStore();
+    }
+    #endregion
+
+    #region Initialization
+    private void RegisterWithStore()
+    {
+        if (_shelves.Count > 0 && StoreController.Instance != null)
         {
-            StoreController.Instance.shelvingCases.Add(this);
+            StoreController.Instance.ShelvingCases.Add(this);
         }
     }
     #endregion
 
-    #region Public Methods
+    #region IPlaceable Implementation
     public void MakePlaceable()
     {
-        mainObject.SetActive(false);
-        placingObject.SetActive(true);
-        col.enabled = false;
+        SetObjectState(false, true, false);
     }
 
     public void PlaceObject()
     {
-        mainObject.SetActive(true);
-        placingObject.SetActive(false);
-        col.enabled = true;
+        SetObjectState(true, false, true);
         transform.SetParent(null);
-
     }
     #endregion
 
     #region Private Methods
+    private void SetObjectState(bool mainActive, bool placingActive, bool colliderEnabled)
+    {
+        if (_mainObject != null)
+        {
+            _mainObject.SetActive(mainActive);
+        }
+
+        if (_placingObject != null)
+        {
+            _placingObject.SetActive(placingActive);
+        }
+
+        if (_collider != null)
+        {
+            _collider.enabled = colliderEnabled;
+        }
+    }
     #endregion
 }
+
+//using System;
+//using System.Collections.Generic;
+//using UnityEngine;
+
+//public class FurnitureController : MonoBehaviour, IPlaceable
+//{
+//    #region Event Fields
+//    #endregion
+
+//    #region Public Fields
+//    public List<ShelfSpaceController> shelves;
+
+//    public GameObject mainObject;
+//    public GameObject placingObject;
+//    public Transform customerStandPoint;
+//    public Collider col;
+//    public float price;
+//    #endregion
+
+//    #region Serialized Private Fields
+//    #endregion
+
+//    #region Private Fields
+//    #endregion
+
+//    #region Public Properties
+//    #endregion
+
+//    #region Unity Callbacks
+//    private void Start()
+//    {
+//        if (shelves.Count > 0)
+//        {
+//            StoreController.Instance.shelvingCases.Add(this);
+//        }
+//    }
+//    #endregion
+
+//    #region Public Methods
+//    public void MakePlaceable()
+//    {
+//        mainObject.SetActive(false);
+//        placingObject.SetActive(true);
+//        col.enabled = false;
+//    }
+
+//    public void PlaceObject()
+//    {
+//        mainObject.SetActive(true);
+//        placingObject.SetActive(false);
+//        col.enabled = true;
+//        transform.SetParent(null);
+
+//    }
+//    #endregion
+
+//    #region Private Methods
+//    #endregion
+//}

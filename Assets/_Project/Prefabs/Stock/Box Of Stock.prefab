@@ -2671,13 +2671,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f309109e46555649839f5dbb54bdbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockBoxController
-  stockInfo:
-    name: Lemon
-    stockObject: {fileID: 3452099114512998089, guid: e421ebf61d0227a41905d60ccedf3dd7, type: 3}
-    typeOfStock: 3
-    basePrice: 0.65
+  _stockInfo:
+    name: 
+    stockObject: {fileID: 0}
+    typeOfStock: 0
+    basePrice: 0
     currentPrice: 0
-  bigDrinkPoints:
+  _stockInBox: []
+  _bigDrinkPoints:
   - {fileID: 4494799186769896959}
   - {fileID: 8075437823103023498}
   - {fileID: 6349603565098971949}
@@ -2693,7 +2694,7 @@ MonoBehaviour:
   - {fileID: 3031078265676520435}
   - {fileID: 3237723110574498734}
   - {fileID: 6374061599851167539}
-  cerealPoints:
+  _cerealPoints:
   - {fileID: 4950407573646265884}
   - {fileID: 3130129942132079045}
   - {fileID: 2649430013106092355}
@@ -2712,7 +2713,7 @@ MonoBehaviour:
   - {fileID: 8223360122921539033}
   - {fileID: 3777456013792199794}
   - {fileID: 156122279856365697}
-  tubeChipPoints:
+  _tubeChipPoints:
   - {fileID: 3075952946413163764}
   - {fileID: 4216531818479104137}
   - {fileID: 1120090615253710202}
@@ -2753,7 +2754,7 @@ MonoBehaviour:
   - {fileID: 7558637204915322932}
   - {fileID: 5281903346547308582}
   - {fileID: 4001047365438188223}
-  fruitPoints:
+  _fruitPoints:
   - {fileID: 6567691183030290129}
   - {fileID: 7329493397707263936}
   - {fileID: 3835847977387271553}
@@ -2786,17 +2787,16 @@ MonoBehaviour:
   - {fileID: 305511889008187943}
   - {fileID: 2929272875404105208}
   - {fileID: 3644554151933367502}
-  largeFruitPoints:
+  _largeFruitPoints:
   - {fileID: 4867273912265061833}
   - {fileID: 1571154203266423009}
   - {fileID: 1872220566244244705}
-  vegetablePoints:
+  _vegetablePoints:
   - {fileID: 5521896902106844671}
   - {fileID: 7353977521691815388}
   - {fileID: 6452997512090581740}
   - {fileID: 5915434958834674804}
-  stockInBox: []
-  testFill: 0
+  _testFill: 0
 --- !u!1 &6404601673547088659
 GameObject:
   m_ObjectHideFlags: 0

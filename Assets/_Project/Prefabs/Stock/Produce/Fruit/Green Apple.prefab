@@ -152,7 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  <Info>k__BackingField:
-    typeOfStock: 3
+  _info:
     name: Green Apple
-    price: 0.75
+    stockObject: {fileID: 5959850270914625573}
+    typeOfStock: 3
+    basePrice: 0.65
+    currentPrice: 0

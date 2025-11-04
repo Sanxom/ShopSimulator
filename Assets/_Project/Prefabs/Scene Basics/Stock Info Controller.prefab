@@ -202,57 +202,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff72d15f9b2da0d4dab8f07055ef3c0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockInfoController
-  drinkInfo:
+  _drinkInfo:
   - name: Cola Soda
     stockObject: {fileID: 8639642362173963538, guid: 10864151902fa8b40994e19b268cb559, type: 3}
     typeOfStock: 1
-    basePrice: 2.99
+    basePrice: 1.99
     currentPrice: 0
   - name: Lime Soda
     stockObject: {fileID: 1153738974391467683, guid: 0dff59f8eea3c7e4098f56ed520f18e3, type: 3}
     typeOfStock: 1
-    basePrice: 2.99
+    basePrice: 1.99
     currentPrice: 0
   - name: Orange Soda
     stockObject: {fileID: 6820720772348931434, guid: 78aab909dd1fe144e959f4e4cd9a3171, type: 3}
     typeOfStock: 1
-    basePrice: 2.99
+    basePrice: 1.99
     currentPrice: 0
   - name: Water
     stockObject: {fileID: 3566843521622032675, guid: f813de393f7530c42b5acbaafc61ebb9, type: 3}
     typeOfStock: 1
     basePrice: 1.99
     currentPrice: 0
-  foodInfo:
+  _foodInfo:
   - name: Granola Cereal
     stockObject: {fileID: 7660662851968950609, guid: 66cc2df93e8c85e41a3e849a031cb77c, type: 3}
     typeOfStock: 0
-    basePrice: 3.99
+    basePrice: 2.35
     currentPrice: 0
   - name: Rings Cereal
     stockObject: {fileID: 8558298658618883541, guid: eab80a277379e7545a77f84b3d9ae343, type: 3}
     typeOfStock: 0
-    basePrice: 3.99
+    basePrice: 2.35
     currentPrice: 0
   - name: Eggplant
     stockObject: {fileID: 4195105889596970896, guid: fffeee1d7188af54fb72f9cfc3571a3a, type: 3}
     typeOfStock: 3
-    basePrice: 1.42
+    basePrice: 1.05
     currentPrice: 0
   - name: Green Apple
     stockObject: {fileID: 5959850270914625573, guid: aa2146adce852994f8751644803d475b, type: 3}
     typeOfStock: 3
-    basePrice: 0.75
+    basePrice: 0.65
     currentPrice: 0
   - name: Lemon
     stockObject: {fileID: 3452099114512998089, guid: e421ebf61d0227a41905d60ccedf3dd7, type: 3}
     typeOfStock: 3
-    basePrice: 0.65
+    basePrice: 0.95
     currentPrice: 0
   - name: Pineapple
     stockObject: {fileID: 3206220601071311031, guid: e374a4bf5fe54e44dbc6735f203da3ca, type: 3}
     typeOfStock: 4
-    basePrice: 1.5
+    basePrice: 1.3
     currentPrice: 0
   - name: Half Watermelon
     stockObject: {fileID: 1402404629388094591, guid: f5ea15f94b00a5c40a45f0b3af64ba45, type: 3}
@@ -267,35 +267,34 @@ MonoBehaviour:
   - name: Lettuce
     stockObject: {fileID: 6343076098585470418, guid: c24c05cb8c2c3484a81f7df8768d7d8e, type: 3}
     typeOfStock: 5
-    basePrice: 1.13
+    basePrice: 1.35
     currentPrice: 0
   - name: BBQ Tube Chips
     stockObject: {fileID: 1325277484929602757, guid: 63bc1ca19b3b1e6469e0de3401754b4f, type: 3}
     typeOfStock: 2
-    basePrice: 1.99
+    basePrice: 2.99
     currentPrice: 0
   - name: Cheddar Tube Chips
     stockObject: {fileID: 8023532575916764463, guid: 7c1204d66e13f384c88f203559a02fdc, type: 3}
     typeOfStock: 2
-    basePrice: 1.99
+    basePrice: 2.99
     currentPrice: 0
   - name: Classic Tube Chips
     stockObject: {fileID: 9709331498928436, guid: 441e7e61bd24f28438e3b7f3bdc88833, type: 3}
     typeOfStock: 2
-    basePrice: 1.99
+    basePrice: 2.99
     currentPrice: 0
   - name: Onion Tube Chips
     stockObject: {fileID: 5125661419269556766, guid: 302c878246afb4c428e19cffc5492c38, type: 3}
     typeOfStock: 2
-    basePrice: 1.99
+    basePrice: 2.99
     currentPrice: 0
-  boxPrefab: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
-  allBoxPrefabs:
+  _allBoxPrefabs:
   - {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
-  allFurniturePrefabs:
+  _allFurniturePrefabs:
   - {fileID: 6419496879619822556, guid: acf3f72a017c6534ebc7e8032800a132, type: 3}
   - {fileID: 1190635766200293680, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
-  initialPooledObjectSize: 50
+  _initialPooledObjectSize: 50
 --- !u!1 &2007581844930465666
 GameObject:
   m_ObjectHideFlags: 0

@@ -168,16 +168,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  shelves:
+  _price: 250
+  _shelves:
   - {fileID: 8484662376781955487}
   - {fileID: 4633970045046443801}
   - {fileID: 8612225072474064543}
   - {fileID: 5482969818451860}
-  mainObject: {fileID: 5758687114845008415}
-  placingObject: {fileID: 3101996458634370896}
-  customerStandPoint: {fileID: 1509228054634866357}
-  col: {fileID: 4265983518423994648}
-  price: 250
+  _mainObject: {fileID: 5758687114845008415}
+  _placingObject: {fileID: 3101996458634370896}
+  _customerStandPoint: {fileID: 1509228054634866357}
+  _collider: {fileID: 4265983518423994648}
 --- !u!1001 &398743829631746266
 PrefabInstance:
   m_ObjectHideFlags: 0

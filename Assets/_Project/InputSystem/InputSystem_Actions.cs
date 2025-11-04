@@ -199,6 +199,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TakeStock"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee4a8e53-cd89-442c-90f8-819928b5433d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -586,6 +595,39 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""PickupFurniture"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""81f148a2-1739-4bc7-9532-6b1f28890a3e"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TakeStock"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""8a5bc433-629b-4518-8ee6-eaf60145f2b6"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""TakeStock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""51519dc3-ca2f-4c61-a714-65dfe9b5d421"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""TakeStock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -1084,6 +1126,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_OpenMenu = m_Player.FindAction("OpenMenu", throwIfNotFound: true);
         m_Player_PickupFurniture = m_Player.FindAction("PickupFurniture", throwIfNotFound: true);
+        m_Player_TakeStock = m_Player.FindAction("TakeStock", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1189,6 +1232,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_OpenMenu;
     private readonly InputAction m_Player_PickupFurniture;
+    private readonly InputAction m_Player_TakeStock;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1248,6 +1292,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/PickupFurniture".
         /// </summary>
         public InputAction @PickupFurniture => m_Wrapper.m_Player_PickupFurniture;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/TakeStock".
+        /// </summary>
+        public InputAction @TakeStock => m_Wrapper.m_Player_TakeStock;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1310,6 +1358,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @PickupFurniture.started += instance.OnPickupFurniture;
             @PickupFurniture.performed += instance.OnPickupFurniture;
             @PickupFurniture.canceled += instance.OnPickupFurniture;
+            @TakeStock.started += instance.OnTakeStock;
+            @TakeStock.performed += instance.OnTakeStock;
+            @TakeStock.canceled += instance.OnTakeStock;
         }
 
         /// <summary>
@@ -1357,6 +1408,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @PickupFurniture.started -= instance.OnPickupFurniture;
             @PickupFurniture.performed -= instance.OnPickupFurniture;
             @PickupFurniture.canceled -= instance.OnPickupFurniture;
+            @TakeStock.started -= instance.OnTakeStock;
+            @TakeStock.performed -= instance.OnTakeStock;
+            @TakeStock.canceled -= instance.OnTakeStock;
         }
 
         /// <summary>
@@ -1741,6 +1795,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPickupFurniture(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TakeStock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTakeStock(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

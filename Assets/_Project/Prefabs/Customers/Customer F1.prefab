@@ -100,7 +100,15 @@ PrefabInstance:
       value: Customer F1
       objectReference: {fileID: 0}
     - target: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+      propertyPath: _animator
+      value: 
+      objectReference: {fileID: 6764335935740490029}
+    - target: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
       propertyPath: shoppingBag
+      value: 
+      objectReference: {fileID: 1666916753712414040}
+    - target: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+      propertyPath: _shoppingBag
       value: 
       objectReference: {fileID: 1666916753712414040}
     - target: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}

@@ -367,11 +367,11 @@ MonoBehaviour:
   _camera: {fileID: 1092737199951999549}
   _moveSpeed: 5
   _lookSpeed: 8
-  _jumpForce: 5
+  _jumpForce: 4
   _minLookAngle: -70
   _maxLookAngle: 70
   _interactionRange: 3
-  _throwForce: 10
+  _throwForce: 7
   _waitToPlaceStock: 0.2
   _stockHoldPoint: {fileID: 6918392840584523512}
   _boxHoldPoint: {fileID: 8081062794147123609}

@@ -153,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  <Info>k__BackingField:
+  _info:
     name: Cheddar Tube Chips
-    stockObject: {fileID: 0}
+    stockObject: {fileID: 8023532575916764463}
     typeOfStock: 2
-    basePrice: 0
+    basePrice: 2.99
     currentPrice: 0
