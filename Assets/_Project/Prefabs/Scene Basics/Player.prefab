@@ -239,7 +239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6918392840584523512}
   m_Layer: 0
-  m_Name: Hold Point
+  m_Name: Stock Hold Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,42 +363,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7666f211fced2c14f98e5930640736da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  controller: {fileID: 3007382644555023689}
-  cameraTransform: {fileID: 1092737199951999549}
-  _holdPoint: {fileID: 6918392840584523512}
-  heldBox: {fileID: 0}
-  boxHoldPoint: {fileID: 8081062794147123609}
-  _heldFurniture: {fileID: 0}
-  _furnitureHoldPoint: {fileID: 3990113605105937221}
-  whatIsStock:
-    serializedVersion: 2
-    m_Bits: 64
-  whatIsShelf:
-    serializedVersion: 2
-    m_Bits: 256
-  whatIsPriceLabel:
-    serializedVersion: 2
-    m_Bits: 512
-  whatIsStockBox:
-    serializedVersion: 2
-    m_Bits: 1024
-  whatIsTrash:
-    serializedVersion: 2
-    m_Bits: 2048
-  whatIsFurniture:
-    serializedVersion: 2
-    m_Bits: 4096
-  whatIsCheckout:
-    serializedVersion: 2
-    m_Bits: 16384
-  interactionRange: 2
-  throwForce: 8
-  moveSpeed: 5
-  lookSpeed: 10
-  jumpForce: 4
+  _controller: {fileID: 3007382644555023689}
+  _camera: {fileID: 1092737199951999549}
+  _moveSpeed: 5
+  _lookSpeed: 8
+  _jumpForce: 5
   _minLookAngle: -70
   _maxLookAngle: 70
-  <WaitToPlaceStock>k__BackingField: 0.2
+  _interactionRange: 3
+  _throwForce: 10
+  _waitToPlaceStock: 0.2
+  _stockHoldPoint: {fileID: 6918392840584523512}
+  _boxHoldPoint: {fileID: 8081062794147123609}
+  _furnitureHoldPoint: {fileID: 3990113605105937221}
+  _stockLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _shelfLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _priceLabelLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  _stockBoxLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  _trashLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  _furnitureLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  _checkoutLayer:
+    serializedVersion: 2
+    m_Bits: 16384
 --- !u!1 &8867706846974703177
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +407,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3990113605105937221}
   m_Layer: 7
-  m_Name: Furniture Point
+  m_Name: Furniture Hold Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
