@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Checkout : MonoBehaviour
+public class Checkout : MonoBehaviour, IInteractable
 {
     public static Checkout Instance { get; private set; }
 
@@ -24,12 +24,15 @@ public class Checkout : MonoBehaviour
     #endregion
 
     #region Properties
+    public GameObject MyObject { get; set; }
     public List<Customer> CustomersInQueue => _customersInQueue;
+
     #endregion
 
     #region Unity Lifecycle
     private void Awake()
     {
+        MyObject = gameObject;
         InitializeSingleton();
     }
 
@@ -136,6 +139,16 @@ public class Checkout : MonoBehaviour
         {
             _checkoutScreen.SetActive(false);
         }
+    }
+
+    public void OnInteract(Transform holdPoint = null)
+    {
+        CheckoutCustomer();
+    }
+
+    public string GetInteractionPrompt()
+    {
+        return $"Checkout Customer";
     }
     #endregion
 }

@@ -397,6 +397,13 @@ MonoBehaviour:
   _checkoutLayer:
     serializedVersion: 2
     m_Bits: 16384
+  _storeSignLayer:
+    serializedVersion: 2
+    m_Bits: 32768
+  _interactableLayer:
+    serializedVersion: 2
+    m_Bits: 65536
+  _maxPossibleInteractableObjects: 8
 --- !u!1 &8867706846974703177
 GameObject:
   m_ObjectHideFlags: 0

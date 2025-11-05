@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _info:
+  _stockInfo:
     name: Rings Cereal
     stockObject: {fileID: 8558298658618883541}
     typeOfStock: 0

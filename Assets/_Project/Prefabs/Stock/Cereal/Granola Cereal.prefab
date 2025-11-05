@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _info:
+  _stockInfo:
     name: Granola Cereal
     stockObject: {fileID: 7660662851968950609}
     typeOfStock: 0

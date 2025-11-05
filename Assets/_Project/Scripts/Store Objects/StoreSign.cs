@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class PriceLabel : MonoBehaviour, IInteractable
+public class StoreSign : MonoBehaviour, IInteractable
 {
     #region Event Fields
     #endregion
@@ -11,7 +12,7 @@ public class PriceLabel : MonoBehaviour, IInteractable
     #endregion
 
     #region Serialized Private Fields
-    [SerializeField] private ShelfSpaceController myShelf;
+    [SerializeField] private TMP_Text storeSignText;
     #endregion
 
     #region Private Fields
@@ -22,17 +23,21 @@ public class PriceLabel : MonoBehaviour, IInteractable
     #endregion
 
     #region Unity Callbacks
+    private void Awake()
+    {
+        MyObject = gameObject;
+    }
     #endregion
 
     #region Public Methods
-    public void OnInteract(Transform holdPoint = null)
-    {
-        myShelf.StartPriceUpdate();
-    }
-
     public string GetInteractionPrompt()
     {
-        return $"Set Price of {myShelf.StockInfo.name}";
+        return $"Store Sign";
+    }
+
+    public void OnInteract(Transform holdPoint = null)
+    {
+        storeSignText.text = ""; // TODO: Bring up a window to change the Text of the Store Sign with Player Input
     }
     #endregion
 

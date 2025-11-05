@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FurnitureController : MonoBehaviour, IPlaceable
+public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
 {
     #region Serialized Fields
     [Header("Furniture Settings")]
@@ -16,12 +16,19 @@ public class FurnitureController : MonoBehaviour, IPlaceable
     #endregion
 
     #region Properties
+    public GameObject MyObject { get; set; }
     public List<ShelfSpaceController> Shelves => _shelves;
     public Transform CustomerStandPoint => _customerStandPoint;
     public float Price => _price;
+
     #endregion
 
     #region Unity Lifecycle
+    private void Awake()
+    {
+        MyObject = gameObject;
+    }
+
     private void Start()
     {
         RegisterWithStore();
@@ -68,6 +75,16 @@ public class FurnitureController : MonoBehaviour, IPlaceable
         {
             _collider.enabled = colliderEnabled;
         }
+    }
+
+    public void OnInteract(Transform holdPoint = null)
+    {
+
+    }
+
+    public string GetInteractionPrompt()
+    {
+        return $"Pickup {MyObject.name}";
     }
     #endregion
 }

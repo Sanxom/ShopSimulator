@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Customer
   _navPoints: []
-  _moveSpeed: 10
+  _moveSpeed: 5
   _browseTime: 3
   _waitAfterGrabbing: 0.5
   _maxBrowsePoints: 5

@@ -162,7 +162,7 @@ public class Customer : MonoBehaviour
             return;
         }
 
-        Vector3 targetPosition = new Vector3(
+        Vector3 targetPosition = new(
             _navPoints[0].point.position.x,
             transform.position.y,
             _navPoints[0].point.position.z
@@ -335,9 +335,9 @@ public class Customer : MonoBehaviour
 
         foreach (StockObject stock in _stockInBag)
         {
-            if (stock != null && stock.Info != null)
+            if (stock != null && stock.StockInfo != null)
             {
-                total += stock.Info.currentPrice;
+                total += stock.StockInfo.currentPrice;
             }
         }
 

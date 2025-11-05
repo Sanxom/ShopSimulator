@@ -1,10 +1,10 @@
 using masonbell;
 using UnityEngine;
 
-public class StockObject : MonoBehaviour, ITrashable
+public class StockObject : MonoBehaviour, IInteractable, ITrashable
 {
     #region Serialized Fields
-    [SerializeField] private StockInfo _info;
+    [SerializeField] private StockInfo _stockInfo;
     #endregion
 
     #region Private Fields
@@ -18,7 +18,8 @@ public class StockObject : MonoBehaviour, ITrashable
     #endregion
 
     #region Properties
-    public StockInfo Info => _info;
+    public GameObject MyObject { get; set; }
+    public StockInfo StockInfo => _stockInfo;
     public Rigidbody Rb => _rigidbody;
     public Collider Col => _collider;
     public string InteractionPrompt { get; private set; }
@@ -73,9 +74,9 @@ public class StockObject : MonoBehaviour, ITrashable
 
     private void RefreshStockInfo()
     {
-        if (_info != null && StockInfoController.Instance != null)
+        if (StockInfo != null && StockInfoController.Instance != null)
         {
-            _info = StockInfoController.Instance.GetStockInfo(_info.name);
+            _stockInfo = StockInfoController.Instance.GetStockInfo(StockInfo.name);
         }
     }
     #endregion
@@ -83,17 +84,15 @@ public class StockObject : MonoBehaviour, ITrashable
     #region Movement
     private void MoveToPlacedPosition(float deltaTime)
     {
-        transform.localPosition = Vector3.MoveTowards(
+        transform.SetLocalPositionAndRotation(Vector3.MoveTowards(
             transform.localPosition,
             Vector3.zero,
             MOVE_SPEED * deltaTime
-        );
-
-        transform.localRotation = Quaternion.Slerp(
+        ), Quaternion.Slerp(
             transform.localRotation,
             Quaternion.identity,
             MOVE_SPEED * deltaTime
-        );
+        ));
     }
 
     private void MoveToBagPosition(float deltaTime)
@@ -170,6 +169,16 @@ public class StockObject : MonoBehaviour, ITrashable
         {
             _collider.enabled = colliderEnabled;
         }
+    }
+
+    public void OnInteract(Transform holdPoint)
+    {
+        Pickup(holdPoint);
+    }
+
+    public string GetInteractionPrompt()
+    {
+        return $"{_stockInfo.name}";
     }
     #endregion
 }

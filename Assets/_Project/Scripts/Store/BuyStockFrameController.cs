@@ -81,7 +81,7 @@ public class BuyStockFrameController : MonoBehaviour
             return;
         }
 
-        int boxAmount = _boxToSpawn.GetStockAmount(_stockInfo.typeOfStock);
+        int boxAmount = _boxToSpawn.GetMaxPossibleStockAmount(_stockInfo.typeOfStock);
         _boxCost = boxAmount * _stockInfo.currentPrice;
 
         if (_amountInBoxText != null) _amountInBoxText.text = $"{boxAmount} per box";

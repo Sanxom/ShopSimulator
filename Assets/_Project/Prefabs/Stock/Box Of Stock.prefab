@@ -2565,7 +2565,7 @@ GameObject:
   - component: {fileID: 5583080673013908867}
   - component: {fileID: 4255744174081715121}
   - component: {fileID: 5965207231676153944}
-  m_Layer: 10
+  m_Layer: 16
   m_Name: Box Of Stock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2671,6 +2671,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f309109e46555649839f5dbb54bdbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockBoxController
+  _priority: 0
+  _isInteractable: 1
+  _interactionPrompt: Interact
   _stockInfo:
     name: 
     stockObject: {fileID: 0}

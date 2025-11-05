@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 9140553905540937760}
   - component: {fileID: 4265983518423994648}
   - component: {fileID: 6419496879619822556}
-  m_Layer: 12
+  m_Layer: 16
   m_Name: Shelving Case - 1x4
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -204,7 +204,7 @@ public class StockInfoController : MonoBehaviour
 
         foreach (ShelfSpaceController shelf in shelves)
         {
-            if (shelf.Info != null && shelf.Info.name == stockName)
+            if (shelf.StockInfo != null && shelf.StockInfo.name == stockName)
             {
                 shelf.SetShelfLabelText(newPrice);
             }
