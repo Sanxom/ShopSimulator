@@ -611,45 +611,51 @@ public class PlayerInteraction
     #region Place/Use Logic
     private void TryPlaceOrUseHeldObject()
     {
-        RaycastHit closestHit = default;
-        float minDistance = float.MaxValue;
-        int numOfHits = TryRaycastForInteractables();
-        if (numOfHits == 0) return;
-
-        for (int i = 0; i < numOfHits; i++)
+        if (_heldFurniture != null)
         {
-            if (!hits[i].collider.TryGetComponent(out TrashCan _)) continue;
-            if (hits[i].distance < minDistance)
+            PlaceFurniture();
+        }
+        else
+        {
+
+            RaycastHit closestHit = default;
+            float minDistance = float.MaxValue;
+            int numOfHits = TryRaycastForInteractables();
+            if (numOfHits == 0) return;
+
+            for (int i = 0; i < numOfHits; i++)
             {
-                minDistance = hits[i].distance;
-                closestHit = hits[i];
-                if (CanBeTrashed(HeldObject) && HeldObject.TryGetComponent(out ITrashable trashable))
+                if (!hits[i].collider.TryGetComponent(out TrashCan _)) continue;
+                if (hits[i].distance < minDistance)
                 {
-                    trashable.TrashObject();
-                    RemoveHeldObjectReference();
-                    return;
+                    minDistance = hits[i].distance;
+                    closestHit = hits[i];
+                    if (CanBeTrashed(HeldObject) && HeldObject.TryGetComponent(out ITrashable trashable))
+                    {
+                        trashable.TrashObject();
+                        RemoveHeldObjectReference();
+                        return;
+                    }
                 }
             }
-        }
 
-        for (int i = 0; i < numOfHits; i++)
-        {
-            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController _)) continue;
-            if (hits[i].distance < minDistance)
+            for (int i = 0; i < numOfHits; i++)
             {
-                minDistance = hits[i].distance;
-                closestHit = hits[i];
-                break;
+                if (!hits[i].collider.TryGetComponent(out ShelfSpaceController _)) continue;
+                if (hits[i].distance < minDistance)
+                {
+                    minDistance = hits[i].distance;
+                    closestHit = hits[i];
+                    break;
+                }
             }
-        }
-        if (closestHit.collider.TryGetComponent(out IInteractable interactable))
-        {
-            if (_heldStock != null)
-                HandleHeldStock(interactable);
-            else if (_heldBox != null)
-                HandleHeldBox(interactable);
-            else if (_heldFurniture != null)
-                PlaceFurniture();
+            if (closestHit.collider.TryGetComponent(out IInteractable interactable))
+            {
+                if (_heldStock != null)
+                    HandleHeldStock(interactable);
+                else if (_heldBox != null)
+                    HandleHeldBox(interactable);
+            }
         }
     }
 
@@ -821,7 +827,6 @@ public class PlayerInteraction
     private void PlaceFurniture()
     {
         if (_heldFurniture == null) return;
-
         _heldFurniture.PlaceObject();
         RemoveHeldObjectReference();
     }

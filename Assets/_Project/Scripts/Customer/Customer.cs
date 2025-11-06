@@ -170,6 +170,12 @@ public class Customer : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * deltaTime);
         transform.LookAt(targetPosition);
 
+        if (_currentShelfCase != null && _currentShelfCase.IsHeld && CurrentState == CustomerState.Browsing)
+        {
+            CompleteBrowsePoint();
+            return;
+        }
+
         bool isMoving = Vector3.Distance(transform.position, targetPosition) >= ARRIVED_AT_POINT_THRESHOLD;
 
         if (!isMoving)
@@ -225,7 +231,7 @@ public class Customer : MonoBehaviour
     {
         _navPoints.Clear();
 
-        if (StoreController.Instance.ShelvingCases.Count == 0 || StoreController.Instance.ShelvingCases.Count == 1 && StoreController.Instance.ShelvingCases[0].IsHeld)
+        if ((StoreController.Instance.ShelvingCases.Count == 0) || (StoreController.Instance.ShelvingCases.Count == 1 && StoreController.Instance.ShelvingCases[0].IsHeld))
         {
             StartLeaving();
             return;
@@ -233,10 +239,6 @@ public class Customer : MonoBehaviour
 
         int selectedShelf = Random.Range(0, StoreController.Instance.ShelvingCases.Count);
         _currentShelfCase = StoreController.Instance.ShelvingCases[selectedShelf];
-        if (_currentShelfCase.IsHeld)
-        {
-            CompleteBrowsePoint();
-        }
 
         NavPoint browsePoint = new()
         {
