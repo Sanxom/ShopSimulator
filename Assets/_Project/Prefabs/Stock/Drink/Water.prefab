@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3545355597735132280}
   - component: {fileID: 6743435481581707885}
   - component: {fileID: 3566843521622032675}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Water
-    stockObject: {fileID: 3566843521622032675}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 7323ec7f7ea800a4a8b3107e3915cb39, type: 2}

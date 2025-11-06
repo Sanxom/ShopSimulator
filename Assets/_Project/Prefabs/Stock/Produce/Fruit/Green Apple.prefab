@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4250968049725356189}
   - component: {fileID: 7252551189605494413}
   - component: {fileID: 5959850270914625573}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Green Apple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,9 +152,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Green Apple
-    stockObject: {fileID: 5959850270914625573}
-    typeOfStock: 3
-    basePrice: 0.65
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 34715af11799dfe44aff40afd824ac97, type: 2}

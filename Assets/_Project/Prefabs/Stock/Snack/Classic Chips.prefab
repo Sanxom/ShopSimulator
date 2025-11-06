@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 795286775958411911}
   - component: {fileID: 977901545427542571}
   - component: {fileID: 9709331498928436}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Classic Chips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Classic Tube Chips
-    stockObject: {fileID: 9709331498928436}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 22a09ff49f3ad54478fca60212abf619, type: 2}

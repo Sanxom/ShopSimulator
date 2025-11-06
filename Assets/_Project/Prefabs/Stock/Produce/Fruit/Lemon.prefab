@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5939149489149757590}
   - component: {fileID: 3677356883434344802}
   - component: {fileID: 3452099114512998089}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Lemon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Lemon
-    stockObject: {fileID: 3452099114512998089}
-    typeOfStock: 3
-    basePrice: 0.95
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 0589168f87b7754498df3878a5ccf821, type: 2}

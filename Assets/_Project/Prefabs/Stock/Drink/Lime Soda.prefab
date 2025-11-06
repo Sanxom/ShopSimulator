@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1449375314480803298}
   - component: {fileID: 2568850968416035219}
   - component: {fileID: 1153738974391467683}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Lime Soda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Lime Soda
-    stockObject: {fileID: 1153738974391467683}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: df62539c5fc880e47a0c9f37644dbb78, type: 2}

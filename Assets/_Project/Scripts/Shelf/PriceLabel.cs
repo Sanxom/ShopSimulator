@@ -32,7 +32,7 @@ public class PriceLabel : MonoBehaviour, IInteractable
 
     public string GetInteractionPrompt()
     {
-        return $"Set Price of {myShelf.StockInfo.name}";
+        return $"Set Price of {myShelf.StockInfo.Name}";
     }
     #endregion
 

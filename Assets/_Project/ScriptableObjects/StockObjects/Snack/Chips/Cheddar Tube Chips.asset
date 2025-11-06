@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4b0fd4c4815134bba7998b10d14061, type: 3}
+  m_Name: Cheddar Tube Chips
+  m_EditorClassIdentifier: Assembly-CSharp::StockInfo
+  Name: Cheddar Tube Chips
+  stockObject: {fileID: 8023532575916764463, guid: 7c1204d66e13f384c88f203559a02fdc, type: 3}
+  typeOfStock: 2
+  basePrice: 1.49
+  currentPrice: 0

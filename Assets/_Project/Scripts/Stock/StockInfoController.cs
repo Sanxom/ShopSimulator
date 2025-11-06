@@ -1,4 +1,3 @@
-using masonbell;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,11 +41,6 @@ public class StockInfoController : MonoBehaviour
     private void Start()
     {
         InitializeAllPools();
-    }
-
-    private void OnDisable()
-    {
-        CleanupAllPools();
     }
     #endregion
 
@@ -153,17 +147,6 @@ public class StockInfoController : MonoBehaviour
             }
         }
     }
-
-    private void CleanupAllPools()
-    {
-        ObjectPool<StockObject>.ReturnAllToPool();
-        ObjectPool<StockBoxController>.ReturnAllToPool();
-        ObjectPool<FurnitureController>.ReturnAllToPool();
-
-        ObjectPool<StockObject>.ClearAllPools();
-        ObjectPool<StockBoxController>.ClearAllPools();
-        ObjectPool<FurnitureController>.ClearAllPools();
-    }
     #endregion
 
     #region Public Methods
@@ -171,7 +154,7 @@ public class StockInfoController : MonoBehaviour
     {
         foreach (StockInfo stock in _allStock)
         {
-            if (stock.name == stockName)
+            if (stock.Name == stockName)
             {
                 return stock;
             }
@@ -190,7 +173,7 @@ public class StockInfoController : MonoBehaviour
     {
         foreach (StockInfo stock in _allStock)
         {
-            if (stock.name == stockName)
+            if (stock.Name == stockName)
             {
                 stock.currentPrice = newPrice;
                 break;
@@ -204,7 +187,7 @@ public class StockInfoController : MonoBehaviour
 
         foreach (ShelfSpaceController shelf in shelves)
         {
-            if (shelf.StockInfo != null && shelf.StockInfo.name == stockName)
+            if (shelf.StockInfo != null && shelf.StockInfo.Name == stockName)
             {
                 shelf.SetShelfLabelText(newPrice);
             }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4826365549518039976}
   - component: {fileID: 907053778939341651}
   - component: {fileID: 4195105889596970896}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Eggplant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Eggplant
-    stockObject: {fileID: 4195105889596970896}
-    typeOfStock: 3
-    basePrice: 1.05
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 5d6ef001c5bbf6a4c8fe107dced11f34, type: 2}

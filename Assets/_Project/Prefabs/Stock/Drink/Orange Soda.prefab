@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4872487662992234046}
   - component: {fileID: 6325888370189583057}
   - component: {fileID: 6820720772348931434}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Orange Soda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockItem
-  _stockInfo:
-    name: Orange Soda
-    stockObject: {fileID: 6820720772348931434}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 1616273f182da6747a08802ce215c71f, type: 2}

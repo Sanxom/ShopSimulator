@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2789143914950838127}
   - component: {fileID: 2200772637018499390}
   - component: {fileID: 1325277484929602757}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: BBQ Chips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: BBQ Tube Chips
-    stockObject: {fileID: 1325277484929602757}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 50ac31f52ce3b8940bc9019792d3fccb, type: 2}

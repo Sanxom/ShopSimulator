@@ -597,15 +597,37 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""c14f114d-8b1e-4541-81ce-ed9a296b6f77"",
-                    ""path"": ""<Keyboard>/j"",
+                    ""name"": ""Button With One Modifier"",
+                    ""id"": ""ae6cd5fb-0f77-4072-86a8-012bc8cd29c9"",
+                    ""path"": ""ButtonWithOneModifier(modifiersOrder=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TakeStock"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Modifier"",
+                    ""id"": ""f7cf3460-0986-4cd5-9d69-6f0b0db29765"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""TakeStock"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button"",
+                    ""id"": ""544813c0-1e38-4a60-a767-d54bb06d3103"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""TakeStock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8694577461757824257}
   - component: {fileID: 6171936624039892896}
   - component: {fileID: 8558298658618883541}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Rings Cereal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,9 +152,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Rings Cereal
-    stockObject: {fileID: 8558298658618883541}
-    typeOfStock: 0
-    basePrice: 2.35
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: da03b8b53b09b924c9f1d2be0f548af7, type: 2}

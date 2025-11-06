@@ -203,92 +203,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockInfoController
   _drinkInfo:
-  - name: Cola Soda
-    stockObject: {fileID: 8639642362173963538, guid: 10864151902fa8b40994e19b268cb559, type: 3}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
-  - name: Lime Soda
-    stockObject: {fileID: 1153738974391467683, guid: 0dff59f8eea3c7e4098f56ed520f18e3, type: 3}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
-  - name: Orange Soda
-    stockObject: {fileID: 6820720772348931434, guid: 78aab909dd1fe144e959f4e4cd9a3171, type: 3}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
-  - name: Water
-    stockObject: {fileID: 3566843521622032675, guid: f813de393f7530c42b5acbaafc61ebb9, type: 3}
-    typeOfStock: 1
-    basePrice: 1.99
-    currentPrice: 0
+  - {fileID: 11400000, guid: e714058d5a2a9f84f899352e3a23fd1f, type: 2}
+  - {fileID: 11400000, guid: df62539c5fc880e47a0c9f37644dbb78, type: 2}
+  - {fileID: 11400000, guid: 1616273f182da6747a08802ce215c71f, type: 2}
+  - {fileID: 11400000, guid: 7323ec7f7ea800a4a8b3107e3915cb39, type: 2}
   _foodInfo:
-  - name: Granola Cereal
-    stockObject: {fileID: 7660662851968950609, guid: 66cc2df93e8c85e41a3e849a031cb77c, type: 3}
-    typeOfStock: 0
-    basePrice: 2.35
-    currentPrice: 0
-  - name: Rings Cereal
-    stockObject: {fileID: 8558298658618883541, guid: eab80a277379e7545a77f84b3d9ae343, type: 3}
-    typeOfStock: 0
-    basePrice: 2.35
-    currentPrice: 0
-  - name: Eggplant
-    stockObject: {fileID: 4195105889596970896, guid: fffeee1d7188af54fb72f9cfc3571a3a, type: 3}
-    typeOfStock: 3
-    basePrice: 1.05
-    currentPrice: 0
-  - name: Green Apple
-    stockObject: {fileID: 5959850270914625573, guid: aa2146adce852994f8751644803d475b, type: 3}
-    typeOfStock: 3
-    basePrice: 0.65
-    currentPrice: 0
-  - name: Lemon
-    stockObject: {fileID: 3452099114512998089, guid: e421ebf61d0227a41905d60ccedf3dd7, type: 3}
-    typeOfStock: 3
-    basePrice: 0.95
-    currentPrice: 0
-  - name: Pineapple
-    stockObject: {fileID: 3206220601071311031, guid: e374a4bf5fe54e44dbc6735f203da3ca, type: 3}
-    typeOfStock: 4
-    basePrice: 1.3
-    currentPrice: 0
-  - name: Half Watermelon
-    stockObject: {fileID: 1402404629388094591, guid: f5ea15f94b00a5c40a45f0b3af64ba45, type: 3}
-    typeOfStock: 4
-    basePrice: 1.5
-    currentPrice: 0
-  - name: Whole Watermelon
-    stockObject: {fileID: 4534930452665419100, guid: c368ecfb6acc8dd43b8fd3ae72e2fcc1, type: 3}
-    typeOfStock: 4
-    basePrice: 3
-    currentPrice: 0
-  - name: Lettuce
-    stockObject: {fileID: 6343076098585470418, guid: c24c05cb8c2c3484a81f7df8768d7d8e, type: 3}
-    typeOfStock: 5
-    basePrice: 1.35
-    currentPrice: 0
-  - name: BBQ Tube Chips
-    stockObject: {fileID: 1325277484929602757, guid: 63bc1ca19b3b1e6469e0de3401754b4f, type: 3}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
-  - name: Cheddar Tube Chips
-    stockObject: {fileID: 8023532575916764463, guid: 7c1204d66e13f384c88f203559a02fdc, type: 3}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
-  - name: Classic Tube Chips
-    stockObject: {fileID: 9709331498928436, guid: 441e7e61bd24f28438e3b7f3bdc88833, type: 3}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
-  - name: Onion Tube Chips
-    stockObject: {fileID: 5125661419269556766, guid: 302c878246afb4c428e19cffc5492c38, type: 3}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
+  - {fileID: 11400000, guid: ee2c577f28c3763458fe7d79b2643682, type: 2}
+  - {fileID: 11400000, guid: da03b8b53b09b924c9f1d2be0f548af7, type: 2}
+  - {fileID: 11400000, guid: 5d6ef001c5bbf6a4c8fe107dced11f34, type: 2}
+  - {fileID: 11400000, guid: 34715af11799dfe44aff40afd824ac97, type: 2}
+  - {fileID: 11400000, guid: d11c27273d0d52a4584c827fd775f0f8, type: 2}
+  - {fileID: 11400000, guid: 0589168f87b7754498df3878a5ccf821, type: 2}
+  - {fileID: 11400000, guid: 811ba23be057aa549aa42c04e83cd121, type: 2}
+  - {fileID: 11400000, guid: 76c3d98775403764993588a83d32e009, type: 2}
+  - {fileID: 11400000, guid: 050db804ba892574986ba4ce29878d79, type: 2}
+  - {fileID: 11400000, guid: 50ac31f52ce3b8940bc9019792d3fccb, type: 2}
+  - {fileID: 11400000, guid: 8b28bf69dd529a44fac2bffbb023c335, type: 2}
+  - {fileID: 11400000, guid: 22a09ff49f3ad54478fca60212abf619, type: 2}
+  - {fileID: 11400000, guid: ffd7e5ae4e671894eb5cc5977f3592a0, type: 2}
   _allBoxPrefabs:
   - {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
   _allFurniturePrefabs:

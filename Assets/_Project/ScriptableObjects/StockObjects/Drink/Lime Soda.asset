@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4b0fd4c4815134bba7998b10d14061, type: 3}
+  m_Name: Lime Soda
+  m_EditorClassIdentifier: Assembly-CSharp::StockInfo
+  Name: Lime Soda
+  stockObject: {fileID: 1153738974391467683, guid: 0dff59f8eea3c7e4098f56ed520f18e3, type: 3}
+  typeOfStock: 1
+  basePrice: 3.49
+  currentPrice: 0

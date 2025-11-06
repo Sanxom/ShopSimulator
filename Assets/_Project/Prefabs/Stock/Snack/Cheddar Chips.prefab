@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2256583784955546256}
   - component: {fileID: 1332558075687010139}
   - component: {fileID: 8023532575916764463}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Cheddar Chips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Cheddar Tube Chips
-    stockObject: {fileID: 8023532575916764463}
-    typeOfStock: 2
-    basePrice: 2.99
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 8b28bf69dd529a44fac2bffbb023c335, type: 2}

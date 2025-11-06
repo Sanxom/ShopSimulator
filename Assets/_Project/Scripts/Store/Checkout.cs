@@ -105,6 +105,7 @@ public class Checkout : MonoBehaviour, IInteractable
         {
             return;
         }
+        print("hello");
 
         Customer customer = _customersInQueue[0];
         float totalSpent = customer.GetTotalSpendAmount();

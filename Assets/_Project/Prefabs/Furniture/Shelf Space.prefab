@@ -2674,12 +2674,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
   _objectsOnShelf: []
-  _info:
-    name: 
-    stockObject: {fileID: 0}
-    typeOfStock: 0
-    basePrice: 0
-    currentPrice: 0
+  _stockInfo: {fileID: 0}
   _bigDrinkPoints:
   - {fileID: 6639731904276530106}
   - {fileID: 834322884214974501}
@@ -4280,7 +4275,7 @@ GameObject:
   - component: {fileID: 6787883440619940670}
   - component: {fileID: 6211503553221817329}
   - component: {fileID: 2263854809144552124}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

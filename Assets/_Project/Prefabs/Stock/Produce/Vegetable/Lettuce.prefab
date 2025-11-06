@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3871302827492030905}
   - component: {fileID: 7075451818855988627}
   - component: {fileID: 6343076098585470418}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Lettuce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Lettuce
-    stockObject: {fileID: 6343076098585470418}
-    typeOfStock: 5
-    basePrice: 1.35
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: 050db804ba892574986ba4ce29878d79, type: 2}

@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
+  furnitureInfo: {fileID: 11400000, guid: 5c2598b0a8a11db4c88b65a5ae03be1f, type: 2}
   _price: 250
   _shelves:
   - {fileID: 8484662376781955487}

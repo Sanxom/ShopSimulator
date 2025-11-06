@@ -38,7 +38,7 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
     #region Initialization
     private void RegisterWithStore()
     {
-        if (_shelves.Count > 0 && StoreController.Instance != null)
+        if (Shelves.Count > 0 && StoreController.Instance != null)
         {
             StoreController.Instance.ShelvingCases.Add(this);
         }

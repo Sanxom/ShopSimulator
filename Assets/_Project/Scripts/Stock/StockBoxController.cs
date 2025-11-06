@@ -1,5 +1,4 @@
 #region Claude Code v2
-using masonbell;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -215,8 +214,6 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
         int lastIndex = _stockInBox.Count - 1;
         StockObject stockToPlace = _stockInBox[lastIndex];
-        print(stockToPlace);
-        print(stockToPlace.StockInfo);
 
         if (stockToPlace == null || stockToPlace.StockInfo == null)
         {
@@ -231,6 +228,9 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         {
             _stockInBox.RemoveAt(lastIndex);
         }
+
+        if (_stockInBox.Count == 0)
+            _stockInfo = null;
 
         if (!_isOpen)
         {
@@ -370,7 +370,7 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     {
         if (_stockInBox.Count > 0 && _stockInBox[0] != null && _stockInBox[0].StockInfo != null)
         {
-            return $"Box of {_stockInBox[0].StockInfo.name}";
+            return $"Box of {_stockInBox[0].StockInfo.Name}";
         }
         return "Empty Box";
     }

@@ -106,7 +106,7 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
             return true;
         }
 
-        return StockInfo.name == objectToPlace.StockInfo.name && !IsShelfFull(StockInfo.typeOfStock);
+        return StockInfo.Name == objectToPlace.StockInfo.Name && !IsShelfFull(StockInfo.typeOfStock);
     }
 
     private bool IsShelfFull(StockInfo.StockType stockType)
@@ -216,7 +216,7 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
 
         StockInfo.currentPrice = newPrice;
 
-        if (_shelfNameText != null) _shelfNameText.text = StockInfo.name;
+        if (_shelfNameText != null) _shelfNameText.text = StockInfo.Name;
         if (_shelfPriceText != null) _shelfPriceText.text = $"${StockInfo.currentPrice:0.00}";
         if (_shelfCountText != null) _shelfCountText.text = $"{_objectsOnShelf.Count}";
     }

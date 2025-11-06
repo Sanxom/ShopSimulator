@@ -1,8 +1,5 @@
 #region Claude Code v2
-using masonbell;
 using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -67,6 +64,7 @@ public class PlayerController : MonoBehaviour
 
     #region Properties
     public bool IsHoldingSomething => _interaction.IsHoldingSomething;
+    public GameObject HeldObject => _interaction.HeldObject;
 
     public int MaxPossibleInteractableObjects { get => _maxPossibleInteractableObjects; private set => _maxPossibleInteractableObjects = value; }
     #endregion
@@ -361,6 +359,7 @@ public class PlayerInteraction
     private InputAction _takeStockAction;
 
     public bool IsHoldingSomething => _heldStock != null || _heldBox != null || _heldFurniture != null;
+    public GameObject HeldObject;
 
     public PlayerInteraction(Config config)
     {
@@ -419,14 +418,14 @@ public class PlayerInteraction
             _heldStock.Release();
             _heldStock.Rb.AddForce(_config.camera.transform.forward * _config.throwForce, ForceMode.Impulse);
             _heldStock.transform.SetParent(null);
-            _heldStock = null;
+            RemoveHeldObjectReference();
         }
         else if (_heldBox != null)
         {
             _heldBox.Release();
             _heldBox.Rb.AddForce(_config.camera.transform.forward * _config.throwForce, ForceMode.Impulse);
             _heldBox.transform.SetParent(null);
-            _heldBox = null;
+            RemoveHeldObjectReference();
         }
     }
 
@@ -437,14 +436,26 @@ public class PlayerInteraction
             _heldBox.OpenClose();
             return;
         }
+        else
+        {
+            RaycastHit closestHit;
+            float minDistance = float.MaxValue;
+            int numOfHits = TryRaycastForInteractables();
+            if (numOfHits == 0) return;
 
-        //if (TryRaycast(_config.shelfLayer, out RaycastHit hit))
-        //{
-        //    if (hit.collider.TryGetComponent(out StockBoxController box))
-        //    {
-        //        box.OpenClose();
-        //    }
-        //}
+            for (int i = 0; i < numOfHits; i++)
+            {
+                if (!hits[i].collider.TryGetComponent(out StockBoxController box)) continue;
+                if (hits[i].distance < minDistance)
+                {
+                    minDistance = hits[i].distance;
+                    closestHit = hits[i];
+
+                    box.OpenClose();
+                    return;
+                }
+            }
+        }
     }
 
     public void OnPickupFurniturePerformed(InputAction.CallbackContext context)
@@ -454,14 +465,25 @@ public class PlayerInteraction
             PlaceFurniture();
             return;
         }
-
-        IInteractable interactable;
-        (interactable, _) = TryRaycastForInteractable();
-        if (interactable == null) return;
-
-        if (interactable.MyObject.TryGetComponent(out FurnitureController _))
+        else
         {
-            PickupFurniture(hits[0]);
+            RaycastHit closestHit;
+            float minDistance = float.MaxValue;
+            int numOfHits = TryRaycastForInteractables();
+            if (numOfHits == 0) return;
+
+            for (int i = 0; i < numOfHits; i++)
+            {
+                if (!hits[i].collider.TryGetComponent(out FurnitureController _)) continue;
+                if (hits[i].distance < minDistance)
+                {
+                    minDistance = hits[i].distance;
+                    closestHit = hits[i];
+
+                    PickupFurniture(closestHit);
+                    return;
+                }
+            }
         }
     }
 
@@ -470,31 +492,24 @@ public class PlayerInteraction
         // Only allow taking stock when holding a box
         if (_heldBox == null) return;
 
-        IInteractable interactable;
-        (interactable, _) = TryRaycastForInteractable();
-
-        RaycastHit closestHit = default;
+        RaycastHit closestHit;
         float minDistance = float.MaxValue;
+        int numOfHits = TryRaycastForInteractables();
+        if (numOfHits == 0) return;
 
-        foreach (RaycastHit hit in hits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out ShelfSpaceController _)) continue;
-
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController shelf)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
-                break;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+
+                TryTakeStockFromShelfIntoBox(shelf);
+                _takeStockTimer = _config.waitToPlaceStock;
+                _isFastTakeActive = true;
+                return;
             }
-        }
-
-        if (interactable == null) return;
-
-        if (closestHit.collider.TryGetComponent(out ShelfSpaceController shelf))
-        {
-            TryTakeStockFromShelfIntoBox(shelf);
-            _takeStockTimer = _config.waitToPlaceStock;
-            _isFastTakeActive = true;
         }
     }
 
@@ -503,6 +518,8 @@ public class PlayerInteraction
         if (_heldBox != null && _isFastTakeActive)
         {
             _isFastTakeActive = false;
+            if (_interactAction.IsPressed())
+                _isFastPlacementActive = true;
         }
     }
     #endregion
@@ -511,221 +528,150 @@ public class PlayerInteraction
     private void TryPickupObjectOrInteract()
     {
         ComponentChecks();
-        //if (TryInteractWithPriceLabel()) return;
-        //if (TryPickupStock()) return;
-        //if (TryPickupStockBox()) return;
-        //if (TryTakeStockFromShelf()) return;
-        //if (TryInteractWithCheckout()) return;
-        //if (TryInteractWithStoreSign()) return;
     }
 
     private void ComponentChecks()
     {
-        //IInteractable interactable;
-        //Transform temp;
-        //(interactable, temp) = TryRaycastForInteractable();
-
-        RaycastHit[] tempHits = TryRaycastForInteractables();
-
-        RaycastHit closestHit = default;
+        RaycastHit closestHit;
         float minDistance = float.MaxValue;
+        int numOfHits = TryRaycastForInteractables();
+        if (numOfHits == 0) return;
 
-        if (tempHits == null) return;
-
-        foreach (RaycastHit hit in tempHits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out StockObject _)) continue;
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out StockObject stockObject)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
 
-                closestHit.collider.GetComponent<IInteractable>().OnInteract(_config.stockHoldPoint);
-                _heldStock = closestHit.collider.GetComponent<StockObject>();
+                if (closestHit.collider.TryGetComponent(out IInteractable interactable))
+                    interactable.OnInteract(_config.stockHoldPoint);
+                _heldStock = stockObject;
+                HeldObject = _heldStock.gameObject;
                 return;
             }
         }
 
-        foreach (RaycastHit hit in tempHits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out ShelfSpaceController _)) continue;
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out StockBoxController box)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
 
-                _heldStock = closestHit.collider.GetComponent<ShelfSpaceController>().GetStock();
-                _heldStock.OnInteract(_config.stockHoldPoint);
+                if (closestHit.collider.TryGetComponent(out IInteractable interactable))
+                    interactable.OnInteract(_config.boxHoldPoint);
+                _heldBox = box;
+                HeldObject = _heldBox.gameObject;
                 return;
             }
         }
 
-        foreach (RaycastHit hit in tempHits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out StockBoxController _)) continue;
-            if (hit.distance < minDistance)
+            if (hits[i].collider.GetComponentInParent<PriceLabel>() == null) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
 
-                closestHit.collider.GetComponent<IInteractable>().OnInteract(_config.boxHoldPoint);
-                _heldBox = closestHit.collider.GetComponent<StockBoxController>();
+                closestHit.collider.GetComponentInParent<IInteractable>().OnInteract();
                 return;
             }
         }
 
-        foreach (RaycastHit hit in tempHits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out Checkout _)) continue;
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController shelf)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
 
-                closestHit.collider.GetComponent<IInteractable>().OnInteract();
+                _heldStock = shelf.GetStock();
+                if (_heldStock != null)
+                {
+                    HeldObject = _heldStock.gameObject;
+                    _heldStock.OnInteract(_config.stockHoldPoint);
+                    return;
+                }
+            }
+        }
+
+        for (int i = 0; i < numOfHits; i++)
+        {
+            Debug.Log(hits[i].transform.name);
+            if (!hits[i].collider.TryGetComponent(out Checkout checkout)) continue;
+            if (hits[i].distance < minDistance)
+            {
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+                if (closestHit.collider.TryGetComponent(out IInteractable _))
+                    checkout.OnInteract();
                 return;
             }
         }
 
-        foreach (RaycastHit hit in tempHits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out StoreSign _)) continue;
-            if (hit.distance < minDistance)
+            Debug.Log(hits[i].transform.name);
+            if (!hits[i].collider.TryGetComponent(out StoreSign storeSign)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
-
-                closestHit.collider.GetComponent<IInteractable>().OnInteract();
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+                if (closestHit.collider.TryGetComponent(out IInteractable _))
+                    storeSign.OnInteract();
                 return;
             }
         }
-    }
-
-    //private bool TryPickupStock()
-    //{
-    //    if (TryRaycast(_config.stockLayer, out RaycastHit hit))
-    //    {
-    //        _heldStock = hit.collider.GetComponent<StockObject>();
-    //        if (_heldStock != null)
-    //        {
-    //            _heldStock.Pickup(_config.stockHoldPoint);
-    //        }
-    //        return _heldStock != null;
-    //    }
-    //    return false;
-    //}
-
-    //private bool TryPickupStockBox()
-    //{
-    //    if (TryRaycast(_config.stockBoxLayer, out RaycastHit hit))
-    //    {
-    //        _heldBox = hit.collider.GetComponent<StockBoxController>();
-    //        if (_heldBox != null)
-    //        {
-    //            _heldBox.Pickup(_config.boxHoldPoint);
-
-    //            if (!_heldBox.OpenBox)
-    //            {
-    //                _heldBox.OpenClose();
-    //            }
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-
-    //private bool TryTakeStockFromShelf()
-    //{
-    //    if (TryRaycast(_config.shelfLayer, out RaycastHit hit))
-    //    {
-    //        if (hit.collider.TryGetComponent(out ShelfSpaceController shelf))
-    //        {
-    //            _heldStock = shelf.GetStock();
-    //        }
-
-    //        if (_heldStock != null)
-    //        {
-    //            _heldStock.Pickup(_config.stockHoldPoint);
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-
-    //private bool TryInteractWithPriceLabel()
-    //{
-    //    if (TryRaycast(_config.priceLabelLayer, out RaycastHit hit))
-    //    {
-    //        var shelf = hit.collider.GetComponentInParent<ShelfSpaceController>();
-    //        if (shelf != null)
-    //        {
-    //            shelf.StartPriceUpdate();
-    //        }
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
-    //private bool TryInteractWithCheckout()
-    //{
-    //    if (TryRaycast(_config.checkoutLayer, out RaycastHit hit))
-    //    {
-    //        if (hit.collider.TryGetComponent(out Checkout checkout))
-    //        {
-    //            checkout.CheckoutCustomer();
-    //        }
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
-    private bool TryInteractWithStoreSign() // TODO: Allow Player to change the name of the Store
-    {
-        IInteractable interactable;
-        Transform temp;
-        (interactable, temp) = TryRaycastForInteractable();
-        if (interactable == null || temp == null) return false;
-
-        if (interactable.MyObject.TryGetComponent(out StoreSign storeSign))
-        {
-            return true;
-        }
-        return false;
     }
     #endregion
 
     #region Place/Use Logic
     private void TryPlaceOrUseHeldObject()
     {
-        IInteractable interactable;
-        (interactable, _) = TryRaycastForInteractable();
-        if (interactable == null) return;
+        RaycastHit closestHit = default;
+        float minDistance = float.MaxValue;
+        int numOfHits = TryRaycastForInteractables();
+        if (numOfHits == 0) return;
 
-        if (_heldStock != null)
+        for (int i = 0; i < numOfHits; i++)
         {
-            HandleHeldStock(interactable);
-        }
-        else if (_heldBox != null)
-        {
-            RaycastHit closestHit = default;
-            float minDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
+            if (!hits[i].collider.TryGetComponent(out TrashCan _)) continue;
+            if (hits[i].distance < minDistance)
             {
-                if (!hit.collider.TryGetComponent(out ShelfSpaceController _)) continue;
-
-                if (hit.distance < minDistance)
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+                if (CanBeTrashed(HeldObject) && HeldObject.TryGetComponent(out ITrashable trashable))
                 {
-                    minDistance = hit.distance;
-                    closestHit = hit;
-                    break;
+                    trashable.TrashObject();
+                    RemoveHeldObjectReference();
+                    return;
                 }
             }
-
-            HandleHeldBox(closestHit.collider.GetComponent<IInteractable>());
         }
-        else if (_heldFurniture != null)
+
+        for (int i = 0; i < numOfHits; i++)
         {
-            PlaceFurniture();
+            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController _)) continue;
+            if (hits[i].distance < minDistance)
+            {
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+                break;
+            }
+        }
+        if (closestHit.collider.TryGetComponent(out IInteractable interactable))
+        {
+            if (_heldStock != null)
+                HandleHeldStock(interactable);
+            else if (_heldBox != null)
+                HandleHeldBox(interactable);
+            else if (_heldFurniture != null)
+                PlaceFurniture();
         }
     }
 
@@ -735,22 +681,22 @@ public class PlayerInteraction
         {
             shelf.PlaceStock(_heldStock);
 
-            if (_heldStock.IsPlaced) _heldStock = null;
+            if (_heldStock.IsPlaced)
+            {
+                RemoveHeldObjectReference();
+            }
         }
         else if (interactable.MyObject.TryGetComponent(out StockBoxController stockBox))
         {
-            if (stockBox.CanTakeStockFromHand(_heldStock)) _heldStock = null;
-        }
-        else if (interactable.MyObject.TryGetComponent(out TrashCan _))
-        {
-            _heldStock.TrashObject();
-            _heldStock = null;
+            if (stockBox.CanTakeStockFromHand(_heldStock))
+            {
+                RemoveHeldObjectReference();
+            }
         }
     }
 
     private void HandleHeldBox(IInteractable interactable)
     {
-        // Add null check here
         if (interactable == null) return;
 
         if (_heldBox.StockInBox.Count > 0)
@@ -764,13 +710,6 @@ public class PlayerInteraction
             }
             return;
         }
-
-        if (interactable.MyObject.TryGetComponent(out TrashCan _))
-        {
-            _heldBox.Release();
-            _heldBox.TrashObject();
-            _heldBox = null;
-        }
     }
     #endregion
 
@@ -783,10 +722,10 @@ public class PlayerInteraction
         if (shelf.ObjectsOnShelf == null || shelf.ObjectsOnShelf.Count == 0) return;
 
         // Check if box is empty OR if the stock types match
-        bool canTakeStock = _heldBox.StockInBox.Count >= 0
+        bool canTakeStock = (_heldBox.StockInfo == null && _heldBox.StockInBox.Count == 0)
+                            || (_heldBox.StockInBox.Count > 0
                             && _heldBox.StockInBox.Count < _heldBox.MaxCapacity
-                            && _heldBox.StockInfo != null
-                            && _heldBox.StockInfo.name == shelf.StockInfo.name;
+                            && _heldBox.StockInfo.Name == shelf.StockInfo.Name);
 
         if (!canTakeStock)
         {
@@ -806,44 +745,46 @@ public class PlayerInteraction
     #region Fast Placement
     private void ProcessFastPlacement(float deltaTime)
     {
-        IInteractable interactable;
-        Transform temp;
-        (interactable, temp) = TryRaycastForInteractable();
-
         RaycastHit closestHit = default;
         float minDistance = float.MaxValue;
-
-        foreach (RaycastHit hit in hits)
+        int numOfHits = TryRaycastForInteractables();
+        if (numOfHits == 0) return;
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out ShelfSpaceController _)) continue;
-
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController shelf)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+
+                if (shelf == null)
+                {
+                    _isFastPlacementActive = false;
+                    return;
+                }
+
+                if (_heldStock != null || _heldBox == null)
+                {
+                    _isFastPlacementActive = false;
+                    return;
+                }
+
+                _placeStockTimer -= deltaTime;
+
+                if (_takeStockAction.IsPressed())
+                {
+                    _isFastPlacementActive = false;
+                    _isFastTakeActive = true;
+                    return;
+                }
+
+                if (_placeStockTimer <= 0f && _interactAction.IsPressed())
+                {
+                    _heldBox.PlaceStockOnShelf(shelf);
+                    _placeStockTimer = _config.waitToPlaceStock;
+                }
                 break;
             }
-        }
-
-        if (interactable == null || temp == null || _heldStock != null || _heldBox == null)
-        {
-            _isFastPlacementActive = false;
-            return;
-        }
-
-        if (closestHit.collider.TryGetComponent(out ShelfSpaceController shelf))
-        {
-            _placeStockTimer -= deltaTime;
-
-            if (_placeStockTimer <= 0f && _interactAction != null && _interactAction.IsPressed())
-            {
-                _heldBox.PlaceStockOnShelf(shelf);
-                _placeStockTimer = _config.waitToPlaceStock;
-            }
-        }
-        else
-        {
-            _isFastPlacementActive = false;
         }
     }
     #endregion
@@ -851,44 +792,34 @@ public class PlayerInteraction
     #region Fast Take
     private void ProcessFastTake(float deltaTime)
     {
-        IInteractable interactable;
-        Transform temp;
-        (interactable, temp) = TryRaycastForInteractable();
-
         RaycastHit closestHit = default;
         float minDistance = float.MaxValue;
+        int numOfHits = TryRaycastForInteractables();
+        if (numOfHits == 0) return;
 
-        foreach (RaycastHit hit in hits)
+        for (int i = 0; i < numOfHits; i++)
         {
-            if (!hit.collider.TryGetComponent(out ShelfSpaceController _)) continue;
-
-            if (hit.distance < minDistance)
+            if (!hits[i].collider.TryGetComponent(out ShelfSpaceController shelf)) continue;
+            if (hits[i].distance < minDistance)
             {
-                minDistance = hit.distance;
-                closestHit = hit;
+                minDistance = hits[i].distance;
+                closestHit = hits[i];
+
+                if (numOfHits == 0 || _heldStock != null || _heldBox == null)
+                {
+                    _isFastTakeActive = false;
+                    return;
+                }
+
+                _takeStockTimer -= deltaTime;
+
+                if (_takeStockTimer <= 0f && _takeStockAction.IsPressed())
+                {
+                    TryTakeStockFromShelfIntoBox(shelf);
+                    _takeStockTimer = _config.waitToPlaceStock;
+                }
                 break;
             }
-        }
-
-        if (interactable == null || temp == null || _heldStock != null || _heldBox == null)
-        {
-            _isFastTakeActive = false;
-            return;
-        }
-
-        if (closestHit.collider.TryGetComponent(out ShelfSpaceController shelf))
-        {
-            _takeStockTimer -= deltaTime;
-
-            if (_takeStockTimer <= 0f && _takeStockAction != null && _takeStockAction.IsPressed())
-            {
-                TryTakeStockFromShelfIntoBox(shelf);
-                _takeStockTimer = _config.waitToPlaceStock;
-            }
-        }
-        else
-        {
-            _isFastTakeActive = false;
         }
     }
     #endregion
@@ -896,8 +827,12 @@ public class PlayerInteraction
     #region Furniture Methods
     private void PickupFurniture(RaycastHit hit)
     {
-        _heldFurniture = hit.transform.GetComponent<FurnitureController>();
-        if (_heldFurniture == null) return;
+        if (hit.transform.TryGetComponent(out FurnitureController furniture))
+            _heldFurniture = furniture;
+        if (_heldFurniture != null)
+            HeldObject = _heldFurniture.gameObject;
+        else
+            return;
 
         hit.collider.enabled = false;
         _heldFurniture.transform.SetParent(_config.furnitureHoldPoint);
@@ -910,7 +845,7 @@ public class PlayerInteraction
         if (_heldFurniture == null) return;
 
         _heldFurniture.PlaceObject();
-        _heldFurniture = null;
+        RemoveHeldObjectReference();
     }
 
     private void KeepFurnitureAboveGround()
@@ -924,690 +859,33 @@ public class PlayerInteraction
     #endregion
 
     #region Utility Methods
-    private bool TryRaycast(LayerMask layerMask, out RaycastHit hit)
-    {
-        Ray ray = _config.camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        return Physics.Raycast(ray, out hit, _config.interactionRange, layerMask);
-    }
-
-    private (IInteractable, Transform) TryRaycastForInteractable()
+    private int TryRaycastForInteractables()
     {
         Ray ray = _config.camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         int numOfHits = Physics.RaycastNonAlloc(ray, hits, _config.interactionRange, _config.interactableLayer);
-        if (numOfHits == 0) return (null, null);
-        Transform temp = hits[0].transform;
-        IInteractable interactable = hits[0].transform.GetComponent<IInteractable>();
-        return (interactable, temp);
+
+        return numOfHits;
     }
 
-    private RaycastHit[] TryRaycastForInteractables()
+    private bool CanBeTrashed(GameObject objectToTrash)
     {
-        Ray ray = _config.camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        RaycastHit[] temp = new RaycastHit[Physics.RaycastNonAlloc(ray, hits, _config.interactionRange, _config.interactableLayer)];
+        return objectToTrash.TryGetComponent(out StockBoxController box) && box.StockInBox.Count == 0 || objectToTrash.TryGetComponent(out StockObject _);
+    }
 
-        return temp;
+    private void RemoveHeldObjectReference()
+    {
+        if (_heldBox != null)
+            _heldBox = null;
+        if (_heldStock != null)
+            _heldStock = null;
+        if (_heldFurniture != null)
+            _heldFurniture = null;
+
+        HeldObject = null;
     }
     #endregion
 }
 #endregion
-#endregion
-
-#region Claude Code v1
-//using masonbell;
-//using System;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.InputSystem;
-
-//public class PlayerController : MonoBehaviour
-//{
-//    public static PlayerController Instance { get; private set; }
-
-//    #region Events
-//    public static event Action OnUIPanelClosedWithCancelAction;
-//    #endregion
-
-//    #region Serialized Fields
-//    [Header("References")]
-//    [SerializeField] private CharacterController _controller;
-//    [SerializeField] private Camera _camera;
-
-//    [Header("Movement Settings")]
-//    [SerializeField] private float _moveSpeed = 5f;
-//    [SerializeField] private float _lookSpeed = 2f;
-//    [SerializeField] private float _jumpForce = 5f;
-//    [SerializeField] private float _minLookAngle = -80f;
-//    [SerializeField] private float _maxLookAngle = 80f;
-
-//    [Header("Interaction Settings")]
-//    [SerializeField] private float _interactionRange = 3f;
-//    [SerializeField] private float _throwForce = 10f;
-//    [SerializeField] private float _waitToPlaceStock = 0.2f;
-//    [SerializeField] private Transform _stockHoldPoint;
-//    [SerializeField] private Transform _boxHoldPoint;
-//    [SerializeField] private Transform _furnitureHoldPoint;
-
-//    [Header("Interaction Layers")]
-//    [SerializeField] private LayerMask _stockLayer;
-//    [SerializeField] private LayerMask _shelfLayer;
-//    [SerializeField] private LayerMask _priceLabelLayer;
-//    [SerializeField] private LayerMask _stockBoxLayer;
-//    [SerializeField] private LayerMask _trashLayer;
-//    [SerializeField] private LayerMask _furnitureLayer;
-//    [SerializeField] private LayerMask _checkoutLayer;
-//    #endregion
-
-//    #region Private Fields
-//    private InputSystem_Actions _gameInput;
-//    private PlayerMovement _movement;
-//    private PlayerInteraction _interaction;
-
-//    private InputAction _moveAction;
-//    private InputAction _lookAction;
-//    private InputAction _jumpAction;
-//    private InputAction _interactAction;
-//    private InputAction _dropAction;
-//    private InputAction _openBoxAction;
-//    private InputAction _pickupFurnitureAction;
-//    private InputAction _submitAction;
-//    private InputAction _cancelAction;
-//    #endregion
-
-//    #region Properties
-//    public bool IsHoldingSomething => _interaction.IsHoldingSomething;
-//    #endregion
-
-//    #region Unity Lifecycle
-//    private void Awake()
-//    {
-//        InitializeSingleton();
-//        InitializeInput();
-//        InitializeComponents();
-//    }
-
-//    private void OnEnable()
-//    {
-//        SubscribeToInputEvents();
-//        UIController.OnUIPanelClosed += DisableUIEnablePlayer;
-//    }
-
-//    private void Start()
-//    {
-//        Cursor.lockState = CursorLockMode.Locked;
-//    }
-
-//    private void Update()
-//    {
-//        float deltaTime = Time.deltaTime;
-//        _movement.UpdateMovement(deltaTime);
-//        _interaction.UpdateInteraction(deltaTime);
-//    }
-
-//    private void OnDisable()
-//    {
-//        UnsubscribeFromInputEvents();
-//        UIController.OnUIPanelClosed -= DisableUIEnablePlayer;
-
-//        _gameInput?.UI.Disable();
-//        _gameInput?.Player.Disable();
-//    }
-//    #endregion
-
-//    #region Initialization
-//    private void InitializeSingleton()
-//    {
-//        if (Instance != null && Instance != this)
-//        {
-//            Destroy(gameObject);
-//            return;
-//        }
-//        Instance = this;
-//    }
-
-//    private void InitializeInput()
-//    {
-//        _gameInput = new InputSystem_Actions();
-//        _gameInput.Enable();
-
-//        _moveAction = _gameInput.Player.Move;
-//        _lookAction = _gameInput.Player.Look;
-//        _jumpAction = _gameInput.Player.Jump;
-//        _interactAction = _gameInput.Player.Interact;
-//        _dropAction = _gameInput.Player.DropHeldItem;
-//        _openBoxAction = _gameInput.Player.OpenBox;
-//        _pickupFurnitureAction = _gameInput.Player.PickupFurniture;
-//        _submitAction = _gameInput.UI.Submit;
-//        _cancelAction = _gameInput.UI.Cancel;
-//    }
-
-//    private void InitializeComponents()
-//    {
-//        var movementConfig = new PlayerMovement.Config
-//        {
-//            Controller = _controller,
-//            CameraTransform = _camera.transform,
-//            Transform = transform,
-//            MoveSpeed = _moveSpeed,
-//            LookSpeed = _lookSpeed,
-//            JumpForce = _jumpForce,
-//            MinLookAngle = _minLookAngle,
-//            MaxLookAngle = _maxLookAngle
-//        };
-//        _movement = new PlayerMovement(movementConfig, _moveAction, _lookAction, _jumpAction);
-
-//        var interactionConfig = new PlayerInteraction.Config
-//        {
-//            Camera = _camera,
-//            InteractionRange = _interactionRange,
-//            ThrowForce = _throwForce,
-//            WaitToPlaceStock = _waitToPlaceStock,
-//            StockHoldPoint = _stockHoldPoint,
-//            BoxHoldPoint = _boxHoldPoint,
-//            FurnitureHoldPoint = _furnitureHoldPoint,
-//            StockLayer = _stockLayer,
-//            ShelfLayer = _shelfLayer,
-//            PriceLabelLayer = _priceLabelLayer,
-//            StockBoxLayer = _stockBoxLayer,
-//            TrashLayer = _trashLayer,
-//            FurnitureLayer = _furnitureLayer,
-//            CheckoutLayer = _checkoutLayer
-//        };
-//        _interaction = new PlayerInteraction(interactionConfig);
-//        _interaction.SetInteractAction(_interactAction);
-//    }
-//    #endregion
-
-//    #region Input Event Subscriptions
-//    private void SubscribeToInputEvents()
-//    {
-//        _interactAction.performed += _interaction.OnInteractPerformed;
-//        _interactAction.canceled += _interaction.OnInteractCanceled;
-//        _dropAction.performed += _interaction.OnDropPerformed;
-//        _openBoxAction.performed += _interaction.OnOpenBoxPerformed;
-//        _pickupFurnitureAction.performed += _interaction.OnPickupFurniturePerformed;
-//        _submitAction.performed += OnSubmitPerformed;
-//        _cancelAction.performed += OnCancelPerformed;
-//    }
-
-//    private void UnsubscribeFromInputEvents()
-//    {
-//        _interactAction.performed -= _interaction.OnInteractPerformed;
-//        _interactAction.canceled -= _interaction.OnInteractCanceled;
-//        _dropAction.performed -= _interaction.OnDropPerformed;
-//        _openBoxAction.performed -= _interaction.OnOpenBoxPerformed;
-//        _pickupFurnitureAction.performed -= _interaction.OnPickupFurniturePerformed;
-//        _submitAction.performed -= OnSubmitPerformed;
-//        _cancelAction.performed -= OnCancelPerformed;
-//    }
-//    #endregion
-
-//    #region Public Methods
-//    public void DisableUIEnablePlayer()
-//    {
-//        _gameInput.UI.Disable();
-//        _gameInput.Player.Enable();
-//        Cursor.lockState = CursorLockMode.Locked;
-//    }
-
-//    public void DisablePlayerEnableUI()
-//    {
-//        _gameInput.Player.Disable();
-//        _gameInput.UI.Enable();
-//        Cursor.lockState = CursorLockMode.None;
-//    }
-//    #endregion
-
-//    #region Input Callbacks
-//    private void OnSubmitPerformed(InputAction.CallbackContext context)
-//    {
-//        if (UIController.Instance != null)
-//        {
-//            UIController.Instance.ApplyPriceUpdate();
-//        }
-//    }
-
-//    private void OnCancelPerformed(InputAction.CallbackContext context)
-//    {
-//        OnUIPanelClosedWithCancelAction?.Invoke();
-//        DisableUIEnablePlayer();
-//    }
-//    #endregion
-//}
-
-//#region Movement Component
-//public class PlayerMovement
-//{
-//    public struct Config
-//    {
-//        public CharacterController Controller;
-//        public Transform CameraTransform;
-//        public Transform Transform;
-//        public float MoveSpeed;
-//        public float LookSpeed;
-//        public float JumpForce;
-//        public float MinLookAngle;
-//        public float MaxLookAngle;
-//    }
-
-//    private readonly Config _config;
-//    private readonly InputAction _moveAction;
-//    private readonly InputAction _lookAction;
-//    private readonly InputAction _jumpAction;
-
-//    private float _ySpeed;
-//    private float _horizontalRotation;
-//    private float _verticalRotation;
-
-//    public PlayerMovement(Config config, InputAction moveAction, InputAction lookAction, InputAction jumpAction)
-//    {
-//        _config = config;
-//        _moveAction = moveAction;
-//        _lookAction = lookAction;
-//        _jumpAction = jumpAction;
-//    }
-
-//    public void UpdateMovement(float deltaTime)
-//    {
-//        HandleMovement(deltaTime);
-//        HandleRotation(deltaTime);
-//    }
-
-//    private void HandleMovement(float deltaTime)
-//    {
-//        Vector2 moveInput = _moveAction.ReadValue<Vector2>();
-//        Vector3 moveDirection = CalculateMoveDirection(moveInput);
-
-//        ApplyGravity(deltaTime);
-//        HandleJump();
-
-//        moveDirection.y = _ySpeed;
-//        _config.Controller.Move(moveDirection * deltaTime);
-//    }
-
-//    private Vector3 CalculateMoveDirection(Vector2 input)
-//    {
-//        Vector3 forward = _config.Transform.forward * input.y;
-//        Vector3 right = _config.Transform.right * input.x;
-//        return (forward + right).normalized * _config.MoveSpeed;
-//    }
-
-//    private void ApplyGravity(float deltaTime)
-//    {
-//        if (_config.Controller.isGrounded)
-//        {
-//            _ySpeed = 0f;
-//        }
-//        _ySpeed += Physics.gravity.y * deltaTime;
-//    }
-
-//    private void HandleJump()
-//    {
-//        if (_jumpAction.IsPressed() && _config.Controller.isGrounded)
-//        {
-//            _ySpeed = _config.JumpForce;
-//        }
-//    }
-
-//    private void HandleRotation(float deltaTime)
-//    {
-//        Vector2 lookInput = _lookAction.ReadValue<Vector2>();
-
-//        _horizontalRotation += lookInput.x * deltaTime * _config.LookSpeed;
-//        _config.Transform.rotation = Quaternion.Euler(0f, _horizontalRotation, 0f);
-
-//        _verticalRotation -= lookInput.y * deltaTime * _config.LookSpeed;
-//        _verticalRotation = Mathf.Clamp(_verticalRotation, _config.MinLookAngle, _config.MaxLookAngle);
-//        _config.CameraTransform.localRotation = Quaternion.Euler(_verticalRotation, 0f, 0f);
-//    }
-//}
-//#endregion
-
-//#region Interaction Component
-//public class PlayerInteraction
-//{
-//    public struct Config
-//    {
-//        public Camera Camera;
-//        public float InteractionRange;
-//        public float ThrowForce;
-//        public float WaitToPlaceStock;
-//        public Transform StockHoldPoint;
-//        public Transform BoxHoldPoint;
-//        public Transform FurnitureHoldPoint;
-//        public LayerMask StockLayer;
-//        public LayerMask ShelfLayer;
-//        public LayerMask PriceLabelLayer;
-//        public LayerMask StockBoxLayer;
-//        public LayerMask TrashLayer;
-//        public LayerMask FurnitureLayer;
-//        public LayerMask CheckoutLayer;
-//    }
-
-//    private readonly Config _config;
-
-//    private StockObject _heldStock;
-//    private StockBoxController _heldBox;
-//    private FurnitureController _heldFurniture;
-
-//    private float _placeStockTimer;
-//    private bool _isFastPlacementActive;
-//    private InputAction _interactAction;
-
-//    public bool IsHoldingSomething => _heldStock != null || _heldBox != null || _heldFurniture != null;
-
-//    public PlayerInteraction(Config config)
-//    {
-//        _config = config;
-//    }
-
-//    public void SetInteractAction(InputAction interactAction)
-//    {
-//        _interactAction = interactAction;
-//    }
-
-//    public void UpdateInteraction(float deltaTime)
-//    {
-//        if (_isFastPlacementActive)
-//        {
-//            ProcessFastPlacement(deltaTime);
-//        }
-
-//        if (_heldFurniture != null)
-//        {
-//            KeepFurnitureAboveGround();
-//        }
-//    }
-
-//    #region Input Handlers
-//    public void OnInteractPerformed(InputAction.CallbackContext context)
-//    {
-//        if (!IsHoldingSomething)
-//        {
-//            TryPickupObject();
-//        }
-//        else
-//        {
-//            TryPlaceOrUseHeldObject();
-//        }
-//    }
-
-//    public void OnInteractCanceled(InputAction.CallbackContext context)
-//    {
-//        if (_heldBox != null && _isFastPlacementActive)
-//        {
-//            _isFastPlacementActive = false;
-//        }
-//    }
-
-//    public void OnDropPerformed(InputAction.CallbackContext context)
-//    {
-//        if (_heldStock != null)
-//        {
-//            _heldStock.Release();
-//            _heldStock.Rb.AddForce(_config.Camera.transform.forward * _config.ThrowForce, ForceMode.Impulse);
-//            _heldStock.transform.SetParent(null);
-//            _heldStock = null;
-//        }
-//        else if (_heldBox != null)
-//        {
-//            _heldBox.Release();
-//            _heldBox.Rb.AddForce(_config.Camera.transform.forward * _config.ThrowForce, ForceMode.Impulse);
-//            _heldBox.transform.SetParent(null);
-//            _heldBox = null;
-//        }
-//    }
-
-//    public void OnOpenBoxPerformed(InputAction.CallbackContext context)
-//    {
-//        if (_heldBox != null)
-//        {
-//            _heldBox.OpenClose();
-//            return;
-//        }
-
-//        if (TryRaycast(_config.StockBoxLayer, out RaycastHit hit))
-//        {
-//            if (hit.collider.TryGetComponent(out StockBoxController box))
-//            {
-//                box.OpenClose();
-//            }
-//        }
-//    }
-
-//    public void OnPickupFurniturePerformed(InputAction.CallbackContext context)
-//    {
-//        if (_heldFurniture != null)
-//        {
-//            PlaceFurniture();
-//            return;
-//        }
-
-//        if (TryRaycast(_config.FurnitureLayer, out RaycastHit hit))
-//        {
-//            PickupFurniture(hit);
-//        }
-//    }
-//    #endregion
-
-//    #region Pickup Logic
-//    private void TryPickupObject()
-//    {
-//        if (TryInteractWithPriceLabel()) return;
-//        if (TryPickupStock()) return;
-//        if (TryPickupStockBox()) return;
-//        if (TryTakeStockFromShelf()) return;
-//        if (TryInteractWithCheckout()) return;
-//    }
-
-//    private bool TryPickupStock()
-//    {
-//        if (TryRaycast(_config.StockLayer, out RaycastHit hit))
-//        {
-//            _heldStock = hit.collider.GetComponent<StockObject>();
-//            if (_heldStock != null)
-//            {
-//                _heldStock.Pickup(_config.StockHoldPoint);
-//            }
-//            return _heldStock != null;
-//        }
-//        return false;
-//    }
-
-//    private bool TryPickupStockBox()
-//    {
-//        if (TryRaycast(_config.StockBoxLayer, out RaycastHit hit))
-//        {
-//            _heldBox = hit.collider.GetComponent<StockBoxController>();
-//            if (_heldBox != null)
-//            {
-//                _heldBox.Pickup(_config.BoxHoldPoint);
-
-//                if (!_heldBox.OpenBox)
-//                {
-//                    _heldBox.OpenClose();
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    private bool TryTakeStockFromShelf()
-//    {
-//        if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
-//        {
-//            if (hit.collider.TryGetComponent(out ShelfSpaceController shelf))
-//            {
-//                _heldStock = shelf.GetStock();
-//            }
-
-//            if (_heldStock != null)
-//            {
-//                _heldStock.Pickup(_config.StockHoldPoint);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    private bool TryInteractWithPriceLabel()
-//    {
-//        if (TryRaycast(_config.PriceLabelLayer, out RaycastHit hit))
-//        {
-//            var shelf = hit.collider.GetComponentInParent<ShelfSpaceController>();
-//            if (shelf != null)
-//            {
-//                shelf.StartPriceUpdate();
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    private bool TryInteractWithCheckout()
-//    {
-//        if (TryRaycast(_config.CheckoutLayer, out RaycastHit hit))
-//        {
-//            if (hit.collider.TryGetComponent(out Checkout checkout))
-//            {
-//                checkout.CheckoutCustomer();
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-//    #endregion
-
-//    #region Place/Use Logic
-//    private void TryPlaceOrUseHeldObject()
-//    {
-//        if (_heldStock != null)
-//        {
-//            HandleHeldStock();
-//        }
-//        else if (_heldBox != null)
-//        {
-//            HandleHeldBox();
-//        }
-//        else if (_heldFurniture != null)
-//        {
-//            PlaceFurniture();
-//        }
-//    }
-
-//    private void HandleHeldStock()
-//    {
-//        if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
-//        {
-//            if (hit.collider.TryGetComponent(out ShelfSpaceController shelf))
-//            {
-//                shelf.PlaceStock(_heldStock);
-//            }
-
-//            if (_heldStock.IsPlaced)
-//            {
-//                _heldStock = null;
-//            }
-//            return;
-//        }
-
-//        if (TryRaycast(_config.TrashLayer, out _))
-//        {
-//            _heldStock.TrashObject();
-//            _heldStock = null;
-//        }
-//    }
-
-//    private void HandleHeldBox()
-//    {
-//        if (_heldBox.StockInBox.Count > 0)
-//        {
-//            if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
-//            {
-//                var shelf = hit.collider.GetComponent<ShelfSpaceController>();
-//                _heldBox.PlaceStockOnShelf(shelf);
-//                _placeStockTimer = _config.WaitToPlaceStock;
-//                _isFastPlacementActive = true;
-//            }
-//        }
-//        else
-//        {
-//            if (TryRaycast(_config.TrashLayer, out _))
-//            {
-//                _heldBox.Release();
-//                _heldBox.TrashObject();
-//                _heldBox = null;
-//            }
-//        }
-//    }
-//    #endregion
-
-//    #region Fast Placement
-//    private void ProcessFastPlacement(float deltaTime)
-//    {
-//        if (_heldStock != null || _heldBox == null)
-//        {
-//            _isFastPlacementActive = false;
-//            return;
-//        }
-
-//        if (TryRaycast(_config.ShelfLayer, out RaycastHit hit))
-//        {
-//            _placeStockTimer -= deltaTime;
-
-//            if (_placeStockTimer <= 0f && _interactAction != null && _interactAction.IsPressed())
-//            {
-//                var shelf = hit.collider.GetComponent<ShelfSpaceController>();
-//                _heldBox.PlaceStockOnShelf(shelf);
-//                _placeStockTimer = _config.WaitToPlaceStock;
-//            }
-//        }
-//        else
-//        {
-//            _isFastPlacementActive = false;
-//        }
-//    }
-//    #endregion
-
-//    #region Furniture Methods
-//    private void PickupFurniture(RaycastHit hit)
-//    {
-//        _heldFurniture = hit.transform.GetComponent<FurnitureController>();
-//        if (_heldFurniture == null) return;
-
-//        hit.collider.enabled = false;
-//        _heldFurniture.transform.SetParent(_config.FurnitureHoldPoint);
-//        _heldFurniture.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-//        _heldFurniture.MakePlaceable();
-//    }
-
-//    private void PlaceFurniture()
-//    {
-//        if (_heldFurniture == null) return;
-
-//        _heldFurniture.PlaceObject();
-//        _heldFurniture = null;
-//    }
-
-//    private void KeepFurnitureAboveGround()
-//    {
-//        Vector3 holdPosition = _config.FurnitureHoldPoint.position;
-//        Vector3 playerPosition = _config.FurnitureHoldPoint.parent.position;
-
-//        _heldFurniture.transform.position = new Vector3(holdPosition.x, 0f, holdPosition.z);
-//        _heldFurniture.transform.LookAt(new Vector3(playerPosition.x, 0f, playerPosition.z));
-//    }
-//    #endregion
-
-//    #region Utility Methods
-//    private bool TryRaycast(LayerMask layerMask, out RaycastHit hit)
-//    {
-//        Ray ray = _config.Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-//        return Physics.Raycast(ray, out hit, _config.InteractionRange, layerMask);
-//    }
-//    #endregion
-//}
-//#endregion
 #endregion
 
 #region James' Code

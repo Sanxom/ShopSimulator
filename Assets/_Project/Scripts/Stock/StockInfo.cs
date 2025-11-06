@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class StockInfo
+[CreateAssetMenu(fileName = "StockInfo", menuName = "Data/StockInfo")]
+public class StockInfo : ScriptableObject
 {
     public enum StockType
     {
@@ -19,7 +19,7 @@ public class StockInfo
     #endregion
 
     #region Public Fields
-    public string name;
+    public string Name;
     public StockObject stockObject;
     public StockType typeOfStock;
     public float basePrice;
@@ -36,6 +36,10 @@ public class StockInfo
     #endregion
 
     #region Unity Callbacks
+    private void OnEnable()
+    {
+        currentPrice = basePrice;
+    }
     #endregion
 
     #region Public Methods

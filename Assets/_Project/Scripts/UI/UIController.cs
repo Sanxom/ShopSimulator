@@ -135,7 +135,7 @@ public class UIController : MonoBehaviour
 
         if (StockInfoController.Instance != null)
         {
-            StockInfoController.Instance.UpdatePrice(_activeStockInfo.name, _activeStockInfo.currentPrice);
+            StockInfoController.Instance.UpdatePrice(_activeStockInfo.Name, _activeStockInfo.currentPrice);
         }
 
         CloseUpdatePricePanel();

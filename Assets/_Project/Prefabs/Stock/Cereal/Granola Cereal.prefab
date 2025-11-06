@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6587410432811309631}
   - component: {fileID: 4451407029773144986}
   - component: {fileID: 7660662851968950609}
-  m_Layer: 6
+  m_Layer: 16
   m_Name: Granola Cereal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,9 +152,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _stockInfo:
-    name: Granola Cereal
-    stockObject: {fileID: 7660662851968950609}
-    typeOfStock: 0
-    basePrice: 2.35
-    currentPrice: 0
+  _stockInfo: {fileID: 11400000, guid: ee2c577f28c3763458fe7d79b2643682, type: 2}

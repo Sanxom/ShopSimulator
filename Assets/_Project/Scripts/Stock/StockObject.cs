@@ -1,4 +1,3 @@
-using masonbell;
 using UnityEngine;
 
 public class StockObject : MonoBehaviour, IInteractable, ITrashable
@@ -76,7 +75,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     {
         if (StockInfo != null && StockInfoController.Instance != null)
         {
-            _stockInfo = StockInfoController.Instance.GetStockInfo(StockInfo.name);
+            _stockInfo = StockInfoController.Instance.GetStockInfo(StockInfo.Name);
         }
     }
     #endregion
@@ -178,7 +177,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     public string GetInteractionPrompt()
     {
-        return $"{_stockInfo.name}";
+        return $"{_stockInfo.Name}";
     }
     #endregion
 }

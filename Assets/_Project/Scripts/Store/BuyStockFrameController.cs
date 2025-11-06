@@ -1,4 +1,3 @@
-using masonbell;
 using TMPro;
 using UnityEngine;
 
@@ -59,7 +58,7 @@ public class BuyStockFrameController : MonoBehaviour
     {
         if (StockInfoController.Instance != null)
         {
-            _stockInfo = StockInfoController.Instance.GetStockInfo(_stockInfo.name);
+            _stockInfo = StockInfoController.Instance.GetStockInfo(_stockInfo.Name);
         }
     }
 
@@ -70,7 +69,7 @@ public class BuyStockFrameController : MonoBehaviour
             return;
         }
 
-        if (_nameText != null) _nameText.text = _stockInfo.name;
+        if (_nameText != null) _nameText.text = _stockInfo.Name;
         if (_priceText != null) _priceText.text = $"${_stockInfo.currentPrice:0.00}";
     }
 
