@@ -131,6 +131,9 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
         transform.SetParent(holdPoint);
         transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         _isPlaced = false;
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(6);
     }
 
     public void Release()

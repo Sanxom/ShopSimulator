@@ -203,6 +203,9 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         {
             _animator.SetBool(OPEN_BOX_ANIMATOR_PARAMETER, _isOpen);
         }
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(2);
     }
 
     public void PlaceStockOnShelf(ShelfSpaceController shelf)
@@ -227,6 +230,9 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         if (stockToPlace.IsPlaced)
         {
             _stockInBox.RemoveAt(lastIndex);
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(7);
         }
 
         if (_stockInBox.Count == 0)
@@ -282,6 +288,9 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         stock.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         stock.PlaceInBox();
         _stockInBox.Add(stock);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(6);
 
         if (_stockInBox.Count == 1)
         {
@@ -339,6 +348,8 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         stock.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         stock.PlaceInBox();
         _stockInBox.Add(stock);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(6);
 
         if (_stockInBox.Count == 1)
         {

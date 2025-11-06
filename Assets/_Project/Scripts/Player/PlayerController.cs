@@ -282,6 +282,9 @@ public class PlayerMovement
         if (_jumpAction.IsPressed() && _config.Controller.isGrounded)
         {
             _ySpeed = _config.JumpForce;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(8);
         }
     }
 
@@ -397,6 +400,9 @@ public class PlayerInteraction
             _heldStock.Rb.AddForce(_config.camera.transform.forward * _config.throwForce, ForceMode.Impulse);
             _heldStock.transform.SetParent(null);
             RemoveHeldObjectReference();
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(9);
         }
         else if (_heldBox != null)
         {
@@ -404,6 +410,9 @@ public class PlayerInteraction
             _heldBox.Rb.AddForce(_config.camera.transform.forward * _config.throwForce, ForceMode.Impulse);
             _heldBox.transform.SetParent(null);
             RemoveHeldObjectReference();
+
+                if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(0);
         }
     }
 
@@ -543,6 +552,8 @@ public class PlayerInteraction
                     interactable.OnInteract(_config.boxHoldPoint);
                 _heldBox = box;
                 HeldObject = _heldBox.gameObject;
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(1);
                 return;
             }
         }
@@ -634,6 +645,9 @@ public class PlayerInteraction
                     {
                         trashable.TrashObject();
                         RemoveHeldObjectReference();
+
+                        if (AudioManager.Instance != null)
+                            AudioManager.Instance.PlaySFX(10);
                         return;
                     }
                 }
@@ -668,6 +682,8 @@ public class PlayerInteraction
             if (_heldStock.IsPlaced)
             {
                 RemoveHeldObjectReference();
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(7);
             }
         }
         else if (interactable.MyObject.TryGetComponent(out StockBoxController stockBox))
@@ -675,6 +691,9 @@ public class PlayerInteraction
             if (stockBox.CanTakeStockFromHand(_heldStock))
             {
                 RemoveHeldObjectReference();
+
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(7);
             }
         }
     }
@@ -822,13 +841,20 @@ public class PlayerInteraction
         _heldFurniture.transform.SetParent(_config.furnitureHoldPoint);
         _heldFurniture.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         _heldFurniture.MakePlaceable();
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(4);
     }
 
     private void PlaceFurniture()
     {
         if (_heldFurniture == null) return;
+
         _heldFurniture.PlaceObject();
         RemoveHeldObjectReference();
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(5);
     }
 
     private void KeepFurnitureAboveGround()

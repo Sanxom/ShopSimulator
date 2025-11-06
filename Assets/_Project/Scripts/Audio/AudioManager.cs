@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     #region Serialized Private Fields
     [SerializeField] private AudioSource _titleMusic;
     [SerializeField] private List<AudioSource> _allBGM = new();
+    [SerializeField] private List<AudioSource> _allSFX = new();
     #endregion
 
     #region Private Fields
@@ -65,6 +66,12 @@ public class AudioManager : MonoBehaviour
         _isBGMPlaying = true;
         _currentTrack = Random.Range(0, _allBGM.Count);
         _allBGM[_currentTrack].Play();
+    }
+
+    public void PlaySFX(int sfxToPlay)
+    {
+        _allSFX[sfxToPlay].Stop();
+        _allSFX[sfxToPlay].Play();
     }
     #endregion
 

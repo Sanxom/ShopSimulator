@@ -105,7 +105,6 @@ public class Checkout : MonoBehaviour, IInteractable
         {
             return;
         }
-        print("hello");
 
         Customer customer = _customersInQueue[0];
         float totalSpent = customer.GetTotalSpendAmount();
@@ -117,6 +116,9 @@ public class Checkout : MonoBehaviour, IInteractable
         _customersInQueue.RemoveAt(0);
 
         UpdateQueue();
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(3);
     }
     #endregion
 
