@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StockInfoController : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class StockInfoController : MonoBehaviour
     private const string POOLED_STOCK_GAMEOBJECT_NAME = "PooledStock";
     private const string POOLED_BOX_GAMEOBJECT_NAME = "PooledBoxes";
     private const string POOLED_FURNITURE_GAMEOBJECT_NAME = "PooledFurniture";
+    private bool _isInitialized;
 
     private List<StockInfo> _allStock;
     #endregion
@@ -35,12 +37,16 @@ public class StockInfoController : MonoBehaviour
     private void Awake()
     {
         InitializeSingleton();
-        CombineStockLists();
     }
 
     private void Start()
     {
+        if (_isInitialized) return;
+
+        CombineStockLists();
         InitializeAllPools();
+
+        _isInitialized = true;
     }
     #endregion
 
@@ -53,6 +59,7 @@ public class StockInfoController : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void CombineStockLists()

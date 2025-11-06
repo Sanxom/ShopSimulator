@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class CustomerManager : MonoBehaviour
 
     #region Private Fields
     private float _spawnTimer;
+    private bool _isInitialized;
     #endregion
 
     #region Unity Lifecycle
@@ -32,12 +34,17 @@ public class CustomerManager : MonoBehaviour
 
     private void Start()
     {
+        if (_isInitialized) return;
+
         InitializeCustomerPools();
         _spawnTimer = _timeBetweenCustomers;
+        _isInitialized = true;
     }
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
+
         UpdateSpawnTimer(Time.deltaTime);
     }
     #endregion
@@ -51,6 +58,7 @@ public class CustomerManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void InitializeCustomerPools()

@@ -34,6 +34,7 @@ public class StoreController : MonoBehaviour
     private void Start()
     {
         UpdateMoneyDisplay();
+        AudioManager.Instance.PlayBGM();
     }
 
     private void Update()

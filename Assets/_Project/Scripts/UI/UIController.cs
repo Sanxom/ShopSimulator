@@ -1,17 +1,28 @@
 using System;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
     public static UIController Instance { get; private set; }
 
     #region Events
-    public static Action OnUIPanelClosed;
+    public static event Action OnUIPanelClosed;
+    public static event Action OnUIPanelOpened;
     #endregion
 
     #region Serialized Fields
+    [Header("Input References")]
+    private InputSystem_Actions _gameInput;
+    private InputAction _playerOpenCloseBuyMenuAction;
+    private InputAction _pauseAction;
+    private InputAction _submitAction;
+    private InputAction _cancelAction;
+    private InputAction _UIOpenCloseBuyMenuAction;
+
     [Header("Price Update Panel")]
     [SerializeField] private GameObject _updatePricePanel;
     [SerializeField] private TMP_Text _basePriceText;
@@ -20,6 +31,10 @@ public class UIController : MonoBehaviour
 
     [Header("Buy Menu")]
     [SerializeField] private GameObject _buyMenuPanel;
+
+    [Header("Pause Menu")]
+    [SerializeField] private GameObject _pauseMenuPanel;
+    [SerializeField] private string _mainMenuSceneName;
 
     [Header("Money Display")]
     [SerializeField] private TMP_Text _moneyText;
@@ -38,21 +53,19 @@ public class UIController : MonoBehaviour
     private void Awake()
     {
         InitializeSingleton();
+        InitializeInput();
     }
 
     private void OnEnable()
     {
+        _gameInput.Enable();
         SubscribeToEvents();
-    }
-
-    private void Update()
-    {
-        HandleBuyMenuInput();
     }
 
     private void OnDisable()
     {
         UnsubscribeFromEvents();
+        _gameInput.Disable();
     }
     #endregion
 
@@ -67,32 +80,48 @@ public class UIController : MonoBehaviour
         Instance = this;
     }
 
+    private void InitializeInput()
+    {
+        _gameInput = PlayerController.Instance.GameInput;
+
+        _playerOpenCloseBuyMenuAction = _gameInput.Player.OpenCloseBuyMenu;
+        _pauseAction = _gameInput.Player.Pause;
+
+        _UIOpenCloseBuyMenuAction = _gameInput.UI.OpenCloseBuyMenu;
+        _submitAction = _gameInput.UI.Submit;
+        _cancelAction = _gameInput.UI.Cancel;
+    }
+
     private void SubscribeToEvents()
     {
-        PlayerController.OnUIPanelClosedWithCancelAction += CloseUpdatePricePanelWithCancelAction;
-        PlayerController.OnUIPanelClosedWithCancelAction += CloseBuyMenuPanelWithCancelAction;
+        _playerOpenCloseBuyMenuAction.performed += OpenCloseBuyMenu;
+        _UIOpenCloseBuyMenuAction.performed += OpenCloseBuyMenu;
+        _pauseAction.performed += Pause;
+        _submitAction.performed += OnSubmitPerformed;
+        _cancelAction.performed += OnCancelPerformed;
     }
 
     private void UnsubscribeFromEvents()
     {
-        PlayerController.OnUIPanelClosedWithCancelAction -= CloseUpdatePricePanelWithCancelAction;
-        PlayerController.OnUIPanelClosedWithCancelAction -= CloseBuyMenuPanelWithCancelAction;
+        _playerOpenCloseBuyMenuAction.performed -= OpenCloseBuyMenu;
+        _UIOpenCloseBuyMenuAction.performed -= OpenCloseBuyMenu;
+        _pauseAction.performed -= Pause;
+        _submitAction.performed -= OnSubmitPerformed;
+        _cancelAction.performed -= OnCancelPerformed;
     }
     #endregion
 
     #region Price Update Panel
     public void OnOpenUpdatePricePanel(StockInfo stockToUpdate)
     {
-        if (stockToUpdate == null)
-        {
-            return;
-        }
+        if (stockToUpdate == null) return;
 
         _updatePricePanel.SetActive(true);
         _activeStockInfo = stockToUpdate;
 
         UpdatePriceDisplayTexts(stockToUpdate);
         SetInputFieldValue(stockToUpdate.currentPrice);
+        OnUIPanelOpened?.Invoke();
     }
 
     private void UpdatePriceDisplayTexts(StockInfo stock)
@@ -143,31 +172,16 @@ public class UIController : MonoBehaviour
 
     public void CloseUpdatePricePanel()
     {
+        if (!_updatePricePanel.activeSelf) return;
+
         OnUIPanelClosed?.Invoke();
-
-        if (_updatePricePanel != null)
-        {
-            _updatePricePanel.SetActive(false);
-        }
-    }
-
-    private void CloseUpdatePricePanelWithCancelAction()
-    {
-        if (_updatePricePanel != null && _updatePricePanel.activeSelf)
-        {
-            _updatePricePanel.SetActive(false);
-        }
+        _updatePricePanel.SetActive(false);
     }
     #endregion
 
     #region Buy Menu
-    public void OpenCloseBuyMenu()
+    public void OpenCloseBuyMenu(InputAction.CallbackContext context)
     {
-        if (_buyMenuPanel == null || PlayerController.Instance == null)
-        {
-            return;
-        }
-
         bool isOpen = _buyMenuPanel.activeSelf;
 
         if (isOpen)
@@ -180,34 +194,74 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void OnSubmitPerformed(InputAction.CallbackContext context)
+    {
+        ApplyPriceUpdate();
+    }
+
+    private void OnCancelPerformed(InputAction.CallbackContext context)
+    {
+        CloseUpdatePricePanel();
+        CloseBuyMenu();
+        UnpauseGame();
+    }
+
     private void OpenBuyMenu()
     {
+        if (BuyMenuPanel.activeSelf) return;
+
         _buyMenuPanel.SetActive(true);
-        PlayerController.Instance.DisablePlayerEnableUI();
+        OnUIPanelOpened?.Invoke();
     }
 
     private void CloseBuyMenu()
     {
+        if (!_buyMenuPanel.activeSelf) return;
+
+        OnUIPanelClosed?.Invoke();
         _buyMenuPanel.SetActive(false);
-        PlayerController.Instance.DisableUIEnablePlayer();
-    }
-
-    private void CloseBuyMenuPanelWithCancelAction()
-    {
-        if (_buyMenuPanel != null && _buyMenuPanel.activeSelf)
-        {
-            CloseBuyMenu();
-        }
-    }
-
-    private void HandleBuyMenuInput()
-    {
-        if (Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame)
-        {
-            OpenCloseBuyMenu();
-        }
     }
     #endregion
+
+    #region Pause Menu
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(_mainMenuSceneName);
+        Time.timeScale = 1f;
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    public void Pause(InputAction.CallbackContext context)
+    {
+        PauseGame();
+    }
+
+    public void PauseGame()
+    {
+        if (_pauseMenuPanel.activeSelf) return;
+
+        _pauseMenuPanel.SetActive(true);
+        OnUIPanelOpened?.Invoke();
+        Time.timeScale = 0f;
+    }
+
+    public void UnpauseGame()
+    {
+        if (!_pauseMenuPanel.activeSelf) return;
+
+        OnUIPanelClosed?.Invoke();
+        _pauseMenuPanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+#endregion
 
     #region Money Display
     public void UpdateMoney(float currentMoney)

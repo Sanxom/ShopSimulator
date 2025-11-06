@@ -15,11 +15,16 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
     [SerializeField] private Collider _collider;
     #endregion
 
+    #region Private Fields
+    private bool _isHeld = false;
+    #endregion
+
     #region Properties
     public GameObject MyObject { get; set; }
     public List<ShelfSpaceController> Shelves => _shelves;
     public Transform CustomerStandPoint => _customerStandPoint;
     public float Price => _price;
+    public bool IsHeld => _isHeld;
 
     #endregion
 
@@ -75,6 +80,11 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
         {
             _collider.enabled = colliderEnabled;
         }
+
+        if (_mainObject.activeSelf)
+            _isHeld = false;
+        else if (_placingObject.activeSelf)
+            _isHeld = true;
     }
 
     public void OnInteract(Transform holdPoint = null)

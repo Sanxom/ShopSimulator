@@ -225,7 +225,7 @@ public class Customer : MonoBehaviour
     {
         _navPoints.Clear();
 
-        if (StoreController.Instance.ShelvingCases.Count == 0)
+        if (StoreController.Instance.ShelvingCases.Count == 0 || StoreController.Instance.ShelvingCases.Count == 1 && StoreController.Instance.ShelvingCases[0].IsHeld)
         {
             StartLeaving();
             return;
@@ -233,8 +233,12 @@ public class Customer : MonoBehaviour
 
         int selectedShelf = Random.Range(0, StoreController.Instance.ShelvingCases.Count);
         _currentShelfCase = StoreController.Instance.ShelvingCases[selectedShelf];
+        if (_currentShelfCase.IsHeld)
+        {
+            CompleteBrowsePoint();
+        }
 
-        NavPoint browsePoint = new NavPoint
+        NavPoint browsePoint = new()
         {
             point = _currentShelfCase.CustomerStandPoint,
             waitTime = _browseTime * Random.Range(0.75f, 1.25f)

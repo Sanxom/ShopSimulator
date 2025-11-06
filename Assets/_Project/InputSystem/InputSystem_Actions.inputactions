@@ -97,7 +97,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "OpenMenu",
+                    "name": "OpenCloseBuyMenu",
                     "type": "Button",
                     "id": "53d2d68a-fa10-463a-81d9-83051cb427e7",
                     "expectedControlType": "",
@@ -118,6 +118,15 @@
                     "name": "TakeStock",
                     "type": "Button",
                     "id": "ee4a8e53-cd89-442c-90f8-819928b5433d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "ee965eb9-660b-4b6d-b342-16947bb0835c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -495,7 +504,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "OpenMenu",
+                    "action": "OpenCloseBuyMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -542,6 +551,17 @@
                     "action": "TakeStock",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "5d5c81de-03aa-4260-9265-c141197bd69d",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -554,6 +574,15 @@
                     "type": "PassThrough",
                     "id": "c95b2375-e6d9-4b88-9c4c-c5e76515df4b",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OpenCloseBuyMenu",
+                    "type": "Button",
+                    "id": "ed7322fb-6c4f-4987-8405-94e1ea13d7d2",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -805,6 +834,17 @@
                     "action": "Navigate",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "e57280fe-626a-4d89-b2dc-f67ff8a6f945",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "OpenCloseBuyMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

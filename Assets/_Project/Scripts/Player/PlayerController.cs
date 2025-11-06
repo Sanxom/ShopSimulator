@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get; private set; }
 
     #region Events
-    public static event Action OnUIPanelClosedWithCancelAction;
     #endregion
 
     #region Serialized Fields
@@ -58,13 +57,12 @@ public class PlayerController : MonoBehaviour
     private InputAction _openBoxAction;
     private InputAction _pickupFurnitureAction;
     private InputAction _takeStockAction;
-    private InputAction _submitAction;
-    private InputAction _cancelAction;
     #endregion
 
     #region Properties
     public bool IsHoldingSomething => _interaction.IsHoldingSomething;
     public GameObject HeldObject => _interaction.HeldObject;
+    public InputSystem_Actions GameInput => _gameInput;
 
     public int MaxPossibleInteractableObjects { get => _maxPossibleInteractableObjects; private set => _maxPossibleInteractableObjects = value; }
     #endregion
@@ -81,6 +79,7 @@ public class PlayerController : MonoBehaviour
     {
         SubscribeToInputEvents();
         UIController.OnUIPanelClosed += DisableUIEnablePlayer;
+        UIController.OnUIPanelOpened += DisablePlayerEnableUI;
     }
 
     private void Start()
@@ -99,6 +98,7 @@ public class PlayerController : MonoBehaviour
     {
         UnsubscribeFromInputEvents();
         UIController.OnUIPanelClosed -= DisableUIEnablePlayer;
+        UIController.OnUIPanelOpened -= DisablePlayerEnableUI;
 
         _gameInput?.UI.Disable();
         _gameInput?.Player.Disable();
@@ -129,8 +129,6 @@ public class PlayerController : MonoBehaviour
         _openBoxAction = _gameInput.Player.OpenBox;
         _pickupFurnitureAction = _gameInput.Player.PickupFurniture;
         _takeStockAction = _gameInput.Player.TakeStock;
-        _submitAction = _gameInput.UI.Submit;
-        _cancelAction = _gameInput.UI.Cancel;
     }
 
     private void InitializeComponents()
@@ -182,8 +180,6 @@ public class PlayerController : MonoBehaviour
         _pickupFurnitureAction.performed += _interaction.OnPickupFurniturePerformed;
         _takeStockAction.performed += _interaction.OnTakeStockPerformed;
         _takeStockAction.canceled += _interaction.OnTakeStockCanceled;
-        _submitAction.performed += OnSubmitPerformed;
-        _cancelAction.performed += OnCancelPerformed;
     }
 
     private void UnsubscribeFromInputEvents()
@@ -195,8 +191,6 @@ public class PlayerController : MonoBehaviour
         _pickupFurnitureAction.performed -= _interaction.OnPickupFurniturePerformed;
         _takeStockAction.performed -= _interaction.OnTakeStockPerformed;
         _takeStockAction.canceled -= _interaction.OnTakeStockCanceled;
-        _submitAction.performed -= OnSubmitPerformed;
-        _cancelAction.performed -= OnCancelPerformed;
     }
     #endregion
 
@@ -213,22 +207,6 @@ public class PlayerController : MonoBehaviour
         _gameInput.Player.Disable();
         _gameInput.UI.Enable();
         Cursor.lockState = CursorLockMode.None;
-    }
-    #endregion
-
-    #region Input Callbacks
-    private void OnSubmitPerformed(InputAction.CallbackContext context)
-    {
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.ApplyPriceUpdate();
-        }
-    }
-
-    private void OnCancelPerformed(InputAction.CallbackContext context)
-    {
-        OnUIPanelClosedWithCancelAction?.Invoke();
-        DisableUIEnablePlayer();
     }
     #endregion
 }
