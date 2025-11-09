@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,17 +21,11 @@ public class MainMenu : MonoBehaviour
     #endregion
 
     #region Unity Callbacks
-    private void Start()
-    {
-        AudioManager.Instance.StartTitleMusic();
-    }
+    private void Start() => AudioManager.Instance.StartTitleMusic();
     #endregion
 
     #region Public Methods
-    public void StartGame()
-    {
-        SceneManager.LoadScene(_mainShopScene);
-    }
+    public void StartGame() => SceneManager.LoadScene(_mainShopScene);
 
     public void QuitGame()
     {

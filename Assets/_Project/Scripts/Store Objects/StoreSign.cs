@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -23,22 +21,13 @@ public class StoreSign : MonoBehaviour, IInteractable
     #endregion
 
     #region Unity Callbacks
-    private void Awake()
-    {
-        MyObject = gameObject;
-    }
+    private void Awake() => MyObject = gameObject;
     #endregion
 
     #region Public Methods
-    public string GetInteractionPrompt()
-    {
-        return $"Store Sign";
-    }
+    public string GetInteractionPrompt() => $"Store Sign";
 
-    public void OnInteract(Transform holdPoint = null)
-    {
-        storeSignText.text = ""; // TODO: Bring up a window to change the Text of the Store Sign with Player Input
-    }
+    public void OnInteract(Transform holdPoint = null) => storeSignText.text = ""; // TODO: Bring up a window to change the Text of the Store Sign with Player Input
     #endregion
 
     #region Private Methods

@@ -10,6 +10,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     private const float MOVE_SPEED = 10f;
 
     private Transform _bagPositionInWorld;
+    private bool _isHeld;
     private bool _isPlaced;
     private bool _isInBag;
     private Rigidbody _rigidbody;
@@ -32,29 +33,19 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
         InteractionPrompt = gameObject.name;
     }
 
-    private void OnEnable()
-    {
-        ResetState();
-    }
+    private void OnEnable() => ResetState();
 
-    private void Start()
-    {
-        RefreshStockInfo();
-    }
+    private void Start() => RefreshStockInfo();
 
     private void Update()
     {
-        float deltaTime = Time.deltaTime;
+        //float deltaTime = Time.deltaTime;
 
-        if (_isPlaced)
-        {
-            MoveToPlacedPosition(deltaTime);
-        }
+        //if (_isPlaced || _isHeld)
+        //    MoveToPlacedPosition(deltaTime);
 
-        if (_isInBag)
-        {
-            MoveToBagPosition(deltaTime);
-        }
+        //if (_isInBag)
+        //    MoveToBagPosition(deltaTime);
     }
     #endregion
 
@@ -67,6 +58,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     private void ResetState()
     {
+        _isHeld = false;
         _isPlaced = false;
         _isInBag = false;
     }
@@ -74,15 +66,14 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     private void RefreshStockInfo()
     {
         if (StockInfo != null && StockInfoController.Instance != null)
-        {
             _stockInfo = StockInfoController.Instance.GetStockInfo(StockInfo.Name);
-        }
     }
     #endregion
 
     #region Movement
     private void MoveToPlacedPosition(float deltaTime)
     {
+        print("Hey");
         transform.SetLocalPositionAndRotation(Vector3.MoveTowards(
             transform.localPosition,
             Vector3.zero,
@@ -96,10 +87,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     private void MoveToBagPosition(float deltaTime)
     {
-        if (_bagPositionInWorld == null)
-        {
-            return;
-        }
+        if (_bagPositionInWorld == null) return;
 
         transform.SetPositionAndRotation(Vector3.MoveTowards(
             transform.position,
@@ -127,10 +115,11 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     public void Pickup(Transform holdPoint)
     {
+        _isPlaced = false;
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
-        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-        _isPlaced = false;
+        _isHeld = true;
+        //transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
@@ -138,6 +127,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     public void Release()
     {
+        _isHeld = false;
         SetPhysicsState(false, true);
     }
 
@@ -153,35 +143,22 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
         MakePlaced();
     }
 
-    public void TrashObject()
-    {
-        ObjectPool<StockObject>.ReturnToPool(this);
-    }
+    public void TrashObject() => ObjectPool<StockObject>.ReturnToPool(this);
     #endregion
 
     #region Private Methods
     private void SetPhysicsState(bool isKinematic, bool colliderEnabled)
     {
         if (_rigidbody != null)
-        {
             _rigidbody.isKinematic = isKinematic;
-        }
 
         if (_collider != null)
-        {
             _collider.enabled = colliderEnabled;
-        }
     }
 
-    public void OnInteract(Transform holdPoint)
-    {
-        Pickup(holdPoint);
-    }
+    public void OnInteract(Transform holdPoint) => Pickup(holdPoint);
 
-    public string GetInteractionPrompt()
-    {
-        return $"{_stockInfo.Name}";
-    }
+    public string GetInteractionPrompt() => $"{_stockInfo.Name}";
     #endregion
 }
 

@@ -6,15 +6,9 @@ public class TrashCan : MonoBehaviour, IInteractable
 {
     public GameObject MyObject { get; set; }
 
-    private void Awake()
-    {
-        MyObject = gameObject;
-    }
+    private void Awake() => MyObject = gameObject;
 
-    public string GetInteractionPrompt()
-    {
-        return "Trash Can";
-    }
+    public string GetInteractionPrompt() => "Trash Can";
 
     public void OnInteract(Transform holdPoint = null)
     {
