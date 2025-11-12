@@ -9,6 +9,7 @@ public class StockInfoController : MonoBehaviour
     [Header("Stock Information")]
     [SerializeField] private List<StockInfo> _drinkInfo;
     [SerializeField] private List<StockInfo> _foodInfo;
+    [SerializeField] private float _stockPickupAndPlaceWaitTimeDuration;
 
     [Header("Prefabs")]
     [SerializeField] private List<StockBoxController> _allBoxPrefabs;
@@ -30,12 +31,15 @@ public class StockInfoController : MonoBehaviour
     #region Properties
     public List<StockInfo> DrinkInfo => _drinkInfo;
     public List<StockInfo> FoodInfo => _foodInfo;
+    public WaitForSeconds StockPickupAndPlaceWaitTime { get; private set; }
+    [field: SerializeField] public float StockPickupAndPlaceWaitTimeDuration { get; private set; }
     #endregion
 
     #region Unity Lifecycle
     private void Awake()
     {
         InitializeSingleton();
+        StockPickupAndPlaceWaitTime = new(_stockPickupAndPlaceWaitTimeDuration);
     }
 
     private void Start()

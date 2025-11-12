@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,7 +25,6 @@ public class PlayerController : MonoBehaviour
     [Header("Interaction Settings")]
     [SerializeField] private float _interactionRange = 3f;
     [SerializeField] private float _throwForce = 10f;
-    [SerializeField] private float _waitToPlaceStock = 0.2f;
     [SerializeField] private Transform _stockHoldPoint;
     [SerializeField] private Transform _boxHoldPoint;
     [SerializeField] private Transform _furnitureHoldPoint;
@@ -150,7 +151,6 @@ public class PlayerController : MonoBehaviour
             camera = _camera,
             interactionRange = _interactionRange,
             throwForce = _throwForce,
-            waitToPlaceStock = _waitToPlaceStock,
             stockHoldPoint = _stockHoldPoint,
             boxHoldPoint = _boxHoldPoint,
             furnitureHoldPoint = _furnitureHoldPoint,
@@ -330,16 +330,12 @@ public class PlayerInteraction
     private FurnitureController _heldFurniture;
     private RaycastHit[] hits = new RaycastHit[PlayerController.Instance.MaxPossibleInteractableObjects];
 
-    private float _placeStockTimer;
-    private float _takeStockTimer;
     private bool _isFastPlacementActive;
     private bool _isFastTakeActive;
     private InputAction _interactAction;
     private InputAction _takeStockAction;
 
     public bool IsHoldingSomething => _heldStock != null || _heldBox != null || _heldFurniture != null;
-
-    public float PlaceStockTimer { get => _placeStockTimer; private set => _placeStockTimer = value; }
 
     public GameObject HeldObject;
 
@@ -474,7 +470,6 @@ public class PlayerInteraction
                 minDistance = hits[i].distance;
                 _ = hits[i];
                 TryTakeStockFromShelfIntoBox(shelf);
-                _takeStockTimer = _config.waitToPlaceStock;
                 _isFastTakeActive = true;
                 return;
             }
@@ -494,9 +489,7 @@ public class PlayerInteraction
     #endregion
 
     #region Pickup Logic
-    private void TryPickupObjectOrInteract() => ComponentChecks();
-
-    private void ComponentChecks()
+    private void TryPickupObjectOrInteract()
     {
         RaycastHit closestHit;
         float minDistance = float.MaxValue;
@@ -693,17 +686,16 @@ public class PlayerInteraction
     {
         if (interactable == null) return;
 
-        if (_heldBox.StockInBox.Count > 0)
-        {
-            if (interactable.MyObject.TryGetComponent(out ShelfSpaceController shelf))
-            {
-                _heldBox.PlaceStockOnShelf(shelf);
+        if (_heldBox.IsTaking || _heldBox.IsPlacing) return;
+        if (_heldBox.StockInBox.Count == 0) return;
 
-                _placeStockTimer = _config.waitToPlaceStock;
-                _isFastPlacementActive = true;
-            }
-            return;
+        if (interactable.MyObject.TryGetComponent(out ShelfSpaceController shelf))
+        {
+            _heldBox.PlaceStockOnShelf(shelf);
+
+            _isFastPlacementActive = true;
         }
+        return;
     }
     #endregion
 
@@ -711,7 +703,7 @@ public class PlayerInteraction
     private void TryTakeStockFromShelfIntoBox(ShelfSpaceController shelf)
     {
         if (_heldBox == null || shelf == null || shelf.StockInfo == null) return;
-
+        if (_heldBox.IsTaking || _heldBox.IsPlacing) return;
         if (shelf.ObjectsOnShelf == null || shelf.ObjectsOnShelf.Count == 0) return;
 
         bool canTakeStock = (_heldBox.StockInfo == null && _heldBox.StockInBox.Count == 0)
@@ -755,7 +747,10 @@ public class PlayerInteraction
                     return;
                 }
 
-                _placeStockTimer -= deltaTime;
+                if (_heldBox.IsTaking)
+                {
+                    return;
+                }
 
                 if (_takeStockAction.IsPressed())
                 {
@@ -764,10 +759,9 @@ public class PlayerInteraction
                     return;
                 }
 
-                if (_placeStockTimer <= 0f && _interactAction.IsPressed())
+                if (_interactAction.IsPressed())
                 {
                     _heldBox.PlaceStockOnShelf(shelf);
-                    _placeStockTimer = _config.waitToPlaceStock;
                 }
                 break;
             }
@@ -796,12 +790,14 @@ public class PlayerInteraction
                     return;
                 }
 
-                _takeStockTimer -= deltaTime;
+                if (_heldBox.IsPlacing)
+                {
+                    return;
+                }
 
-                if (_takeStockTimer <= 0f && _takeStockAction.IsPressed())
+                if (_takeStockAction.IsPressed())
                 {
                     TryTakeStockFromShelfIntoBox(shelf);
-                    _takeStockTimer = _config.waitToPlaceStock;
                 }
                 break;
             }

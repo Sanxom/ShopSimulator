@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using PrimeTween;
+using System.Collections;
 
 public class ShelfSpaceController : MonoBehaviour, IInteractable
 {
@@ -22,9 +23,9 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
     [SerializeField] private TMP_Text _shelfNameText;
     [SerializeField] private TMP_Text _shelfPriceText;
     [SerializeField] private TMP_Text _shelfCountText;
+    #endregion
 
-    [SerializeField] private float _stockToAndFromShelfMoveSpeed = 10f;
-    [SerializeField] private float _stockToAndFromShelfRotateSpeed = 100f;
+    #region Private Fields
     #endregion
 
     #region Properties
@@ -38,11 +39,17 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
     #endregion
 
     #region Unity Lifecycle
-    private void Awake() => MyObject = gameObject;
+    private void Awake()
+    {
+        MyObject = gameObject;
+    }
 
     private void OnEnable() => UpdateShelfDisplay();
 
-    private void Start() => UpdateShelfDisplay();
+    private void Start()
+    {
+        UpdateShelfDisplay();
+    }
     #endregion
 
     #region Stock Management
@@ -68,9 +75,7 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
 
         if (!CanPlaceStock(objectToPlace)) return;
 
-        _objectsOnShelf.Add(objectToPlace);
         PlaceStockAtPoint(objectToPlace);
-        UpdateShelfDisplay();
     }
 
     private bool CanPlaceStock(StockObject objectToPlace)
@@ -100,25 +105,27 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
     {
         if (stock == null || StockInfo == null) return;
 
-        stock.MakePlaced();
         List<Transform> points = GetListOfPointsForStockType(StockInfo.typeOfStock);
 
-        if (points != null && points.Count > 0 && _objectsOnShelf.Count <= points.Count)
+        if (points == null || points.Count == 0 || _objectsOnShelf.Count == points.Count)
         {
-            int pointIndex = _objectsOnShelf.Count - 1;
-            if (pointIndex >= 0 && pointIndex < points.Count)
-            {
-                stock.transform.SetParent(points[pointIndex]);
-                MoveToPlacementPoint(stock, points[pointIndex].position, points[pointIndex].rotation);
-            }
+            return;
+        }
+        _objectsOnShelf.Add(stock);
+        int index = ObjectsOnShelf.Count - 1;
+        if (ObjectsOnShelf.Count >= 0 && index < points.Count)
+        {
+            stock.transform.SetParent(points[index]);
+            MoveToPlacementPoint(stock, points[index].position, points[index].rotation);
+            stock.MakePlaced();
+            UpdateShelfDisplay();
         }
     }
 
     private void MoveToPlacementPoint(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
     {
-        TweenSettings settings = new(duration: 0f);
-        Tween.PositionAtSpeed(stock.transform, endPointPosition, _stockToAndFromShelfMoveSpeed);
-        Tween.Rotation(stock.transform, endPointRotation, settings);
+        Tween.Position(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        Tween.Rotation(stock.transform, endPointRotation, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
     }
 
     private int GetCountForListOfStockType(StockInfo.StockType stockType)

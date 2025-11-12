@@ -1,3 +1,5 @@
+using PrimeTween;
+using System.Collections;
 using UnityEngine;
 
 public class StockObject : MonoBehaviour, IInteractable, ITrashable
@@ -71,38 +73,19 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     #endregion
 
     #region Movement
-    private void MoveToPlacedPosition(float deltaTime)
+    private void MoveToPlacedPosition(Transform placementPoint)
     {
-        print("Hey");
-        transform.SetLocalPositionAndRotation(Vector3.MoveTowards(
-            transform.localPosition,
-            Vector3.zero,
-            MOVE_SPEED * deltaTime
-        ), Quaternion.Slerp(
-            transform.localRotation,
-            Quaternion.identity,
-            MOVE_SPEED * deltaTime
-        ));
+        Tween.LocalPosition(transform, Vector3.zero, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        Tween.LocalRotation(transform, new Vector3(0f, 90f, 0f), StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
     }
 
-    private void MoveToBagPosition(float deltaTime)
+    private void MoveToBagPosition(Transform bagPosition)
     {
-        if (_bagPositionInWorld == null) return;
+        if (bagPosition == null) return;
 
-        transform.SetPositionAndRotation(Vector3.MoveTowards(
-            transform.position,
-            _bagPositionInWorld.position,
-            deltaTime
-        ), Quaternion.Slerp(
-            transform.localRotation,
-            Quaternion.identity,
-            deltaTime
-        ));
-        transform.localScale = Vector3.MoveTowards(
-            transform.localScale,
-            Vector3.zero,
-            deltaTime
-        );
+        Tween.Position(transform, bagPosition.position, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        Tween.LocalRotation(transform, Quaternion.identity, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        Tween.Scale(transform, Vector3.zero, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
     }
     #endregion
 
@@ -115,14 +98,20 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     public void Pickup(Transform holdPoint)
     {
+        StartCoroutine(PickupCoroutine(holdPoint));
+    }
+
+    private IEnumerator PickupCoroutine(Transform holdPoint)
+    {
         _isPlaced = false;
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
         _isHeld = true;
-        //transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        MoveToPlacedPosition(holdPoint);
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
+        yield return StockInfoController.Instance.StockPickupAndPlaceWaitTime;
     }
 
     public void Release()
@@ -140,6 +129,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     {
         _bagPositionInWorld = bagPosition;
         _isInBag = true;
+        MoveToBagPosition(_bagPositionInWorld);
         MakePlaced();
     }
 

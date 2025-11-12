@@ -221,12 +221,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8b28bf69dd529a44fac2bffbb023c335, type: 2}
   - {fileID: 11400000, guid: 22a09ff49f3ad54478fca60212abf619, type: 2}
   - {fileID: 11400000, guid: ffd7e5ae4e671894eb5cc5977f3592a0, type: 2}
+  _stockPickupAndPlaceWaitTimeDuration: 0
   _allBoxPrefabs:
   - {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
   _allFurniturePrefabs:
   - {fileID: 6419496879619822556, guid: acf3f72a017c6534ebc7e8032800a132, type: 3}
   - {fileID: 1190635766200293680, guid: 4016746bed4d0674c8fb1d6c77cdad6b, type: 3}
   _initialPooledObjectSize: 50
+  <StockPickupAndPlaceWaitTimeDuration>k__BackingField: 0.2
 --- !u!1 &2007581844930465666
 GameObject:
   m_ObjectHideFlags: 0

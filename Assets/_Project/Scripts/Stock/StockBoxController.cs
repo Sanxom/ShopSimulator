@@ -1,4 +1,5 @@
 using PrimeTween;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     [SerializeField] private List<Transform> _fruitPoints;
     [SerializeField] private List<Transform> _largeFruitPoints;
     [SerializeField] private List<Transform> _vegetablePoints;
-
+    
     [Header("Debug")]
     [SerializeField] private bool _testFill;
     #endregion
@@ -25,12 +26,14 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     private const float MOVE_SPEED = 10f;
     private const string OPEN_BOX_ANIMATOR_PARAMETER = "openBox";
 
-    private bool _isHeld;
     private Rigidbody _rigidbody;
     private Collider _collider;
     private Animator _animator;
+    private WaitForSeconds _stockPickupAndPlaceWaitTime;
     private bool _isOpen;
     private int _maxCapacity;
+    private bool _isTaking = false;
+    private bool _isPlacing = false;
     #endregion
 
     #region Properties
@@ -41,10 +44,21 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     public StockInfo StockInfo => _stockInfo;
     public List<StockObject> StockInBox => _stockInBox;
     public int MaxCapacity => _maxCapacity;
+
+    public bool IsTaking { get => _isTaking; set => _isTaking = value; }
+    public bool IsPlacing { get => _isPlacing; set => _isPlacing = value; }
     #endregion
 
     #region Unity Lifecycle
-    private void Awake() => CacheComponents();
+    private void Awake()
+    {
+        CacheComponents();
+    }
+
+    private void Start()
+    {
+        _stockPickupAndPlaceWaitTime = new(StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+    }
 
     private void Update()
     {
@@ -53,9 +67,6 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
             _testFill = false;
             SetupBox(_stockInfo);
         }
-
-        if (_isHeld)
-            MoveToHoldPosition(Time.deltaTime);
     }
 
     private void OnDisable() => _maxCapacity = 0;
@@ -135,17 +146,10 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     #endregion
 
     #region Movement
-    private void MoveToHoldPosition(float deltaTime)
+    private void MoveToHoldPosition()
     {
-        transform.SetLocalPositionAndRotation(Vector3.MoveTowards(
-            transform.localPosition,
-            Vector3.zero,
-            MOVE_SPEED * deltaTime
-        ), Quaternion.Slerp(
-            transform.localRotation,
-            Quaternion.identity,
-            MOVE_SPEED * deltaTime
-        ));
+        Tween.LocalPosition(transform, Vector3.zero, MOVE_SPEED * Time.deltaTime);
+        Tween.LocalRotation(transform, Quaternion.identity, MOVE_SPEED * Time.deltaTime);
     }
     #endregion
 
@@ -154,13 +158,12 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     {
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
-        _isHeld = true;
+        MoveToHoldPosition();
     }
 
     public void Release()
     {
         SetPhysicsState(false, true);
-        _isHeld = false;
     }
 
     private void SetPhysicsState(bool isKinematic, bool colliderEnabled)
@@ -187,7 +190,13 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
     public void PlaceStockOnShelf(ShelfSpaceController shelf)
     {
-        if (_stockInBox.Count == 0 || shelf == null) return;
+        StartCoroutine(PlaceStockOnShelfCoroutine(shelf));
+    }
+
+    private IEnumerator PlaceStockOnShelfCoroutine(ShelfSpaceController shelf)
+    {
+        if (IsPlacing || IsTaking) yield break;
+        if (_stockInBox.Count == 0 || shelf == null) yield break;
 
         int lastIndex = _stockInBox.Count - 1;
         StockObject stockToPlace = _stockInBox[lastIndex];
@@ -195,9 +204,13 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         if (stockToPlace == null || stockToPlace.StockInfo == null)
         {
             _stockInBox.RemoveAt(lastIndex);
-            return;
+            yield break;
         }
 
+        if (!_isOpen)
+            OpenClose();
+
+        IsPlacing = true;
         shelf.PlaceStock(stockToPlace);
 
         if (stockToPlace.IsPlaced)
@@ -210,49 +223,55 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
         if (_stockInBox.Count == 0)
             _stockInfo = null;
-
-        if (!_isOpen)
-            OpenClose();
+        yield return _stockPickupAndPlaceWaitTime;
+        IsPlacing = false;
     }
 
-    public void TakeStockFromShelf(StockObject stock)
+    private IEnumerator TakeStockFromShelfCoroutine(StockObject stock)
     {
-        if (stock == null || stock.StockInfo == null) return;
+        if (IsTaking || IsPlacing) yield break;
+        if (stock == null || stock.StockInfo == null) yield break;
 
-        if (_stockInBox.Count == 0) 
+        if (_stockInBox.Count == 0)
             _stockInfo = stock.StockInfo;
 
-        if (_stockInfo == null) return;
+        if (_stockInfo == null) yield break;
 
         List<Transform> points = GetListOfPointsForStockType(_stockInfo.typeOfStock);
 
-        if (_stockInBox.Count == points.Count || points.Count == 0) return;
+        if (_stockInBox.Count == points.Count || points.Count == 0) yield break;
 
         Transform targetPoint = points[_stockInBox.Count];
 
-        if (targetPoint == null) return;
+        if (targetPoint == null) yield break;
 
+        if (!_isOpen)
+            OpenClose();
+
+        IsTaking = true;
         stock.transform.SetParent(targetPoint);
-        //stock.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         MoveToPlacementPoint(stock, Vector3.zero, Quaternion.identity);
-        stock.PlaceInBox();
         _stockInBox.Add(stock);
+        stock.PlaceInBox();
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
 
-        if (_stockInBox.Count == 1) 
+        if (_stockInBox.Count == 1)
             _maxCapacity = GetMaxPossibleStockAmount(stock.StockInfo.typeOfStock);
+        yield return _stockPickupAndPlaceWaitTime;
+        IsTaking = false;
+    }
 
-        if (!_isOpen) 
-            OpenClose();
+    public void TakeStockFromShelf(StockObject stock)
+    {
+        StartCoroutine(TakeStockFromShelfCoroutine(stock));
     }
 
     private void MoveToPlacementPoint(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
     {
-        TweenSettings settings = new(duration: 0f);
-        Tween.LocalPositionAtSpeed(stock.transform, endPointPosition, MOVE_SPEED);
-        Tween.LocalRotation(stock.transform, endPointRotation, settings);
+        Tween.LocalPosition(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        Tween.LocalRotation(stock.transform, endPointRotation, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
     }
 
     public bool CanTakeStockFromHand(StockObject stock)

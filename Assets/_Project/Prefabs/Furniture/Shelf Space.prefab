@@ -2789,6 +2789,9 @@ MonoBehaviour:
   _shelfNameText: {fileID: 3367513384230357699}
   _shelfPriceText: {fileID: 2697570752179531294}
   _shelfCountText: {fileID: 1789267699415361616}
+  _stockToAndFromShelfMoveSpeed: 10
+  _stockToAndFromShelfRotateSpeed: 100
+  _stockPlacementWaitTimeDuration: 0.15
 --- !u!1 &5919336070052254180
 GameObject:
   m_ObjectHideFlags: 0

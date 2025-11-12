@@ -2671,15 +2671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f309109e46555649839f5dbb54bdbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockBoxController
-  _priority: 0
-  _isInteractable: 1
-  _interactionPrompt: Interact
-  _stockInfo:
-    name: 
-    stockObject: {fileID: 0}
-    typeOfStock: 0
-    basePrice: 0
-    currentPrice: 0
+  _stockInfo: {fileID: 0}
   _stockInBox: []
   _bigDrinkPoints:
   - {fileID: 4494799186769896959}
@@ -2799,6 +2791,7 @@ MonoBehaviour:
   - {fileID: 7353977521691815388}
   - {fileID: 6452997512090581740}
   - {fileID: 5915434958834674804}
+  _stockTakeWaitTimeDuration: 0.15
   _testFill: 0
 --- !u!1 &6404601673547088659
 GameObject:
