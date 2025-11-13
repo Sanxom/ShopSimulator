@@ -238,6 +238,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsLeft.Array.data[0].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsLeft.Array.data[1].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsLeft.Array.data[2].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsLeft.Array.data[3].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsRight.Array.data[0].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsRight.Array.data[1].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsRight.Array.data[2].waitTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334127642684032688, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
+      propertyPath: _entryPointsRight.Array.data[3].waitTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1842530511793153499, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

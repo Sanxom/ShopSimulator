@@ -16,4 +16,5 @@ MonoBehaviour:
   stockObject: {fileID: 4195105889596970896, guid: fffeee1d7188af54fb72f9cfc3571a3a, type: 3}
   typeOfStock: 3
   basePrice: 1.15
-  currentPrice: 0
+  currentPrice: 1.15
+  defaultScale: {x: 0.25, y: 0.25, z: 0.25}

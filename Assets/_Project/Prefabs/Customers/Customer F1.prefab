@@ -115,6 +115,10 @@ PrefabInstance:
       propertyPath: <Anim>k__BackingField
       value: 
       objectReference: {fileID: 6764335935740490029}
+    - target: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+      propertyPath: _shoppingBagDefaultParent
+      value: 
+      objectReference: {fileID: 6764335935748202195}
     - target: {fileID: 6873014243884279907, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -34.92

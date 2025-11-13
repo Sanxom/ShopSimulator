@@ -1,3 +1,4 @@
+using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -85,6 +86,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        PrimeTweenConfig.warnZeroDuration = false;
     }
 
     private void Update()
@@ -505,7 +507,15 @@ public class PlayerInteraction
                 closestHit = hits[i];
 
                 if (closestHit.collider.TryGetComponent(out IInteractable interactable))
-                    interactable.OnInteract(_config.stockHoldPoint);
+                {
+                    if (stockObject.IsOnCheckoutCounter)
+                    {
+                        stockObject.MoveToCheckoutBag();
+                        return;
+                    }
+                    else
+                        interactable.OnInteract(_config.stockHoldPoint);
+                }
 
                 _heldStock = stockObject;
                 HeldObject = _heldStock.gameObject;
@@ -563,19 +573,19 @@ public class PlayerInteraction
             }
         }
 
-        for (int i = 0; i < numOfHits; i++)
-        {
-            if (!hits[i].collider.TryGetComponent(out Checkout checkout)) continue;
-            if (hits[i].distance < minDistance)
-            {
-                minDistance = hits[i].distance;
-                closestHit = hits[i];
+        //for (int i = 0; i < numOfHits; i++)
+        //{
+        //    if (!hits[i].collider.TryGetComponent(out Checkout checkout)) continue;
+        //    if (hits[i].distance < minDistance)
+        //    {
+        //        minDistance = hits[i].distance;
+        //        closestHit = hits[i];
 
-                if (closestHit.collider.TryGetComponent(out IInteractable _))
-                    checkout.OnInteract();
-                return;
-            }
-        }
+        //        if (closestHit.collider.TryGetComponent(out IInteractable _))
+        //            checkout.OnInteract();
+        //        return;
+        //    }
+        //}
 
         for (int i = 0; i < numOfHits; i++)
         {
@@ -646,6 +656,8 @@ public class PlayerInteraction
                     break;
                 }
             }
+
+            if (closestHit.collider == null) return;
 
             if (closestHit.collider.TryGetComponent(out IInteractable interactable))
             {

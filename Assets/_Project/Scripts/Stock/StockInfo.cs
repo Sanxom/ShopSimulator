@@ -22,6 +22,7 @@ public class StockInfo : ScriptableObject
     public StockType typeOfStock;
     public float basePrice;
     public float currentPrice;
+    public Vector3 defaultScale;
     #endregion
 
     #region Serialized Private Fields

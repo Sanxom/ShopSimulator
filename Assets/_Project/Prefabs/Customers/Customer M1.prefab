@@ -52,6 +52,7 @@ MonoBehaviour:
   _maxBrowsePoints: 5
   _animator: {fileID: 8950892786007486733}
   _shoppingBag: {fileID: 7154214772295996412}
+  _shoppingBagDefaultParent: {fileID: 8950892785997962995}
   _stockInBag: []
 --- !u!1001 &8037106466160848557
 PrefabInstance:

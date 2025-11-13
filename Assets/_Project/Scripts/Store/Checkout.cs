@@ -1,3 +1,5 @@
+using PrimeTween;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,15 +19,24 @@ public class Checkout : MonoBehaviour, IInteractable
 
     [Header("Queue State")]
     [SerializeField] private List<Customer> _customersInQueue = new();
+
+    [Header("Checkout Stock Positions")]
+    [SerializeField] private List<Transform> _checkoutStockPositions;
+    [SerializeField] private List<StockObject> _stockObjectsOnCounter;
+    [SerializeField] private Transform _shoppingBagPlacementPoint;
     #endregion
 
     #region Private Fields
-    private const float CUSTOMER_ARRIVAL_THRESHOLD = 0.2f;
+    private float _totalCurrentPriceAmount = 0f;
     #endregion
 
     #region Properties
     public GameObject MyObject { get; set; }
     public List<Customer> CustomersInQueue => _customersInQueue;
+
+    public List<Transform> CheckoutStockPositions { get => _checkoutStockPositions; private set => _checkoutStockPositions = value; }
+    public List<StockObject> StockObjectsOnCounter { get => _stockObjectsOnCounter; set => _stockObjectsOnCounter = value; }
+    public Transform ShoppingBagPlacementPoint { get => _shoppingBagPlacementPoint; private set => _shoppingBagPlacementPoint = value; }
 
     #endregion
 
@@ -36,9 +47,7 @@ public class Checkout : MonoBehaviour, IInteractable
         InitializeSingleton();
     }
 
-    private void Start() => HidePrice();
-
-    private void Update() => ProcessQueuedCustomers();
+    private void Start() => HideCheckoutScreen();
     #endregion
 
     #region Initialization
@@ -67,21 +76,10 @@ public class Checkout : MonoBehaviour, IInteractable
         for (int i = 0; i < _customersInQueue.Count; i++)
         {
             Vector3 queuePosition = _queuePoint.position + (_customerQueueOffset * i * _queuePoint.forward);
-            _customersInQueue[i].UpdateQueuePoint(queuePosition);
-        }
-    }
-
-    private void ProcessQueuedCustomers()
-    {
-        if (_customersInQueue.Count == 0 || _checkoutScreen.activeSelf) return;
-
-        Customer firstCustomer = _customersInQueue[0];
-        float distanceToQueue = Vector3.Distance(firstCustomer.transform.position, _queuePoint.position);
-
-        if (distanceToQueue <= CUSTOMER_ARRIVAL_THRESHOLD)
-        {
-            firstCustomer.transform.LookAt(transform);
-            ShowPrice(firstCustomer.GetTotalSpendAmount());
+            Vector3 nextQueuePosition = i > 0 && i <= _customersInQueue.Count
+                ? _queuePoint.position + (_customerQueueOffset * (i - 1) * _queuePoint.forward)
+                : queuePosition;
+            _customersInQueue[i].UpdateQueuePoint(queuePosition, nextQueuePosition);
         }
     }
     #endregion
@@ -92,22 +90,63 @@ public class Checkout : MonoBehaviour, IInteractable
         if (!_checkoutScreen.activeSelf || _customersInQueue.Count == 0) return;
 
         Customer customer = _customersInQueue[0];
-        float totalSpent = customer.GetTotalSpendAmount();
 
-        HidePrice();
-        StoreController.Instance.AddMoney(totalSpent);
-
-        customer.StartLeaving();
+        HideCheckoutScreen();
+        StoreController.Instance.AddMoney(_totalCurrentPriceAmount);
+        _totalCurrentPriceAmount = 0;
+        customer.ShoppingBag.transform.SetParent(customer.ShoppingBagDefaultParent);
+        Tween.LocalPosition(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localPosition, 0.1f);
+        Tween.LocalRotation(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localRotation, 0.1f);
+        Tween.Scale(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localScale, 0.1f);
+        customer.TransitionToLeaving();
         _customersInQueue.RemoveAt(0);
 
         UpdateQueue();
+    }
 
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySFX(3);
+    private IEnumerator CheckoutCustomerCoroutine()
+    {
+        if (!_checkoutScreen.activeSelf || _customersInQueue.Count == 0) yield break;
+
+        Customer customer = _customersInQueue[0];
+        // TODO:
+        // Customer chooses to pay with cash or card
+        // Take Cash/Card and do appropriate functions
+        // Transition to Change-giving if paid with Cash and press Enter to give change (can give wrong amount) and Checkout Customer
+        // Or Transition to Card swipe/amount entering (can enter wrong amount) and press Enter to Checkout Customer
+        // Change will not be infinite like other games, you have to go to the bank and get change (Or have it delivered with an upgrade?)
+        HideCheckoutScreen();
+        StoreController.Instance.AddMoney(_totalCurrentPriceAmount);
+        _totalCurrentPriceAmount = 0;
+        _priceText.text = $"${_totalCurrentPriceAmount:0.00}";
+        customer.ShoppingBag.transform.SetParent(customer.ShoppingBagDefaultParent);
+        yield return Tween.LocalPosition(customer.ShoppingBag.transform, new(0.00033f, 0.00755f, 0.00139f), 0.1f).ToYieldInstruction();
+        yield return Tween.Rotation(customer.ShoppingBag.transform, Quaternion.identity, 0.1f).ToYieldInstruction();
+        yield return Tween.Scale(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localScale, 0.1f).ToYieldInstruction();
+        customer.TransitionToLeaving();
+        _customersInQueue.RemoveAt(0);
+
+        UpdateQueue();
     }
     #endregion
 
     #region Price Display
+    public void AddToTotalPrice(float priceToAdd)
+    {
+        _checkoutScreen.SetActive(true);
+        _priceText.text = $"${(_totalCurrentPriceAmount += priceToAdd):0.00}";
+        _stockObjectsOnCounter.RemoveAt(0);
+        if (_stockObjectsOnCounter.Count == 0)
+        {
+            StartCoroutine(CheckoutCustomerCoroutine());
+        }
+    }
+
+    public void ShowCheckoutScreen()
+    {
+        _checkoutScreen.SetActive(true);
+    }
+
     private void ShowPrice(float priceTotal)
     {
         if (_checkoutScreen != null)
@@ -117,7 +156,7 @@ public class Checkout : MonoBehaviour, IInteractable
             _priceText.text = $"${priceTotal:0.00}";
     }
 
-    private void HidePrice()
+    private void HideCheckoutScreen()
     {
         if (_checkoutScreen != null)
             _checkoutScreen.SetActive(false);

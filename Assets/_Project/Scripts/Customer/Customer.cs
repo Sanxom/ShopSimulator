@@ -1,4 +1,8 @@
+using PrimeTween;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.Burst;
 using UnityEngine;
 
 public class Customer : MonoBehaviour
@@ -23,21 +27,22 @@ public class Customer : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator _animator;
     [SerializeField] private GameObject _shoppingBag;
+    [SerializeField] private Transform _shoppingBagDefaultParent;
     [SerializeField] private List<StockObject> _stockInBag = new();
     #endregion
 
     #region Private Fields
     private const string IS_MOVING_ANIMATOR_PARAMETER = "isMoving";
-    private const float ARRIVED_AT_POINT_THRESHOLD = 0.25f;
-    private const float QUEUE_POSITION_THRESHOLD = 0.1f;
 
     private CustomerState _currentState;
     private FurnitureController _currentShelfCase;
-    private Transform _currentStandPoint;
+    private Transform _shoppingBagDefaultTransform;
     private Vector3 _queuePoint;
+    private Vector3 _queuePointAhead;
     private float _currentWaitTime;
     private int _browsePointsRemaining;
     private bool _hasGrabbedItem;
+    private bool _isMoving = false;
     #endregion
 
     #region Properties
@@ -45,12 +50,16 @@ public class Customer : MonoBehaviour
     public float MoveSpeed => _moveSpeed;
     public float BrowseTime => _browseTime;
     public int MaxBrowsePoints => _maxBrowsePoints;
+
+    public GameObject ShoppingBag { get => _shoppingBag; private set => _shoppingBag = value; }
+    public Transform ShoppingBagDefaultTransform { get => _shoppingBagDefaultTransform; private set => _shoppingBagDefaultTransform = value; }
+    public Transform ShoppingBagDefaultParent { get => _shoppingBagDefaultParent; private set => _shoppingBagDefaultParent = value; }
     #endregion
 
     #region Unity Lifecycle
     private void OnEnable()
     {
-        _shoppingBag.SetActive(false);
+        ShoppingBag.SetActive(false);
         InitializeCustomer();
     }
 
@@ -66,19 +75,25 @@ public class Customer : MonoBehaviour
         switch (_currentState)
         {
             case CustomerState.Entering:
-                ProcessEntering(deltaTime);
+                //ProcessEntering(deltaTime);
                 break;
             case CustomerState.Browsing:
-                ProcessBrowsing(deltaTime);
+                //ProcessBrowsing(deltaTime);
                 break;
             case CustomerState.Queueing:
-                ProcessQueueing(deltaTime);
+                //ProcessQueueing();
                 break;
             case CustomerState.AtCheckout:
+                //ProcessCheckout();
                 break;
             case CustomerState.Leaving:
-                ProcessLeaving();
+                //ProcessLeaving();
                 break;
+        }
+
+        if (_currentState == CustomerState.AtCheckout && Checkout.Instance.CustomersInQueue[0] != this)
+        {
+            StartCoroutine(MoveToCheckoutCoroutine());
         }
     }
     #endregion
@@ -100,121 +115,22 @@ public class Customer : MonoBehaviour
         {
             transform.position = _navPoints[0].point.position;
             _currentWaitTime = _navPoints[0].waitTime;
-        }
-    }
-    #endregion
-
-    #region State Processing
-    private void ProcessEntering(float deltaTime)
-    {
-        if (_navPoints.Count > 0)
-        {
-            MoveToPoints(deltaTime);
-        }
-        else
-        {
-            TransitionToBrowsing();
+            StartCoroutine(MoveToEntryPointCoroutine());
         }
     }
 
-    private void ProcessBrowsing(float deltaTime)
+    private IEnumerator MoveToEntryPointCoroutine()
     {
-        MoveToPoints(deltaTime);
-
-        if (_navPoints.Count == 0)
+        for (int i = 1; i < _navPoints.Count - 1; i++)
         {
-            if (!_hasGrabbedItem)
-            {
-                GrabStock();
-            }
-            else
-            {
-                CompleteBrowsePoint();
-            }
-        }
-    }
-
-    private void ProcessQueueing(float deltaTime)
-    {
-        MoveTowardsQueue(deltaTime);
-    }
-
-    private void ProcessLeaving()
-    {
-        if (_navPoints.Count > 0)
-        {
-            MoveToPoints(Time.deltaTime);
-        }
-        else
-        {
-            ObjectPool<Customer>.ReturnToPool(this);
-        }
-    }
-    #endregion
-
-    #region Movement
-    private void MoveToPoints(float deltaTime)
-    {
-        if (_navPoints.Count == 0)
-        {
-            StartNextPoint();
-            return;
+            transform.LookAt(_navPoints[i].point.position);
+            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+            yield return Tween.PositionAtSpeed(transform, _navPoints[i].point.position, MoveSpeed, Ease.Linear).ToYieldInstruction();
+            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+            yield return new WaitForSeconds(_currentWaitTime);
         }
 
-        Vector3 targetPosition = new(
-            _navPoints[0].point.position.x,
-            transform.position.y,
-            _navPoints[0].point.position.z
-        );
-
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * deltaTime);
-        transform.LookAt(targetPosition);
-
-        if (_currentShelfCase != null && _currentShelfCase.IsHeld && CurrentState == CustomerState.Browsing)
-        {
-            CompleteBrowsePoint();
-            return;
-        }
-
-        bool isMoving = Vector3.Distance(transform.position, targetPosition) >= ARRIVED_AT_POINT_THRESHOLD;
-
-        if (!isMoving)
-        {
-            _currentWaitTime -= deltaTime;
-            if (_currentWaitTime <= 0f)
-            {
-                StartNextPoint();
-            }
-        }
-
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, isMoving);
-    }
-
-    private void MoveTowardsQueue(float deltaTime)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, _queuePoint, _moveSpeed * deltaTime);
-
-        bool isMoving = Vector3.Distance(transform.position, _queuePoint) > QUEUE_POSITION_THRESHOLD;
-
-        if (isMoving)
-        {
-            transform.LookAt(_queuePoint);
-        }
-
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, isMoving);
-    }
-
-    public void StartNextPoint()
-    {
-        if (_navPoints.Count > 0)
-        {
-            _navPoints.RemoveAt(0);
-
-            if (_navPoints.Count > 0)
-            {
-                _currentWaitTime = _navPoints[0].waitTime;
-            }
-        }
+        TransitionToBrowsing();
     }
     #endregion
 
@@ -227,13 +143,67 @@ public class Customer : MonoBehaviour
         GetBrowsePoint();
     }
 
+    private IEnumerator BrowsingCoroutine()
+    {
+        Vector3 targetPosition;
+
+        if (_navPoints.Count == 0)
+        {
+            TransitionToLeaving();
+            yield break;
+        }
+
+        if (_currentShelfCase != null && _currentShelfCase.IsHeld)
+        {
+            CompleteBrowsePoint();
+            yield break;
+        }
+
+        targetPosition = new
+        (
+            _navPoints[0].point.position.x,
+            transform.position.y,
+            _navPoints[0].point.position.z
+        );
+
+        transform.LookAt(targetPosition);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        yield return Tween.PositionAtSpeed(transform, targetPosition, MoveSpeed, Ease.Linear).ToYieldInstruction();
+        transform.LookAt(_currentShelfCase.transform);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+
+        if (_currentShelfCase != null && _currentShelfCase.IsHeld)
+        {
+            CompleteBrowsePoint();
+            yield break;
+        }
+
+        yield return new WaitForSeconds(_currentWaitTime);
+
+        if (_currentShelfCase != null && _currentShelfCase.IsHeld)
+        {
+            CompleteBrowsePoint();
+            yield break;
+        }
+
+        StartNextPoint();
+
+        if (_navPoints.Count == 0)
+        {
+            if (!_hasGrabbedItem)
+                GrabStock();
+            else
+                CompleteBrowsePoint();
+        }
+    }
+
     private void GetBrowsePoint()
     {
         _navPoints.Clear();
 
         if ((StoreController.Instance.ShelvingCases.Count == 0) || (StoreController.Instance.ShelvingCases.Count == 1 && StoreController.Instance.ShelvingCases[0].IsHeld))
         {
-            StartLeaving();
+            TransitionToLeaving();
             return;
         }
 
@@ -248,6 +218,8 @@ public class Customer : MonoBehaviour
 
         _navPoints.Add(browsePoint);
         _currentWaitTime = browsePoint.waitTime;
+
+        StartCoroutine(BrowsingCoroutine());
     }
 
     public void GrabStock()
@@ -267,28 +239,32 @@ public class Customer : MonoBehaviour
             PlaceStockInBag(stock);
             SetupPostGrabWait();
         }
+        else
+            CompleteBrowsePoint();
     }
 
     private void PlaceStockInBag(StockObject stock)
     {
-        _shoppingBag.SetActive(true);
-        stock.transform.SetParent(_shoppingBag.transform);
+        ShoppingBag.SetActive(true);
+        ShoppingBagDefaultTransform = ShoppingBag.transform;
+        stock.transform.SetParent(ShoppingBag.transform);
         _stockInBag.Add(stock);
-        stock.PlaceInBag(_shoppingBag.transform);
+        stock.PlaceInBag(ShoppingBag.transform);
     }
 
     private void SetupPostGrabWait()
     {
         _navPoints.Clear();
 
-        NavPoint waitPoint = new NavPoint
+        NavPoint waitPoint = new()
         {
-            point = _currentShelfCase.CustomerStandPoint,
+            point = transform,
             waitTime = _waitAfterGrabbing * Random.Range(0.75f, 1.25f)
         };
 
         _navPoints.Add(waitPoint);
         _currentWaitTime = waitPoint.waitTime;
+        StartCoroutine(BrowsingCoroutine());
     }
 
     private void CompleteBrowsePoint()
@@ -310,28 +286,120 @@ public class Customer : MonoBehaviour
     {
         if (_stockInBag.Count > 0)
         {
-            Checkout.Instance.AddCustomerToQueue(this);
-            _currentState = CustomerState.Queueing;
+            TransitionToQueueing();
         }
         else
         {
-            StartLeaving();
+            TransitionToLeaving();
+        }
+    }
+
+    private void StartNextPoint()
+    {
+        if (_navPoints.Count > 0)
+        {
+            _navPoints.RemoveAt(0);
+
+            if (_navPoints.Count > 0)
+            {
+                _currentWaitTime = _navPoints[0].waitTime;
+            }
         }
     }
     #endregion
 
+    #region Queueing
+    private void TransitionToQueueing()
+    {
+        _currentState = CustomerState.Queueing;
+        Checkout.Instance.AddCustomerToQueue(this);
+        StartCoroutine(MoveToQueueCoroutine());
+    }
+
+    private IEnumerator MoveToQueueCoroutine()
+    {
+        Tween.StopAll(this);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        transform.LookAt(_queuePoint);
+        yield return Tween.PositionAtSpeed(transform, _queuePoint, MoveSpeed, Ease.Linear).ToYieldInstruction();
+        transform.LookAt(_queuePointAhead);
+        Checkout.Instance.CustomersInQueue[0].transform.LookAt(Checkout.Instance.transform);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        TransitionToCheckout();
+    }
+    #endregion
+
+    #region AtCheckout
+    private void TransitionToCheckout()
+    {
+        _currentState = CustomerState.AtCheckout;
+        StartCoroutine(MoveToCheckoutCoroutine());
+    }
+
+    private IEnumerator MoveToCheckoutCoroutine()
+    {
+        Tween.StopAll(this);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        transform.LookAt(_queuePoint);
+        yield return Tween.PositionAtSpeed(transform, _queuePoint, MoveSpeed, Ease.Linear).ToYieldInstruction();
+        transform.LookAt(_queuePointAhead);
+        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        StartCoroutine(AtCheckoutCoroutine());
+    }
+
+    private IEnumerator AtCheckoutCoroutine()
+    {
+        if (Checkout.Instance.CustomersInQueue[0] != this) yield break;
+
+        Checkout.Instance.CustomersInQueue[0].transform.LookAt(Checkout.Instance.transform);
+        Checkout.Instance.ShowCheckoutScreen();
+        List<Transform> tempStockPositions = Checkout.Instance.CheckoutStockPositions;
+        int stockCount = _stockInBag.Count;
+        for (int i = 0; i < stockCount; i++)
+        {
+            StockObject tempStock = _stockInBag[0];
+            tempStock.transform.SetParent(tempStockPositions[i]);
+            yield return Tween.Scale(tempStock.transform, tempStock.StockInfo.defaultScale, 0.1f).ToYieldInstruction();
+            yield return Tween.LocalPosition(tempStock.transform, Vector3.zero, 0.2f).ToYieldInstruction();
+            tempStock.PlaceOnCheckoutCounter(Checkout.Instance);
+            _stockInBag.RemoveAt(0);
+        }
+        ShoppingBag.transform.SetParent(Checkout.Instance.ShoppingBagPlacementPoint);
+        yield return Tween.Scale(ShoppingBag.transform, new Vector3(1.2f, 1.2f, 1.2f), 0.1f).ToYieldInstruction();
+        yield return Tween.LocalPosition(ShoppingBag.transform, Vector3.zero, 0.1f).ToYieldInstruction();
+        yield return Tween.LocalRotation(ShoppingBag.transform, Quaternion.identity, 0.1f).ToYieldInstruction();
+    }
+    #endregion
+
+    #region Leaving
+    private IEnumerator LeavingCoroutine()
+    {
+        for (int i = 0; i < _navPoints.Count; i++)
+        {
+            transform.LookAt(_navPoints[i].point.position);
+            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+            yield return Tween.PositionAtSpeed(transform, _navPoints[i].point.position, MoveSpeed, Ease.Linear).ToYieldInstruction();
+            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        }
+
+        ObjectPool<Customer>.ReturnToPool(this);
+    }
+    #endregion
+
     #region Public Methods
-    public void StartLeaving()
+    public void TransitionToLeaving()
     {
         _currentState = CustomerState.Leaving;
         _navPoints.Clear();
         _navPoints.AddRange(CustomerManager.Instance.GetExitPoints());
+        StartCoroutine(LeavingCoroutine());
     }
 
-    public void UpdateQueuePoint(Vector3 newPoint)
+    public void UpdateQueuePoint(Vector3 newPoint, Vector3 pointAhead)
     {
         _queuePoint = newPoint;
-        transform.LookAt(_queuePoint);
+        _queuePointAhead = pointAhead;
+        transform.LookAt(pointAhead);
     }
 
     public float GetTotalSpendAmount()
