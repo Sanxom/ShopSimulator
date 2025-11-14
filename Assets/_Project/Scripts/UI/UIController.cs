@@ -1,3 +1,4 @@
+using PrimeTween;
 using System;
 using TMPro;
 using UnityEditor;
@@ -222,19 +223,19 @@ public class UIController : MonoBehaviour
     public void PauseGame()
     {
         if (_pauseMenuPanel.activeSelf) return;
-
         _pauseMenuPanel.SetActive(true);
         OnUIPanelOpened?.Invoke();
         Time.timeScale = 0f;
+        Tween.SetPausedAll(true);
     }
 
     public void UnpauseGame()
     {
         if (!_pauseMenuPanel.activeSelf) return;
-
         OnUIPanelClosed?.Invoke();
         _pauseMenuPanel.SetActive(false);
         Time.timeScale = 1f;
+        Tween.SetPausedAll(false);
     }
 #endregion
 

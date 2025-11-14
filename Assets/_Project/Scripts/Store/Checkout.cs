@@ -79,6 +79,10 @@ public class Checkout : MonoBehaviour, IInteractable
             Vector3 nextQueuePosition = i > 0 && i <= _customersInQueue.Count
                 ? _queuePoint.position + (_customerQueueOffset * (i - 1) * _queuePoint.forward)
                 : queuePosition;
+            if (_customersInQueue[0].transform.position != _queuePoint.position)
+            {
+                Tween.Position(_customersInQueue[0].transform, _queuePoint.position, 0.1f, Ease.Linear);
+            }
             _customersInQueue[i].UpdateQueuePoint(queuePosition, nextQueuePosition);
         }
     }
@@ -95,9 +99,9 @@ public class Checkout : MonoBehaviour, IInteractable
         StoreController.Instance.AddMoney(_totalCurrentPriceAmount);
         _totalCurrentPriceAmount = 0;
         customer.ShoppingBag.transform.SetParent(customer.ShoppingBagDefaultParent);
-        Tween.LocalPosition(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localPosition, 0.1f);
-        Tween.LocalRotation(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localRotation, 0.1f);
-        Tween.Scale(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localScale, 0.1f);
+        Tween.LocalPosition(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localPosition, 0.1f, Ease.Linear);
+        Tween.LocalRotation(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localRotation, 0.1f, Ease.Linear);
+        Tween.Scale(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localScale, 0.1f, Ease.Linear);
         customer.TransitionToLeaving();
         _customersInQueue.RemoveAt(0);
 
@@ -109,6 +113,7 @@ public class Checkout : MonoBehaviour, IInteractable
         if (!_checkoutScreen.activeSelf || _customersInQueue.Count == 0) yield break;
 
         Customer customer = _customersInQueue[0];
+        customer.TransitionToPaymentOption();
         // TODO:
         // Customer chooses to pay with cash or card
         // Take Cash/Card and do appropriate functions
@@ -120,9 +125,10 @@ public class Checkout : MonoBehaviour, IInteractable
         _totalCurrentPriceAmount = 0;
         _priceText.text = $"${_totalCurrentPriceAmount:0.00}";
         customer.ShoppingBag.transform.SetParent(customer.ShoppingBagDefaultParent);
-        yield return Tween.LocalPosition(customer.ShoppingBag.transform, new(0.00033f, 0.00755f, 0.00139f), 0.1f).ToYieldInstruction();
-        yield return Tween.Rotation(customer.ShoppingBag.transform, Quaternion.identity, 0.1f).ToYieldInstruction();
-        yield return Tween.Scale(customer.ShoppingBag.transform, customer.ShoppingBagDefaultTransform.localScale, 0.1f).ToYieldInstruction();
+        yield return new WaitForSeconds(0.5f);
+        yield return Tween.LocalPosition(customer.ShoppingBag.transform, Vector3.zero, 0.1f, Ease.Linear).ToYieldInstruction();
+        yield return Tween.Rotation(customer.ShoppingBag.transform, Quaternion.identity, 0.1f, Ease.Linear).ToYieldInstruction();
+        yield return Tween.Scale(customer.ShoppingBag.transform, Vector3.zero, 0.1f, Ease.Linear).ToYieldInstruction();
         customer.TransitionToLeaving();
         _customersInQueue.RemoveAt(0);
 

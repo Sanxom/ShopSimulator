@@ -1,8 +1,6 @@
 using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.Burst;
 using UnityEngine;
 
 public class Customer : MonoBehaviour
@@ -13,6 +11,8 @@ public class Customer : MonoBehaviour
         Browsing,
         Queueing,
         AtCheckout,
+        PayingWithCash,
+        PayingWithCard,
         Leaving
     }
 
@@ -29,6 +29,8 @@ public class Customer : MonoBehaviour
     [SerializeField] private GameObject _shoppingBag;
     [SerializeField] private Transform _shoppingBagDefaultParent;
     [SerializeField] private List<StockObject> _stockInBag = new();
+    [SerializeField] private GameObject _cashObject;
+    [SerializeField] private GameObject _cardObject;
     #endregion
 
     #region Private Fields
@@ -42,7 +44,7 @@ public class Customer : MonoBehaviour
     private float _currentWaitTime;
     private int _browsePointsRemaining;
     private bool _hasGrabbedItem;
-    private bool _isMoving = false;
+    private bool _isPayingWithCard = true;
     #endregion
 
     #region Properties
@@ -105,6 +107,13 @@ public class Customer : MonoBehaviour
         _navPoints.Clear();
         _stockInBag.Clear();
         _hasGrabbedItem = false;
+
+        float payWithCardChance = 0.70f;
+        float randomValue = Random.Range(0f, 1f);
+        if (randomValue <= payWithCardChance)
+            _isPayingWithCard = true;
+        else
+            _isPayingWithCard = false;
     }
 
     private void SetupEntryPath()
@@ -349,9 +358,9 @@ public class Customer : MonoBehaviour
 
     private IEnumerator AtCheckoutCoroutine()
     {
+        Checkout.Instance.UpdateQueue();
         if (Checkout.Instance.CustomersInQueue[0] != this) yield break;
-
-        Checkout.Instance.CustomersInQueue[0].transform.LookAt(Checkout.Instance.transform);
+        Tween.StopAll(this);
         Checkout.Instance.ShowCheckoutScreen();
         List<Transform> tempStockPositions = Checkout.Instance.CheckoutStockPositions;
         int stockCount = _stockInBag.Count;
@@ -359,15 +368,82 @@ public class Customer : MonoBehaviour
         {
             StockObject tempStock = _stockInBag[0];
             tempStock.transform.SetParent(tempStockPositions[i]);
-            yield return Tween.Scale(tempStock.transform, tempStock.StockInfo.defaultScale, 0.1f).ToYieldInstruction();
-            yield return Tween.LocalPosition(tempStock.transform, Vector3.zero, 0.2f).ToYieldInstruction();
+            yield return Tween.Scale(tempStock.transform, tempStock.StockInfo.defaultScale, 0.1f, Ease.Linear).ToYieldInstruction();
+            yield return Tween.LocalPosition(tempStock.transform, Vector3.zero, 0.1f, Ease.Linear).ToYieldInstruction();
             tempStock.PlaceOnCheckoutCounter(Checkout.Instance);
             _stockInBag.RemoveAt(0);
+            transform.LookAt(Checkout.Instance.transform);
         }
         ShoppingBag.transform.SetParent(Checkout.Instance.ShoppingBagPlacementPoint);
-        yield return Tween.Scale(ShoppingBag.transform, new Vector3(1.2f, 1.2f, 1.2f), 0.1f).ToYieldInstruction();
-        yield return Tween.LocalPosition(ShoppingBag.transform, Vector3.zero, 0.1f).ToYieldInstruction();
-        yield return Tween.LocalRotation(ShoppingBag.transform, Quaternion.identity, 0.1f).ToYieldInstruction();
+        yield return Tween.Scale(ShoppingBag.transform, new Vector3(1.2f, 1.2f, 1.2f), 0.1f, Ease.Linear).ToYieldInstruction();
+        yield return Tween.LocalPosition(ShoppingBag.transform, Vector3.zero, 0.1f, Ease.Linear).ToYieldInstruction();
+        yield return Tween.LocalRotation(ShoppingBag.transform, Quaternion.identity, 0.1f, Ease.Linear).ToYieldInstruction();
+    }
+    #endregion
+
+    #region Payment
+    private IEnumerator PayWithCardCoroutine()
+    {
+        // Set Interactable Card Object active and hold up
+        _cardObject.SetActive(true);
+        // Use PlayerController to check for Card Input on Interact pressed
+        // Swap camera view to card machine with screen in view
+        // Swipe or tap card (80% tap, 20% swipe chance for variety)
+        // Player can interact with buttons on keypad to enter an amount to charge or use keyboard to type it
+        // Once player presses Enter to submit the amount, the camera swaps back to normal view, this Customer transitions to leaving, and the Queue is updated
+
+        yield break;
+    }
+
+    private IEnumerator PayWithCashCoroutine()
+    {
+        float cashHandedToPlayer = GenerateRandomCashPayment(GetTotalSpendAmount());
+        // Set Interactable Cash Object active and hold up
+        _cashObject.SetActive(true);
+        // Use PlayerController to check for Cash Input on Interact pressed
+        // Swap camera view to cash register with screen in view and open the register
+        // Screen shows how much Customer gave in cash and change due
+        // Click on interactable bills/coins in the register to have them Tween to a position on the counter (one position for each bill/coin)
+        // Subtract that amount from change due variable as well as text on screen
+        // Once Player presses Enter to submit the amount, the camera swaps back to normal view,
+        // the cashReceived - changeGiven is added to Player's this Customer transitions to leaving, and the Queue is updated
+
+        yield break;
+    }
+
+    private float GenerateRandomCashPayment(float totalCost)
+    {
+        float random = Random.value;
+        // 12% chance to pay with exact change
+        if (random <= 0.12f)
+            return totalCost;
+        // 20% chance to pay with 20% more, rounded up
+        if (random <= 0.32f)
+            return Mathf.Ceil(totalCost * 1.2f);
+        // 68% chance to pay with the roundingIncrement below
+        if (random <= 1f)
+        {
+            // Determine rounding increment based on total cost
+            float roundingIncrement = totalCost switch
+            {
+                < 5f => 1f,// Round to nearest $1
+                < 20f => 5f,// Round to nearest $5
+                < 50f => 10f,// Round to nearest $10
+                < 100f => 20f,// Round to nearest $20
+                _ => 50f,// Round to nearest $50
+            };
+
+            // Calculate the minimum payment (rounded up to next increment)
+            float minPayment = Mathf.Ceil(totalCost / roundingIncrement) * roundingIncrement;
+
+            // Pick a random amount (0, 1, or 2 extra increments)
+            int numIncrements = Random.Range(0, 3);
+            float payment = minPayment + (numIncrements * roundingIncrement);
+
+            return payment;
+        }
+        // Should never reach here, but just pay exact amount as a fail-safe
+        return totalCost;
     }
     #endregion
 
@@ -387,6 +463,19 @@ public class Customer : MonoBehaviour
     #endregion
 
     #region Public Methods
+    public void TransitionToPaymentOption()
+    {
+        if (_isPayingWithCard)
+        {
+            _currentState = CustomerState.PayingWithCard;
+            StartCoroutine(PayWithCardCoroutine());
+        }
+        else
+        {
+            _currentState = CustomerState.PayingWithCash;
+            StartCoroutine(PayWithCashCoroutine());
+        }
+    }
     public void TransitionToLeaving()
     {
         _currentState = CustomerState.Leaving;

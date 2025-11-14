@@ -9,12 +9,9 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     #endregion
 
     #region Private Fields
-    private const float MOVE_SPEED = 10f;
 
     private Transform _bagPositionInWorld;
-    private bool _isHeld;
     private bool _isPlaced;
-    private bool _isInBag;
     private bool _isOnCheckoutCounter;
     private Rigidbody _rigidbody;
     private Collider _collider;
@@ -52,9 +49,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     private void ResetState()
     {
-        _isHeld = false;
         _isPlaced = false;
-        _isInBag = false;
         _isOnCheckoutCounter = false;
     }
 
@@ -99,7 +94,6 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
         _isPlaced = false;
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
-        _isHeld = true;
         MoveToPlacedPosition(holdPoint);
 
         if (AudioManager.Instance != null)
@@ -121,7 +115,6 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     public void PlaceInBag(Transform bagPosition)
     {
         _bagPositionInWorld = bagPosition;
-        _isInBag = true;
         MoveToBagPosition(_bagPositionInWorld);
         MakePlaced();
     }
