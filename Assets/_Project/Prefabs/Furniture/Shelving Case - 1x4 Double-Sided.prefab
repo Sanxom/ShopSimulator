@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 706750778177861806}
   - component: {fileID: 1190635766200293680}
   - component: {fileID: 8660149621548177129}
-  m_Layer: 16
+  m_Layer: 7
   m_Name: Shelving Case - 1x4 Double-Sided
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  furnitureInfo: {fileID: 11400000, guid: b81a79ae984e0534a8784c5eee2883d2, type: 2}
   _price: 500
   _shelves:
   - {fileID: 8879867497288652232}
@@ -126,7 +125,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  furnitureInfo: {fileID: 0}
   _price: 500
   _shelves:
   - {fileID: 3119212320069560654}

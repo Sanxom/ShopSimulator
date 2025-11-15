@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 9140553905540937760}
   - component: {fileID: 4265983518423994648}
   - component: {fileID: 6419496879619822556}
-  m_Layer: 16
+  m_Layer: 7
   m_Name: Shelving Case - 1x4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,8 +154,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4949462, y: 2.4483545, z: 0.6671989}
-  m_Center: {x: -0.0044995546, y: 1.2191235, z: 0.30815876}
+  m_Size: {x: 1.4585204, y: 2.4483545, z: 0.65418965}
+  m_Center: {x: -0.0018976927, y: 1.2191235, z: 0.30165413}
 --- !u!114 &6419496879619822556
 MonoBehaviour:
   m_ObjectHideFlags: 0

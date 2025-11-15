@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1449375314480803298}
   - component: {fileID: 2568850968416035219}
   - component: {fileID: 1153738974391467683}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Lime Soda
   m_TagString: Untagged
   m_Icon: {fileID: 0}

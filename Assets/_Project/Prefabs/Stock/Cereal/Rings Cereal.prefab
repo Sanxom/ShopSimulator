@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8694577461757824257}
   - component: {fileID: 6171936624039892896}
   - component: {fileID: 8558298658618883541}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Rings Cereal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

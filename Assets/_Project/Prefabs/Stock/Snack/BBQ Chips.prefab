@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2789143914950838127}
   - component: {fileID: 2200772637018499390}
   - component: {fileID: 1325277484929602757}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: BBQ Chips
   m_TagString: Untagged
   m_Icon: {fileID: 0}

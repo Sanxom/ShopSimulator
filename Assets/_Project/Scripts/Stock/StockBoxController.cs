@@ -283,6 +283,8 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
         if (_stockInfo == null) return false;
 
+        if (_stockInfo != stock.StockInfo) return false;
+
         List<Transform> points = GetListOfPointsForStockType(_stockInfo.typeOfStock);
 
         if (_stockInBox.Count == points.Count || points.Count == 0)

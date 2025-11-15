@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8377686844511865424}
   - component: {fileID: 1072619397109233441}
   - component: {fileID: 8639642362173963538}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Cola Soda
   m_TagString: Untagged
   m_Icon: {fileID: 0}

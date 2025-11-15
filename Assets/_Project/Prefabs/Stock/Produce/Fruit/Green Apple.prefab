@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4250968049725356189}
   - component: {fileID: 7252551189605494413}
   - component: {fileID: 5959850270914625573}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Green Apple
   m_TagString: Untagged
   m_Icon: {fileID: 0}

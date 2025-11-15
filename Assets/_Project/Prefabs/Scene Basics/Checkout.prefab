@@ -1884,7 +1884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8544673404602262083
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2565,7 +2565,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4988764305657850264}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Shopping Bag Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3093,7 +3093,7 @@ GameObject:
   - component: {fileID: 5029787219398892379}
   - component: {fileID: 6848569598189299427}
   - component: {fileID: 673821680794992524}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Checkout
   m_TagString: Untagged
   m_Icon: {fileID: 0}

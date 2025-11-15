@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6587410432811309631}
   - component: {fileID: 4451407029773144986}
   - component: {fileID: 7660662851968950609}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Granola Cereal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

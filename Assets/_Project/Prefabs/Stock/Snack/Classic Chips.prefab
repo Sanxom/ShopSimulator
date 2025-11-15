@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 795286775958411911}
   - component: {fileID: 977901545427542571}
   - component: {fileID: 9709331498928436}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Classic Chips
   m_TagString: Untagged
   m_Icon: {fileID: 0}

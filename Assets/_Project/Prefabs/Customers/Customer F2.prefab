@@ -8,6 +8,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1737586126921399650, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2579402313560615986, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+      propertyPath: _cardObject
+      value: 
+      objectReference: {fileID: 7113781222117349597}
+    - target: {fileID: 2579402313560615986, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+      propertyPath: _cashObject
+      value: 
+      objectReference: {fileID: 9007004057828468352}
     - target: {fileID: 3783496506270315745, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
       propertyPath: m_Name
       value: Customer F2
@@ -57,3 +69,13 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+--- !u!1 &7113781222117349597 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1737586126921399650, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+  m_PrefabInstance: {fileID: 8837222679555466687}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9007004057828468352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 458049177099944767, guid: 8b80e3bd6e05771428becad04e1545a0, type: 3}
+  m_PrefabInstance: {fileID: 8837222679555466687}
+  m_PrefabAsset: {fileID: 0}

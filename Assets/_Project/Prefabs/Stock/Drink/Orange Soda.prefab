@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4872487662992234046}
   - component: {fileID: 6325888370189583057}
   - component: {fileID: 6820720772348931434}
-  m_Layer: 16
+  m_Layer: 9
   m_Name: Orange Soda
   m_TagString: Untagged
   m_Icon: {fileID: 0}

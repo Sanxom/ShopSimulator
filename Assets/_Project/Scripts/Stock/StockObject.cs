@@ -70,7 +70,6 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     private void MoveToBagPosition(Transform bagPosition)
     {
         if (bagPosition == null) return;
-
         Tween.Position(transform, bagPosition.position, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
         Tween.LocalRotation(transform, Quaternion.identity, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
         Tween.Scale(transform, Vector3.zero, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
@@ -91,6 +90,7 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
 
     private IEnumerator PickupCoroutine(Transform holdPoint)
     {
+        StopAllCoroutines();
         _isPlaced = false;
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
