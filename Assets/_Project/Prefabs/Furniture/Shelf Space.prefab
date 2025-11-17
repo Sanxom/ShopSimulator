@@ -1517,6 +1517,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d0cdf37235a4744b851d14e0acfda4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PriceLabel
+  _displayName: Interact
+  _isEnabled: 1
   myShelf: {fileID: 8085944974100758853}
 --- !u!65 &4343885509010267107
 BoxCollider:
@@ -2695,6 +2697,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
+  _displayName: Interact
+  _isEnabled: 1
   _objectsOnShelf: []
   _stockInfo: {fileID: 0}
   _bigDrinkPoints:
@@ -2884,6 +2888,7 @@ GameObject:
   - component: {fileID: 3362037490675119205}
   - component: {fileID: 7037669337134335948}
   - component: {fileID: 2415984581231979440}
+  - component: {fileID: 6744109181404863041}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -2962,6 +2967,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6744109181404863041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6007000369338007940}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  outlineWidth: 1
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &6169057088635278738
 GameObject:
   m_ObjectHideFlags: 0

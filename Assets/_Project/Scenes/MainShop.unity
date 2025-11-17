@@ -2097,6 +2097,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2706615265981477023, guid: 43199563a09f891488fc403b16e1d58f, type: 3}
+      propertyPath: <MaxPossibleInteractableObjects>k__BackingField
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4581837503135296393, guid: 43199563a09f891488fc403b16e1d58f, type: 3}
       propertyPath: m_Name
       value: Player
@@ -5960,6 +5964,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991327b1acf2da6439812390b38cc9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoreSign
+  _displayName: Interact
+  _isEnabled: 1
   storeSignText: {fileID: 0}
 --- !u!1 &1769868201 stripped
 GameObject:

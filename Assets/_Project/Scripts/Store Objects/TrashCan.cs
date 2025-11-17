@@ -2,16 +2,22 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrashCan : MonoBehaviour, IInteractable
+public class TrashCan : InteractableObject
 {
-    public GameObject MyObject { get; set; }
-
-    private void Awake() => MyObject = gameObject;
-
-    public string GetInteractionPrompt() => "Trash Can";
-
-    public void OnInteract(Transform holdPoint = null)
+    protected override void Awake()
     {
-        //noop, just here as marker, really
+        base.Awake();
+    }
+
+    public override void OnInteract(PlayerInteraction player)
+    {
+        if (player.HeldObject == null) return;
+        if (!player.CanBeTrashed(player.HeldObject)) return;
+
+        if (player.HeldObject.TryGetComponent(out ITrashable trashable))
+        {
+            player.RemoveHeldObjectReference();
+            trashable.TrashObject();
+        }
     }
 }

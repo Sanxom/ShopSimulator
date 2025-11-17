@@ -302,6 +302,7 @@ GameObject:
   - component: {fileID: 291449620463026125}
   - component: {fileID: 3007382644555023689}
   - component: {fileID: 561707334723003003}
+  - component: {fileID: 2706615265981477023}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -365,44 +366,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _controller: {fileID: 3007382644555023689}
   _camera: {fileID: 1092737199951999549}
+  _playerInteraction: {fileID: 2706615265981477023}
   _moveSpeed: 5
   _lookSpeed: 8
   _jumpForce: 4
   _minLookAngle: -70
   _maxLookAngle: 70
-  _interactionRange: 3
-  _throwForce: 7
+--- !u!114 &2706615265981477023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4581837503135296393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3599fb112db85504395c4de53fcfe86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  _camera: {fileID: 1092737199951999549}
   _stockHoldPoint: {fileID: 6918392840584523512}
   _boxHoldPoint: {fileID: 8081062794147123609}
   _furnitureHoldPoint: {fileID: 3990113605105937221}
-  _stockLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _shelfLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _priceLabelLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _stockBoxLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _trashLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _furnitureLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  _checkoutLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _storeSignLayer:
-    serializedVersion: 2
-    m_Bits: 0
   _interactableLayer:
     serializedVersion: 2
     m_Bits: 512
-  _maxPossibleInteractableObjects: 8
+  _furnitureLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  _interactionRange: 3
+  _throwForce: 5
+  _waitToPlaceStock: 0.1
+  <StockHoldPoint>k__BackingField: {fileID: 6918392840584523512}
+  <BoxHoldPoint>k__BackingField: {fileID: 8081062794147123609}
+  <FurnitureHoldPoint>k__BackingField: {fileID: 3990113605105937221}
+  <MaxPossibleInteractableObjects>k__BackingField: 8
 --- !u!1 &8867706846974703177
 GameObject:
   m_ObjectHideFlags: 0

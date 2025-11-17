@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class StoreSign : MonoBehaviour, IInteractable
+public class StoreSign : InteractableObject
 {
     #region Event Fields
     #endregion
@@ -17,17 +17,20 @@ public class StoreSign : MonoBehaviour, IInteractable
     #endregion
 
     #region Public Properties
-    public GameObject MyObject { get; set; }
     #endregion
 
     #region Unity Callbacks
-    private void Awake() => MyObject = gameObject;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
     #endregion
 
     #region Public Methods
-    public string GetInteractionPrompt() => $"Store Sign";
-
-    public void OnInteract(Transform holdPoint = null) => storeSignText.text = ""; // TODO: Bring up a window to change the Text of the Store Sign with Player Input
+    public override void OnInteract(PlayerInteraction player)
+    {
+        // TODO: Bring up a window to change the Text of the Store Sign with Player Input
+    }
     #endregion
 
     #region Private Methods

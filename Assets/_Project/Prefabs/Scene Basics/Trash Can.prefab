@@ -67,6 +67,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd185d85d1614d54ab9d37875673d2de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashCan
+  _displayName: Trash Can
+  _isEnabled: 1
 --- !u!1001 &3376581423204767039
 PrefabInstance:
   m_ObjectHideFlags: 0

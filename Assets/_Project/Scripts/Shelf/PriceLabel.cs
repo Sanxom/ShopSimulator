@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PriceLabel : MonoBehaviour, IInteractable
+public class PriceLabel : InteractableObject
 {
     #region Event Fields
     #endregion
@@ -16,21 +16,26 @@ public class PriceLabel : MonoBehaviour, IInteractable
     #endregion
 
     #region Public Properties
-    public GameObject MyObject { get; set; }
     #endregion
 
     #region Unity Callbacks
+    protected override void Awake()
+    {
+        base.Awake();
+    }
     #endregion
 
     #region Public Methods
-    public void OnInteract(Transform holdPoint = null)
-    {
-        myShelf.StartPriceUpdate();
-    }
+    //public void OnInteract(Transform holdPoint = null)
+    //{
+    //    myShelf.StartPriceUpdate();
+    //}
 
-    public string GetInteractionPrompt()
+    public override void OnInteract(PlayerInteraction player)
     {
-        return $"Set Price of {myShelf.StockInfo.Name}";
+        if (player.IsHoldingSomething) return; // TODO: We can remove this if we want to update prices even while holding something.  This might get annoying, though.
+
+        myShelf.StartPriceUpdate();
     }
     #endregion
 

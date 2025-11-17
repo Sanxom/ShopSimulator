@@ -2,8 +2,9 @@ using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
+public class StockBoxController : InteractableObject, ITrashable
 {
     #region Serialized Fields
     [Header("Stock Settings")]
@@ -37,7 +38,6 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     #endregion
 
     #region Properties
-    public GameObject MyObject { get; set; }
     public Rigidbody Rb => _rigidbody;
     public Collider Col => _collider;
     public bool OpenBox => _isOpen;
@@ -47,11 +47,13 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
     public bool IsTaking { get => _isTaking; set => _isTaking = value; }
     public bool IsPlacing { get => _isPlacing; set => _isPlacing = value; }
+    public bool CanTrash { get; private set; }
     #endregion
 
     #region Unity Lifecycle
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         CacheComponents();
     }
 
@@ -75,7 +77,6 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
     #region Initialization
     private void CacheComponents()
     {
-        MyObject = gameObject;
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         _animator = GetComponent<Animator>();
@@ -159,6 +160,8 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
         MoveToHoldPosition();
+        if (!_isOpen)
+            OpenClose();
     }
 
     public void Release()
@@ -313,22 +316,37 @@ public class StockBoxController : MonoBehaviour, IInteractable, ITrashable
 
     public void TrashObject()
     {
+        if (StockInBox.Count > 0) return;
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(10);
         ObjectPool<StockBoxController>.ReturnToPool(this);
     }
 
-    public void OnInteract(Transform holdPoint)
-    {
-        Pickup(holdPoint);
-        if (!OpenBox)
-            OpenClose();
-    }
+    //public void OnInteract(Transform holdPoint)
+    //{
+    //    Pickup(holdPoint);
+    //    if (!OpenBox)
+    //        OpenClose();
+    //}
 
-    public string GetInteractionPrompt()
+    public override void OnInteract(PlayerInteraction player)
     {
-        if (_stockInBox.Count > 0 && _stockInBox[0] != null && _stockInBox[0].StockInfo != null)
-            return $"Box of {_stockInBox[0].StockInfo.Name}";
+        if (!player.IsHoldingSomething)
+        {
+            Pickup(player.BoxHoldPoint);
+            player.HeldBox = this;
+            player.HeldObject = gameObject;
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(1);
+            return;
+        }
 
-        return "Empty Box";
+        if (!CanTakeStockFromHand(player.HeldStock)) return;
+
+        player.RemoveHeldObjectReference();
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(7);
     }
     #endregion
 }

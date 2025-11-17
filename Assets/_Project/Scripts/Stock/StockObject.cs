@@ -2,14 +2,13 @@ using PrimeTween;
 using System.Collections;
 using UnityEngine;
 
-public class StockObject : MonoBehaviour, IInteractable, ITrashable
+public class StockObject : InteractableObject, ITrashable
 {
     #region Serialized Fields
     [SerializeField] private StockInfo _stockInfo;
     #endregion
 
     #region Private Fields
-
     private Transform _bagPositionInWorld;
     private bool _isPlaced;
     private bool _isOnCheckoutCounter;
@@ -18,21 +17,20 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
     #endregion
 
     #region Properties
-    public GameObject MyObject { get; set; }
     public StockInfo StockInfo => _stockInfo;
     public Rigidbody Rb => _rigidbody;
     public Collider Col => _collider;
-    public string InteractionPrompt { get; private set; }
     public bool IsPlaced => _isPlaced;
 
-    public bool IsOnCheckoutCounter { get => _isOnCheckoutCounter; set => _isOnCheckoutCounter = value; }
+    public bool IsOnCheckoutCounter { get => _isOnCheckoutCounter; private set => _isOnCheckoutCounter = value; }
+    public bool CanTrash { get; private set; }
     #endregion
 
     #region Unity Lifecycle
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         CacheComponents();
-        InteractionPrompt = gameObject.name;
     }
 
     private void OnEnable() => ResetState();
@@ -134,7 +132,13 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
         Invoke(nameof(TrashObject), StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
     }
 
-    public void TrashObject() => ObjectPool<StockObject>.ReturnToPool(this);
+    public void TrashObject()
+    {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(10);
+
+        ObjectPool<StockObject>.ReturnToPool(this);
+    }
     #endregion
 
     #region Private Methods
@@ -147,8 +151,17 @@ public class StockObject : MonoBehaviour, IInteractable, ITrashable
             _collider.enabled = colliderEnabled;
     }
 
-    public void OnInteract(Transform holdPoint) => Pickup(holdPoint);
-
-    public string GetInteractionPrompt() => $"{_stockInfo.Name}";
+    //public void OnInteract(Transform holdPoint) => Pickup(holdPoint);
+    public override void OnInteract(PlayerInteraction player)
+    {
+        if (IsOnCheckoutCounter)
+            MoveToCheckoutBag();
+        else
+        {
+            player.HeldStock = this;
+            player.HeldObject = gameObject;
+            Pickup(player.StockHoldPoint);
+        }
+    }
     #endregion
 }

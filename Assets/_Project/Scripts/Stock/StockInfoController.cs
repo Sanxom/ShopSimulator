@@ -9,7 +9,6 @@ public class StockInfoController : MonoBehaviour
     [Header("Stock Information")]
     [SerializeField] private List<StockInfo> _drinkInfo;
     [SerializeField] private List<StockInfo> _foodInfo;
-    [SerializeField] private float _stockPickupAndPlaceWaitTimeDuration;
 
     [Header("Prefabs")]
     [SerializeField] private List<StockBoxController> _allBoxPrefabs;
@@ -39,7 +38,7 @@ public class StockInfoController : MonoBehaviour
     private void Awake()
     {
         InitializeSingleton();
-        StockPickupAndPlaceWaitTime = new(_stockPickupAndPlaceWaitTimeDuration);
+        StockPickupAndPlaceWaitTime = new(StockPickupAndPlaceWaitTimeDuration);
     }
 
     private void Start()

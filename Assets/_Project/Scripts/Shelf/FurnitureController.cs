@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
+public class FurnitureController : InteractableObject, IPlaceable
 {
     #region Serialized Fields
     [Header("Furniture Settings")]
@@ -16,27 +16,32 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
     #endregion
 
     #region Private Fields
-    private bool _isHeld = false;
+    private PlayerInteraction _player;
     #endregion
 
     #region Properties
-    public GameObject MyObject { get; set; }
     public List<ShelfSpaceController> Shelves => _shelves;
     public Transform CustomerStandPoint => _customerStandPoint;
     public float Price => _price;
-    public bool IsHeld => _isHeld;
+    public bool IsHeld { get; private set; }
 
     #endregion
 
     #region Unity Lifecycle
-    private void Awake()
+    protected override void Awake()
     {
-        MyObject = gameObject;
+        base.Awake();
     }
 
     private void Start()
     {
         RegisterWithStore();
+    }
+
+    private void Update()
+    {
+        if (IsHeld)
+            KeepFurnitureAboveGround();
     }
     #endregion
 
@@ -60,6 +65,9 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
     {
         SetObjectState(true, false, true);
         transform.SetParent(null);
+        _player = null;
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(5);
     }
     #endregion
 
@@ -82,19 +90,32 @@ public class FurnitureController : MonoBehaviour, IInteractable, IPlaceable
         }
 
         if (_mainObject.activeSelf)
-            _isHeld = false;
+            IsHeld = false;
         else if (_placingObject.activeSelf)
-            _isHeld = true;
+            IsHeld = true;
     }
 
-    public void OnInteract(Transform holdPoint = null)
+    public void Pickup(PlayerInteraction player)
     {
+        _player = player;
+        transform.SetParent(player.FurnitureHoldPoint);
+        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        player.HeldFurniture = this;
+        player.HeldObject = gameObject;
+        _collider.enabled = false;
+        MakePlaceable();
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(4);
     }
 
-    public string GetInteractionPrompt()
+    private void KeepFurnitureAboveGround() // TODO: Kinda' Janky getting a temp reference to player in Pickup. Maybe do this better later.
     {
-        return $"Pickup {MyObject.name}";
+        Vector3 holdPosition = _player.FurnitureHoldPoint.position;
+        Vector3 playerPosition = _player.transform.position;
+
+        transform.position = new Vector3(holdPosition.x, 0f, holdPosition.z);
+        transform.LookAt(new Vector3(playerPosition.x, 0f, playerPosition.z));
     }
     #endregion
 }

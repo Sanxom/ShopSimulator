@@ -1,10 +1,11 @@
+using PrimeTween;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using PrimeTween;
-using System.Collections;
+using UnityEngine.UIElements;
 
-public class ShelfSpaceController : MonoBehaviour, IInteractable
+public class ShelfSpaceController : InteractableObject
 {
     #region Serialized Fields
     [Header("Stock Management")]
@@ -29,7 +30,6 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
     #endregion
 
     #region Properties
-    public GameObject MyObject { get; set; }
     public List<StockObject> ObjectsOnShelf => _objectsOnShelf;
     public StockInfo StockInfo
     {
@@ -39,11 +39,10 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
     #endregion
 
     #region Unity Lifecycle
-    private void Awake()
+    protected override void Awake()
     {
-        MyObject = gameObject;
+        base.Awake();
     }
-
     private void OnEnable() => UpdateShelfDisplay();
 
     private void Start()
@@ -221,15 +220,44 @@ public class ShelfSpaceController : MonoBehaviour, IInteractable
             DisplayEmptyShelf();
         }
     }
-
-    public void OnInteract(Transform heldObject)
-    {
-
-    }
-
-    public string GetInteractionPrompt()
-    {
-        return "Shelf Space";
-    }
     #endregion
+
+    public override void OnInteract(PlayerInteraction player)
+    {
+        if (!player.IsHoldingSomething)
+        {
+            StockObject temp = GetStock();
+            if (temp == null) return;
+            player.HeldStock = temp;
+            player.HeldObject = temp.gameObject;
+            temp.Pickup(player.StockHoldPoint);
+            return;
+        }
+
+        if (player.HeldStock != null)
+        {
+            StockObject temp = player.HeldStock;
+            PlaceStock(temp);
+
+            if (temp.IsPlaced)
+            {
+                player.RemoveHeldObjectReference();
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(7);
+            }
+            return;
+        }
+
+        if (player.HeldBox != null)
+        {
+            StockBoxController box = player.HeldBox;
+            if (box.IsTaking || box.IsPlacing) return;
+            if (box.StockInBox.Count == 0) return;
+
+            box.PlaceStockOnShelf(this);
+
+            player.IsFastPlacementActive = true; // TODO: Find a way around setting this here later maybe.
+            return;
+        }
+    }
 }
