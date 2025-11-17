@@ -132,23 +132,6 @@ public class PlayerInteraction : MonoBehaviour
             (_hasHitInteractable, box) = TryRaycastForBox();
             if (!_hasHitInteractable) return;
             box.OpenClose();
-
-            //float minDistance = float.MaxValue;
-            //int numOfHits = TryRaycastForInteractables();
-            //if (numOfHits == 0) return;
-
-            //for (int i = 0; i < numOfHits; i++)
-            //{
-            //    if (!hits[i].collider.TryGetComponent(out StockBoxController box)) continue;
-            //    if (hits[i].distance < minDistance)
-            //    {
-            //        minDistance = hits[i].distance;
-            //        _ = hits[i];
-
-            //        box.OpenClose();
-            //        return;
-            //    }
-            //}
         }
     }
 
