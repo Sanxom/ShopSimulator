@@ -1,16 +1,13 @@
 using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class StockBoxController : InteractableObject, ITrashable
 {
     #region Serialized Fields
-    [Header("Stock Settings")]
-    [SerializeField] private StockInfo _stockInfo;
-    [SerializeField] private List<StockObject> _stockInBox;
-
     [Header("Point Lists")]
     [SerializeField] private List<Transform> _bigDrinkPoints;
     [SerializeField] private List<Transform> _cerealPoints;
@@ -27,26 +24,21 @@ public class StockBoxController : InteractableObject, ITrashable
     private const float MOVE_SPEED = 10f;
     private const string OPEN_BOX_ANIMATOR_PARAMETER = "openBox";
 
-    private Rigidbody _rigidbody;
-    private Collider _collider;
-    private Animator _animator;
     private WaitForSeconds _stockPickupAndPlaceWaitTime;
-    private bool _isOpen;
-    private int _maxCapacity;
-    private bool _isTaking = false;
-    private bool _isPlacing = false;
     #endregion
 
     #region Properties
-    public Rigidbody Rb => _rigidbody;
-    public Collider Col => _collider;
-    public bool OpenBox => _isOpen;
-    public StockInfo StockInfo => _stockInfo;
-    public List<StockObject> StockInBox => _stockInBox;
-    public int MaxCapacity => _maxCapacity;
+    [field: SerializeField] public List<StockObject> StockInBox { get; private set; }
+    [field: SerializeField] public StockInfo StockInfo { get; private set; }
 
-    public bool IsTaking { get => _isTaking; set => _isTaking = value; }
-    public bool IsPlacing { get => _isPlacing; set => _isPlacing = value; }
+    public Rigidbody Rb { get; private set; }
+    public Collider Col { get; private set; }
+    public Animator Anim { get; private set; }
+    public int MaxCapacity { get; private set; }
+    public bool IsMoving { get; private set; }
+    public bool IsBoxOpen { get; private set; }
+    public bool IsTaking { get; private set; }
+    public bool IsPlacingStock { get; private set; }
     public bool CanTrash { get; private set; }
     #endregion
 
@@ -67,35 +59,35 @@ public class StockBoxController : InteractableObject, ITrashable
         if (_testFill)
         {
             _testFill = false;
-            SetupBox(_stockInfo);
+            SetupBox(StockInfo);
         }
     }
 
-    private void OnDisable() => _maxCapacity = 0;
+    private void OnDisable() => MaxCapacity = 0;
     #endregion
 
     #region Initialization
     private void CacheComponents()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _collider = GetComponent<Collider>();
-        _animator = GetComponent<Animator>();
+        Rb = GetComponent<Rigidbody>();
+        Col = GetComponent<Collider>();
+        Anim = GetComponent<Animator>();
     }
     #endregion
 
     #region Setup
     public void SetupBox(StockInfo stockType)
     {
-        _stockInfo = stockType;
+        StockInfo = stockType;
 
-        if (_stockInfo == null) return;
+        if (StockInfo == null) return;
 
-        List<Transform> activePoints = GetListOfPointsForStockType(_stockInfo.typeOfStock);
+        List<Transform> activePoints = GetListOfPointsForStockType(StockInfo.typeOfStock);
 
-        if (_stockInBox.Count == 0)
+        if (StockInBox.Count == 0)
             FillBoxWithStock(activePoints);
 
-        _maxCapacity = activePoints.Count;
+        MaxCapacity = activePoints.Count;
     }
 
     /// <summary>
@@ -132,14 +124,14 @@ public class StockBoxController : InteractableObject, ITrashable
 
     private void FillBoxWithStock(List<Transform> points)
     {
-        if (_stockInfo == null || _stockInfo.stockObject == null) return;
+        if (StockInfo == null || StockInfo.stockObject == null) return;
 
         foreach (Transform point in points)
         {
-            StockObject stock = ObjectPool<StockObject>.GetFromPool(_stockInfo.stockObject, point);
+            StockObject stock = ObjectPool<StockObject>.GetFromPool(StockInfo.stockObject, point);
             stock.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             stock.PlaceInBox();
-            _stockInBox.Add(stock);
+            StockInBox.Add(stock);
         }
     }
 
@@ -160,32 +152,34 @@ public class StockBoxController : InteractableObject, ITrashable
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
         MoveToHoldPosition();
-        if (!_isOpen)
+        if (!IsBoxOpen)
             OpenClose();
     }
 
     public void Release()
     {
         SetPhysicsState(false, true);
+        if (StockInBox.Count == MaxCapacity && IsBoxOpen)
+            OpenClose();
     }
 
     private void SetPhysicsState(bool isKinematic, bool colliderEnabled)
     {
-        if (_rigidbody != null)
-            _rigidbody.isKinematic = isKinematic;
+        if (Rb != null)
+            Rb.isKinematic = isKinematic;
 
-        if (_collider != null)
-            _collider.enabled = colliderEnabled;
+        if (Col != null)
+            Col.enabled = colliderEnabled;
     }
     #endregion
 
     #region Box Operations
     public void OpenClose()
     {
-        _isOpen = !_isOpen;
+        IsBoxOpen = !IsBoxOpen;
 
-        if (_animator != null)
-            _animator.SetBool(OPEN_BOX_ANIMATOR_PARAMETER, _isOpen);
+        if (Anim != null)
+            Anim.SetBool(OPEN_BOX_ANIMATOR_PARAMETER, IsBoxOpen);
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(2);
@@ -198,70 +192,72 @@ public class StockBoxController : InteractableObject, ITrashable
 
     private IEnumerator PlaceStockOnShelfCoroutine(ShelfSpaceController shelf)
     {
-        if (IsPlacing || IsTaking) yield break;
-        if (_stockInBox.Count == 0 || shelf == null) yield break;
+        if (IsPlacingStock || IsTaking) yield break;
+        if (StockInBox.Count == 0 || shelf == null) yield break;
 
-        int lastIndex = _stockInBox.Count - 1;
-        StockObject stockToPlace = _stockInBox[lastIndex];
+        int lastIndex = StockInBox.Count - 1;
+        StockObject stockToPlace = StockInBox[lastIndex];
 
         if (stockToPlace == null || stockToPlace.StockInfo == null)
         {
-            _stockInBox.RemoveAt(lastIndex);
+            StockInBox.RemoveAt(lastIndex);
             yield break;
         }
 
-        if (!_isOpen)
+        if (!IsBoxOpen)
             OpenClose();
 
-        IsPlacing = true;
+        IsPlacingStock = true;
         shelf.PlaceStock(stockToPlace);
 
         if (stockToPlace.IsPlaced)
         {
-            _stockInBox.RemoveAt(lastIndex);
+            StockInBox.RemoveAt(lastIndex);
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(7);
         }
 
-        if (_stockInBox.Count == 0)
-            _stockInfo = null;
+        if (StockInBox.Count == 0)
+            StockInfo = null;
         yield return _stockPickupAndPlaceWaitTime;
-        IsPlacing = false;
+        IsPlacingStock = false;
     }
 
     private IEnumerator TakeStockFromShelfCoroutine(StockObject stock)
     {
-        if (IsTaking || IsPlacing) yield break;
+        if (IsTaking || IsPlacingStock) yield break;
         if (stock == null || stock.StockInfo == null) yield break;
 
-        if (_stockInBox.Count == 0)
-            _stockInfo = stock.StockInfo;
+        if (StockInBox.Count == 0)
+            StockInfo = stock.StockInfo;
 
-        if (_stockInfo == null) yield break;
+        if (StockInfo == null) yield break;
 
-        List<Transform> points = GetListOfPointsForStockType(_stockInfo.typeOfStock);
+        List<Transform> points = GetListOfPointsForStockType(StockInfo.typeOfStock);
 
-        if (_stockInBox.Count == points.Count || points.Count == 0) yield break;
+        if (StockInBox.Count == points.Count || points.Count == 0) yield break;
 
-        Transform targetPoint = points[_stockInBox.Count];
+        Transform targetPoint = points[StockInBox.Count];
 
         if (targetPoint == null) yield break;
 
-        if (!_isOpen)
+        if (!IsBoxOpen)
             OpenClose();
 
         IsTaking = true;
         stock.transform.SetParent(targetPoint);
         MoveToPlacementPoint(stock, Vector3.zero, Quaternion.identity);
-        _stockInBox.Add(stock);
+        StockInBox.Add(stock);
         stock.PlaceInBox();
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
 
-        if (_stockInBox.Count == 1)
-            _maxCapacity = GetMaxPossibleStockAmount(stock.StockInfo.typeOfStock);
+        if (StockInBox.Count == 1)
+            MaxCapacity = GetMaxPossibleStockAmount(stock.StockInfo.typeOfStock);
+        if (StockInBox.Count == MaxCapacity)
+            OpenClose();
         yield return _stockPickupAndPlaceWaitTime;
         IsTaking = false;
     }
@@ -273,45 +269,67 @@ public class StockBoxController : InteractableObject, ITrashable
 
     private void MoveToPlacementPoint(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
     {
-        Tween.LocalPosition(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
-        Tween.LocalRotation(stock.transform, endPointRotation, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        StartCoroutine(MoveToPlacementPointCoroutine(stock, endPointPosition, endPointRotation));
+    }
+
+    private IEnumerator MoveToPlacementPointCoroutine(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
+    {
+        yield return Tween.LocalRotation(stock.transform, endPointRotation, 0f).ToYieldInstruction();
+        yield return Tween.LocalPosition(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration).ToYieldInstruction();
     }
 
     public bool CanTakeStockFromHand(StockObject stock)
     {
         if (stock == null || stock.StockInfo == null) return false;
+        if (stock.IsMoving) return false;
 
-        if (_stockInBox.Count == 0)
-            _stockInfo = stock.StockInfo;
+        if (StockInBox.Count == 0)
+            StockInfo = stock.StockInfo;
 
-        if (_stockInfo == null) return false;
+        if (StockInfo == null) return false;
 
-        if (_stockInfo != stock.StockInfo) return false;
+        if (StockInfo != stock.StockInfo) return false;
 
-        List<Transform> points = GetListOfPointsForStockType(_stockInfo.typeOfStock);
+        List<Transform> points = GetListOfPointsForStockType(StockInfo.typeOfStock);
 
-        if (_stockInBox.Count == points.Count || points.Count == 0)
+        if (StockInBox.Count == points.Count || points.Count == 0)
             return false;
 
-        Transform targetPoint = points[_stockInBox.Count];
+        Transform targetPoint = points[StockInBox.Count];
 
         if (targetPoint == null) return false;
 
         stock.transform.SetParent(targetPoint);
-        stock.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        MoveToPlacementPoint(stock, Vector3.zero, Quaternion.identity);
         stock.PlaceInBox();
-        _stockInBox.Add(stock);
+        StockInBox.Add(stock);
+
+        if (!IsBoxOpen)
+            OpenClose();
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
 
-        if (_stockInBox.Count == 1)
-            _maxCapacity = GetMaxPossibleStockAmount(stock.StockInfo.typeOfStock);
-
-        if (!_isOpen)
+        if (StockInBox.Count == 1)
+            MaxCapacity = GetMaxPossibleStockAmount(stock.StockInfo.typeOfStock);
+        if (StockInBox.Count == MaxCapacity)
             OpenClose();
 
         return true;
+    }
+
+    public StockObject TakeStockFromBoxIntoHand()
+    {
+        if (StockInBox.Count == 0) return null;
+
+        int lastIndex = StockInBox.Count - 1;
+        StockObject objectToReturn = StockInBox[lastIndex];
+        StockInBox.RemoveAt(lastIndex);
+
+        if (StockInBox.Count == 0)
+            StockInfo = null;
+
+        return objectToReturn;
     }
 
     public void TrashObject()
@@ -322,12 +340,15 @@ public class StockBoxController : InteractableObject, ITrashable
         ObjectPool<StockBoxController>.ReturnToPool(this);
     }
 
-    //public void OnInteract(Transform holdPoint)
-    //{
-    //    Pickup(holdPoint);
-    //    if (!OpenBox)
-    //        OpenClose();
-    //}
+    public override string GetInteractionPrompt()
+    {
+        if (StockInfo == null) return "Box of Stock";
+        UIController.Instance.ShowInteractionPrompt();
+        StringBuilder sb = new();
+        sb.Append($"Box of {StockInBox.Count} {StockInfo.name}");
+        UIController.Instance.SetInteractionText(sb.ToString());
+        return sb.ToString();
+    }
 
     public override void OnInteract(PlayerInteraction player)
     {
@@ -335,7 +356,7 @@ public class StockBoxController : InteractableObject, ITrashable
         {
             Pickup(player.BoxHoldPoint);
             player.HeldBox = this;
-            player.HeldObject = gameObject;
+            player.HeldObject = MyObject;
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(1);
             return;
@@ -347,6 +368,22 @@ public class StockBoxController : InteractableObject, ITrashable
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(7);
+    }
+
+    public override void OnTake(PlayerInteraction player)
+    {
+        if (!player.IsHoldingSomething)
+        {
+            StockObject temp = TakeStockFromBoxIntoHand();
+            if (temp == null) return;
+
+            if (!IsBoxOpen)
+                OpenClose();
+
+            player.HeldStock = temp;
+            player.HeldObject = temp.gameObject;
+            temp.Pickup(player.StockHoldPoint);
+        }
     }
     #endregion
 }

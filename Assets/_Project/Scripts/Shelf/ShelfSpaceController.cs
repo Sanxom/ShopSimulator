@@ -123,8 +123,13 @@ public class ShelfSpaceController : InteractableObject
 
     private void MoveToPlacementPoint(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
     {
-        Tween.Position(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
-        Tween.Rotation(stock.transform, endPointRotation, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        StartCoroutine(MoveToPlacementPointCoroutine(stock, endPointPosition, endPointRotation));
+    }
+
+    private IEnumerator MoveToPlacementPointCoroutine(StockObject stock, Vector3 endPointPosition, Quaternion endPointRotation)
+    {
+        yield return Tween.Rotation(stock.transform, endPointRotation, 0f).ToYieldInstruction();
+        yield return Tween.Position(stock.transform, endPointPosition, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration).ToYieldInstruction();
     }
 
     private int GetCountForListOfStockType(StockInfo.StockType stockType)
@@ -220,6 +225,26 @@ public class ShelfSpaceController : InteractableObject
             DisplayEmptyShelf();
         }
     }
+
+    private void TryTakeStockFromShelfIntoBox(PlayerInteraction player)
+    {
+        if (player.HeldBox == null || StockInfo == null) return;
+        if (player.HeldBox.IsTaking || player.HeldBox.IsPlacingStock) return;
+        if (ObjectsOnShelf == null || ObjectsOnShelf.Count == 0) return;
+
+        bool canTakeStock = (player.HeldBox.StockInfo == null && player.HeldBox.StockInBox.Count == 0)
+                            || (player.HeldBox.StockInBox.Count > 0
+                            && player.HeldBox.StockInBox.Count < player.HeldBox.MaxCapacity
+                            && player.HeldBox.StockInfo.Name == StockInfo.Name);
+
+        if (!canTakeStock) return;
+
+        StockObject stockFromShelf = GetStock();
+        if (stockFromShelf != null)
+        {
+            player.HeldBox.TakeStockFromShelf(stockFromShelf);
+        }
+    }
     #endregion
 
     public override void OnInteract(PlayerInteraction player)
@@ -236,6 +261,8 @@ public class ShelfSpaceController : InteractableObject
 
         if (player.HeldStock != null)
         {
+            if (player.HeldStock.IsMoving) return;
+
             StockObject temp = player.HeldStock;
             PlaceStock(temp);
 
@@ -251,7 +278,7 @@ public class ShelfSpaceController : InteractableObject
         if (player.HeldBox != null)
         {
             StockBoxController box = player.HeldBox;
-            if (box.IsTaking || box.IsPlacing) return;
+            if (box.IsTaking || box.IsPlacingStock) return;
             if (box.StockInBox.Count == 0) return;
 
             box.PlaceStockOnShelf(this);
@@ -259,5 +286,37 @@ public class ShelfSpaceController : InteractableObject
             player.IsFastPlacementActive = true; // TODO: Find a way around setting this here later maybe.
             return;
         }
+    }
+
+    public override void OnTake(PlayerInteraction player)
+    {
+        if (!player.IsHoldingSomething && StockInfo != null)
+        {
+            StockObject temp = GetStock();
+            if (temp == null) return;
+            if (temp.IsMoving) return;
+            player.HeldStock = temp;
+            player.HeldObject = temp.gameObject;
+            temp.Pickup(player.StockHoldPoint);
+            return;
+        }
+
+        if (player.HeldBox == null) return;
+
+        player.IsFastTakeActive = true;
+        TryTakeStockFromShelfIntoBox(player);
+
+    }
+
+    public override string GetInteractionPrompt()
+    {
+        if (StockInfo == null)
+            return $"Empty Shelf";
+        int count = GetCountForListOfStockType(StockInfo.typeOfStock);
+
+        if (count == 1)
+            return $"{count} {StockInfo.name}";
+        else
+            return $"{GetCountForListOfStockType(StockInfo.typeOfStock)} {StockInfo.name}s";
     }
 }

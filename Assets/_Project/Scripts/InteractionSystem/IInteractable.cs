@@ -8,6 +8,7 @@ public interface IInteractable
     public string GetInteractionPrompt();
     public bool CanInteract();
     public void OnInteract(PlayerInteraction player);
+    public void OnTake(PlayerInteraction player);
     public void OnFocusGained();
     public void OnFocusLost();
 }

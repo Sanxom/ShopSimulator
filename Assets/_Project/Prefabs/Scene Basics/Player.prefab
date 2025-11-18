@@ -395,7 +395,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _interactionRange: 3
-  _throwForce: 5
+  _throwForce: 7
   _waitToPlaceStock: 0.1
   <StockHoldPoint>k__BackingField: {fileID: 6918392840584523512}
   <BoxHoldPoint>k__BackingField: {fileID: 8081062794147123609}

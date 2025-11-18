@@ -2697,7 +2697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25c683b66d122714c83a20405df0f5e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpaceController
-  _displayName: Interact
+  _displayName: Shelf Space
   _isEnabled: 1
   _objectsOnShelf: []
   _stockInfo: {fileID: 0}

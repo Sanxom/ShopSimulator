@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
     private void SubscribeToInputEvents()
     {
         _interactAction.performed += _playerInteraction.OnInteractPerformed;
-        _interactAction.canceled += _playerInteraction.OnInteractCanceled;
+        //_interactAction.canceled += _playerInteraction.OnInteractCanceled;
         _dropAction.performed += _playerInteraction.OnDropPerformed;
         _openBoxAction.performed += _playerInteraction.OnOpenBoxPerformed;
         _pickupFurnitureAction.performed += _playerInteraction.OnPickupFurniturePerformed;
@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour
     private void UnsubscribeFromInputEvents()
     {
         _interactAction.performed -= _playerInteraction.OnInteractPerformed;
-        _interactAction.canceled -= _playerInteraction.OnInteractCanceled;
+        //_interactAction.canceled -= _playerInteraction.OnInteractCanceled;
         _dropAction.performed -= _playerInteraction.OnDropPerformed;
         _openBoxAction.performed -= _playerInteraction.OnOpenBoxPerformed;
         _pickupFurnitureAction.performed -= _playerInteraction.OnPickupFurniturePerformed;

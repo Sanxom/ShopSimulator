@@ -48,14 +48,18 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract() => _isEnabled;
 
-    public string GetInteractionPrompt()
+    public virtual string GetInteractionPrompt()
     {
-        return _displayName;
+        return DisplayName;
     }
 
     public virtual void OnInteract(PlayerInteraction player)
     {
-        
+    }
+
+    public virtual void OnTake(PlayerInteraction player)
+    {
+
     }
 
     public void OnFocusGained() => outline.enabled = true;

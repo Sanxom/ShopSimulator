@@ -24,6 +24,10 @@ public class UIController : MonoBehaviour
     private InputAction _cancelAction;
     private InputAction _UIOpenCloseBuyMenuAction;
 
+    [Header("Interaction Panel")]
+    [SerializeField] private GameObject _interactionPromptPanel;
+    [SerializeField] private TMP_Text _interactionPromptText;
+
     [Header("Price Update Panel")]
     [SerializeField] private GameObject _updatePricePanel;
     [SerializeField] private TMP_Text _basePriceText;
@@ -109,6 +113,23 @@ public class UIController : MonoBehaviour
         _pauseAction.performed -= Pause;
         _submitAction.performed -= OnSubmitPerformed;
         _cancelAction.performed -= OnCancelPerformed;
+    }
+    #endregion
+
+    #region Interaction Panel
+    public void SetInteractionText(string text)
+    {
+        _interactionPromptText.text = text;
+    }
+
+    public void ShowInteractionPrompt()
+    {
+        _interactionPromptPanel.SetActive(true);
+    }
+
+    public void HideInteractionPrompt()
+    {
+        _interactionPromptPanel.SetActive(false);
     }
     #endregion
 

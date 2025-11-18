@@ -2097,10 +2097,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2706615265981477023, guid: 43199563a09f891488fc403b16e1d58f, type: 3}
-      propertyPath: <MaxPossibleInteractableObjects>k__BackingField
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 4581837503135296393, guid: 43199563a09f891488fc403b16e1d58f, type: 3}
       propertyPath: m_Name
       value: Player
@@ -4711,6 +4707,10 @@ PrefabInstance:
       propertyPath: _stockInfo
       value: 
       objectReference: {fileID: 11400000, guid: 34715af11799dfe44aff40afd824ac97, type: 2}
+    - target: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
+      propertyPath: <StockInfo>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: 34715af11799dfe44aff40afd824ac97, type: 2}
     - target: {fileID: 6383490863425037128, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
       propertyPath: m_Name
       value: Box Of Stock (1)
@@ -6461,6 +6461,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
       propertyPath: _stockInfo
+      value: 
+      objectReference: {fileID: 11400000, guid: 50ac31f52ce3b8940bc9019792d3fccb, type: 2}
+    - target: {fileID: 5965207231676153944, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}
+      propertyPath: <StockInfo>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: 50ac31f52ce3b8940bc9019792d3fccb, type: 2}
     - target: {fileID: 6383490863425037128, guid: 201b99fa82bc63f489c3139d618c5ae3, type: 3}

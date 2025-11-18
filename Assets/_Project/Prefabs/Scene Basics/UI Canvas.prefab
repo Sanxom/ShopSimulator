@@ -4639,7 +4639,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3520510848205762233
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6897,6 +6897,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9953e63a7f86df54fba60ac950d9c2cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIController
+  _interactionPromptPanel: {fileID: 6044264941620405375}
+  _interactionPromptText: {fileID: 341994030727134715}
   _updatePricePanel: {fileID: 3827982160057972272}
   _basePriceText: {fileID: 3260446288918428328}
   _currentPriceText: {fileID: 639711902455038038}

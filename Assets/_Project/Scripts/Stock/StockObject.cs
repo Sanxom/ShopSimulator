@@ -11,7 +11,6 @@ public class StockObject : InteractableObject, ITrashable
     #region Private Fields
     private Transform _bagPositionInWorld;
     private bool _isPlaced;
-    private bool _isOnCheckoutCounter;
     private Rigidbody _rigidbody;
     private Collider _collider;
     #endregion
@@ -22,7 +21,8 @@ public class StockObject : InteractableObject, ITrashable
     public Collider Col => _collider;
     public bool IsPlaced => _isPlaced;
 
-    public bool IsOnCheckoutCounter { get => _isOnCheckoutCounter; private set => _isOnCheckoutCounter = value; }
+    public bool IsMoving { get; private set; }
+    public bool IsOnCheckoutCounter { get; private set; }
     public bool CanTrash { get; private set; }
     #endregion
 
@@ -35,7 +35,10 @@ public class StockObject : InteractableObject, ITrashable
 
     private void OnEnable() => ResetState();
 
-    private void Start() => RefreshStockInfo();
+    private void Start()
+    {
+        RefreshStockInfo();
+    }
     #endregion
 
     #region Initialization
@@ -48,7 +51,7 @@ public class StockObject : InteractableObject, ITrashable
     private void ResetState()
     {
         _isPlaced = false;
-        _isOnCheckoutCounter = false;
+        IsOnCheckoutCounter = false;
     }
 
     private void RefreshStockInfo()
@@ -59,10 +62,15 @@ public class StockObject : InteractableObject, ITrashable
     #endregion
 
     #region Movement
-    private void MoveToPlacedPosition(Transform placementPoint)
+    private void MoveToPickupPosition(Transform placementPoint)
     {
-        Tween.LocalPosition(transform, Vector3.zero, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
-        Tween.LocalRotation(transform, new Vector3(0f, 90f, 0f), StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration);
+        StartCoroutine(MoveToPickupPositionCoroutine(placementPoint));
+    }
+
+    private IEnumerator MoveToPickupPositionCoroutine(Transform placementPoint)
+    {
+        yield return Tween.LocalRotation(transform, new Vector3(0f, 90f, 0f), 0f).ToYieldInstruction();
+        yield return Tween.LocalPosition(transform, Vector3.zero, StockInfoController.Instance.StockPickupAndPlaceWaitTimeDuration).ToYieldInstruction();
     }
 
     private void MoveToBagPosition(Transform bagPosition)
@@ -83,20 +91,23 @@ public class StockObject : InteractableObject, ITrashable
 
     public void Pickup(Transform holdPoint)
     {
+        if (IsMoving) return;
+
         StartCoroutine(PickupCoroutine(holdPoint));
     }
 
     private IEnumerator PickupCoroutine(Transform holdPoint)
     {
-        StopAllCoroutines();
+        IsMoving = true;
         _isPlaced = false;
         SetPhysicsState(true, false);
         transform.SetParent(holdPoint);
-        MoveToPlacedPosition(holdPoint);
+        MoveToPickupPosition(holdPoint);
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(6);
         yield return StockInfoController.Instance.StockPickupAndPlaceWaitTime;
+        IsMoving = false;
     }
 
     public void Release()
@@ -151,17 +162,19 @@ public class StockObject : InteractableObject, ITrashable
             _collider.enabled = colliderEnabled;
     }
 
-    //public void OnInteract(Transform holdPoint) => Pickup(holdPoint);
     public override void OnInteract(PlayerInteraction player)
     {
+        if (player.IsHoldingSomething) return;
+
         if (IsOnCheckoutCounter)
-            MoveToCheckoutBag();
-        else
         {
-            player.HeldStock = this;
-            player.HeldObject = gameObject;
-            Pickup(player.StockHoldPoint);
+            MoveToCheckoutBag();
+            return;
         }
+
+        player.HeldStock = this;
+        player.HeldObject = gameObject;
+        Pickup(player.StockHoldPoint);
     }
     #endregion
 }

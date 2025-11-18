@@ -316,7 +316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8078391443134529091, guid: eac4bd539a9fe4e49b5b5948f71862cc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -915,6 +915,10 @@ PrefabInstance:
     - target: {fileID: 1990538533257634957, guid: 792ecd2acffddce47b3f666c8713e672, type: 3}
       propertyPath: m_Name
       value: Stock Info Controller
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898871200976871665, guid: 792ecd2acffddce47b3f666c8713e672, type: 3}
+      propertyPath: <StockPickupAndPlaceWaitTimeDuration>k__BackingField
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

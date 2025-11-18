@@ -117,5 +117,10 @@ public class FurnitureController : InteractableObject, IPlaceable
         transform.position = new Vector3(holdPosition.x, 0f, holdPosition.z);
         transform.LookAt(new Vector3(playerPosition.x, 0f, playerPosition.z));
     }
+
+    public override void OnInteract(PlayerInteraction player)
+    {
+        PlaceObject();
+    }
     #endregion
 }
