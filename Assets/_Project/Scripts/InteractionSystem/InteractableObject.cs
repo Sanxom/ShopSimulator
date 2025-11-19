@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class InteractableObject : MonoBehaviour, IInteractable
 {
@@ -18,7 +19,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
     #endregion
 
     #region Private Fields
-    private Outline outline;
+    private Outline _outline;
     #endregion
 
     #region Public Properties
@@ -29,12 +30,14 @@ public class InteractableObject : MonoBehaviour, IInteractable
     protected virtual void Awake()
     {
         MyObject = gameObject;
-
-        //outline = MyObject.AddComponent<Outline>();
-        //outline.OutlineMode = Outline.Mode.OutlineVisible;
-        //outline.OutlineColor = Color.yellow;
-        //outline.OutlineWidth = 1f;
-        //outline.enabled = false;
+        if (MyObject.TryGetComponent(out Outline outline))
+        {
+            _outline = outline;
+            _outline.OutlineColor = Color.green;
+            _outline.OutlineWidth = 20f;
+            _outline.OutlineMode = Outline.Mode.OutlineVisible;
+            _outline.enabled = false;
+        }
     }
     #endregion
 
@@ -62,7 +65,15 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
     }
 
-    public void OnFocusGained() => outline.enabled = true;
+    public virtual void OnFocusGained()
+    {
+        if (_outline == null) return;
+        _outline.enabled = true;
+    }
 
-    public void OnFocusLost() => outline.enabled = false;
+    public virtual void OnFocusLost()
+    {
+        if (_outline == null) return;
+        _outline.enabled = false;
+    }
 }

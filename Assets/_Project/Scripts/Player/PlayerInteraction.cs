@@ -1,6 +1,7 @@
 using System;
 using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 public class PlayerInteraction : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private float _throwForce;
 
     private RaycastHit _hit;
-    private IInteractable _interactableObject;
+    private IInteractable _currentInteractableObject;
     private IPlaceable _placeableObject;
 
     private bool _hasHitInteractable;
@@ -40,13 +41,11 @@ public class PlayerInteraction : MonoBehaviour
     private void Update()
     {
         // Poll for interactions
-        _interactableObject = FindNearestInteractable();
-        if (_interactableObject == null)
-        {
+        _currentInteractableObject = FindNearestInteractable();
+        if (_currentInteractableObject == null)
             UIController.Instance.HideInteractionPrompt();
-            return;
-        }
-        _interactableObject.GetInteractionPrompt();
+        else 
+            _currentInteractableObject.GetInteractionPrompt();
 
         // Poll for Furniture objects
         _placeableObject = FindNearestPlaceable();
@@ -76,8 +75,8 @@ public class PlayerInteraction : MonoBehaviour
         }
         else
         {
-            if (_interactableObject == null) return;
-            _interactableObject.OnInteract(this);
+            if (_currentInteractableObject == null) return;
+            _currentInteractableObject.OnInteract(this);
         }
     }
 
@@ -118,9 +117,9 @@ public class PlayerInteraction : MonoBehaviour
         if (HeldBox != null)
             HeldBox.OpenClose();
 
-        if (_interactableObject == null) return;
+        if (_currentInteractableObject == null) return;
 
-        if(_interactableObject.MyObject.TryGetComponent(out StockBoxController box)) // TODO: Don't reference box here maybe?
+        if(_currentInteractableObject.MyObject.TryGetComponent(out StockBoxController box)) // TODO: Don't reference box here maybe?
             box.OpenClose();
     }
 
@@ -139,9 +138,9 @@ public class PlayerInteraction : MonoBehaviour
 
     public void OnTakeStockPerformed(InputAction.CallbackContext context)
     {
-        if (_interactableObject == null) return;
+        if (_currentInteractableObject == null) return;
         if (HeldStock != null) return;
-        _interactableObject.OnTake(this);
+        _currentInteractableObject.OnTake(this);
     }
 
     public void OnTakeStockCanceled(InputAction.CallbackContext context)
@@ -166,7 +165,7 @@ public class PlayerInteraction : MonoBehaviour
     #region Fast Placement
     private void ProcessFastPlacement()
     {
-        if (_interactableObject == null)
+        if (_currentInteractableObject == null)
         {
             IsFastPlacementActive = false;
             return;
@@ -188,14 +187,14 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         if (_interactAction.IsPressed() || Mouse.current.leftButton.isPressed) // TODO: Fix this somehow. The Mouse is hard-coded because we need to do
-            _interactableObject.OnInteract(this);                              // fast placement if you start with taking then let go of the modifier key
+            _currentInteractableObject.OnInteract(this);                              // fast placement if you start with taking then let go of the modifier key
     }
     #endregion
 
     #region Fast Take
     private void ProcessFastTake()
     {
-        if (_interactableObject == null) return;
+        if (_currentInteractableObject == null) return;
 
         if (HeldStock != null || HeldBox == null)
         {
@@ -206,7 +205,7 @@ public class PlayerInteraction : MonoBehaviour
         if (HeldBox.IsPlacingStock) return;
 
         if (_takeStockAction.IsPressed())
-            _interactableObject.OnTake(this);
+            _currentInteractableObject.OnTake(this);
     }
     #endregion
 
@@ -215,21 +214,50 @@ public class PlayerInteraction : MonoBehaviour
 
     private IInteractable FindNearestInteractable()
     {
-        Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        RaycastHit[] hits = new RaycastHit[1];
-        Physics.RaycastNonAlloc(ray, hits, _interactionRange, _interactableLayer);
+        //Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Ray ray = new(_camera.transform.position, _camera.transform.forward);
+        Debug.DrawRay(_camera.transform.position, _camera.transform.forward * _interactionRange, Color.red);
+        //RaycastHit[] hits = new RaycastHit[8];
+        //Physics.RaycastNonAlloc(ray, hits, _interactionRange, _interactableLayer);
+        if (!Physics.Raycast(ray, out _hit, _interactionRange, _interactableLayer))
+        {
+            _currentInteractableObject?.OnFocusLost();
+            return null;
+        }
 
-        Collider col = hits[0].collider;
-        if (col == null) return null;
-        if (!col.TryGetComponent(out IInteractable interactable)) return null;
-        if (!interactable.CanInteract()) return null;
+        //Collider col = hits[0].collider;
+        Collider col = _hit.collider;
+        if (!col.TryGetComponent(out IInteractable interactable))
+        {
+            _currentInteractableObject?.OnFocusLost();
+            return null;
+        }
+        if (!interactable.CanInteract())
+        {
+            _currentInteractableObject?.OnFocusLost();
+            return null;
+        }
 
-        return interactable;
+        // Handle interactable change
+        if (interactable != _currentInteractableObject)
+        {
+            // Exit previous
+            _currentInteractableObject?.OnFocusLost();
+
+            // Enter new
+            interactable?.OnFocusGained();
+
+            _currentInteractableObject = interactable;
+        }
+        print(_currentInteractableObject.MyObject.name);
+        return _currentInteractableObject;
     }
 
     private IPlaceable FindNearestPlaceable()
     {
-        Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        //Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Ray ray = new(_camera.transform.position, _camera.transform.forward);
+
         RaycastHit[] hits = new RaycastHit[1];
         Physics.RaycastNonAlloc(ray, hits, _interactionRange, _furnitureLayer);
         Collider col = hits[0].collider;

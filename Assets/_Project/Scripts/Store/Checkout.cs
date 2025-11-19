@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Checkout : MonoBehaviour
+public class Checkout : InteractableObject
 {
     public static Checkout Instance { get; private set; }
 
@@ -40,8 +40,9 @@ public class Checkout : MonoBehaviour
     #endregion
 
     #region Unity Lifecycle
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         InitializeSingleton();
     }
 

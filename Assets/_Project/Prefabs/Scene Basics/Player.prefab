@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 1092737199951999549}
   - component: {fileID: 2193319816420146448}
   - component: {fileID: 5083956046788704864}
+  - component: {fileID: 8003682989414941438}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -229,6 +230,22 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &8003682989414941438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1211019010912271732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.PhysicsRaycaster
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 512
+  m_MaxRayIntersections: 1
 --- !u!1 &3531813099765910208
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,9 +402,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
   _camera: {fileID: 1092737199951999549}
-  _stockHoldPoint: {fileID: 6918392840584523512}
-  _boxHoldPoint: {fileID: 8081062794147123609}
-  _furnitureHoldPoint: {fileID: 3990113605105937221}
   _interactableLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -396,7 +410,6 @@ MonoBehaviour:
     m_Bits: 128
   _interactionRange: 3
   _throwForce: 7
-  _waitToPlaceStock: 0.1
   <StockHoldPoint>k__BackingField: {fileID: 6918392840584523512}
   <BoxHoldPoint>k__BackingField: {fileID: 8081062794147123609}
   <FurnitureHoldPoint>k__BackingField: {fileID: 3990113605105937221}

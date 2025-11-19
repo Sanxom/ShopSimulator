@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 481055887514918098}
   - component: {fileID: 3447319848723625502}
   - component: {fileID: 3206220601071311031}
+  - component: {fileID: -3693206871719287228}
   m_Layer: 9
   m_Name: Pineapple
   m_TagString: Untagged
@@ -153,4 +154,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
+  _displayName: Interact
+  _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 811ba23be057aa549aa42c04e83cd121, type: 2}
+--- !u!114 &-3693206871719287228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99270435406666425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

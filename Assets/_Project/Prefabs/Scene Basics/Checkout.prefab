@@ -3093,6 +3093,7 @@ GameObject:
   - component: {fileID: 5029787219398892379}
   - component: {fileID: 6848569598189299427}
   - component: {fileID: 673821680794992524}
+  - component: {fileID: 2349713401155211021}
   m_Layer: 9
   m_Name: Checkout
   m_TagString: Untagged
@@ -3138,7 +3139,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.34908995, y: 0.59871054, z: 0.4912789}
   m_Center: {x: 0.40128836, y: 1.1801698, z: 0.6524901}
@@ -3154,6 +3155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827bc82472d87944695fc14f6427c826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Checkout
+  _displayName: Interact
+  _isEnabled: 1
   _priceText: {fileID: 8230810345948273291}
   _checkoutScreen: {fileID: 4631866976457428145}
   _queuePoint: {fileID: 3495059428602218104}
@@ -3167,6 +3170,24 @@ MonoBehaviour:
   - {fileID: 7194256339955166013}
   _stockObjectsOnCounter: []
   _shoppingBagPlacementPoint: {fileID: 4988764305657850264}
+--- !u!114 &2349713401155211021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7746507391175328722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7773442798026325107
 GameObject:
   m_ObjectHideFlags: 0
@@ -3624,8 +3645,7 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2570794847676964832, guid: 5477d3fd2949e594fb97acccc2f90f8e, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -3661,7 +3681,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 8.133259, y: 4.7809668, z: 5.467269}
   m_Center: {x: -3.250722, y: 2.3904834, z: 0.022132993}
@@ -3682,7 +3702,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 4.9611115, y: 4.7294226, z: 5.4108233}
   m_Center: {x: 6.0041113, y: 2.390483, z: -0.006087422}
@@ -3703,7 +3723,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 2.919639, y: 4.7550473, z: 4.613008}
   m_Center: {x: 2.1910245, y: 2.390483, z: -0.4049958}

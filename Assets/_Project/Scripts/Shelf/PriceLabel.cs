@@ -26,11 +26,6 @@ public class PriceLabel : InteractableObject
     #endregion
 
     #region Public Methods
-    //public void OnInteract(Transform holdPoint = null)
-    //{
-    //    myShelf.StartPriceUpdate();
-    //}
-
     public override void OnInteract(PlayerInteraction player)
     {
         if (player.IsHoldingSomething) return; // TODO: We can remove this if we want to update prices even while holding something.  This might get annoying, though.

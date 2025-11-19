@@ -1,8 +1,9 @@
 using PrimeTween;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class StockObject : InteractableObject, ITrashable
+public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler, IPointerExitHandler
 {
     #region Serialized Fields
     [SerializeField] private StockInfo _stockInfo;
@@ -176,5 +177,17 @@ public class StockObject : InteractableObject, ITrashable
         player.HeldObject = gameObject;
         Pickup(player.StockHoldPoint);
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnFocusGained();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnFocusLost();
+    }
+
+
     #endregion
 }
