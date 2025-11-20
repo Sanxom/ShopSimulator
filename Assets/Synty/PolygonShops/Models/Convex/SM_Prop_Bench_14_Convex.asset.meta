@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7f41ea858dbcb0945b22a90deb5fe5be
+timeCreated: 1625189524
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Bench_14_Convex.asset
+  uploadId: 797894

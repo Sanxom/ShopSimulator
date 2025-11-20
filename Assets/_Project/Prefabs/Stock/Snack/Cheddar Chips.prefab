@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Cheddar Tube Chips
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 8b28bf69dd529a44fac2bffbb023c335, type: 2}
 --- !u!114 &7889461044953735590

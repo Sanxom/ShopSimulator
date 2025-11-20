@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: dd7ef92569a82324e92f2982c0ac0837
+timeCreated: 1625188051
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Generic_Tree_02_Convex.asset
+  uploadId: 797894

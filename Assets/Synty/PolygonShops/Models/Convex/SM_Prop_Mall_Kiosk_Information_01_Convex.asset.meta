@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cbb37e25fef67724c83aa9ac3b5e4c28
+timeCreated: 1625190656
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Mall_Kiosk_Information_01_Convex.asset
+  uploadId: 797894

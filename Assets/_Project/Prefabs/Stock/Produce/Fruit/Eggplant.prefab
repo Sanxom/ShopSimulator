@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Eggplant
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 5d6ef001c5bbf6a4c8fe107dced11f34, type: 2}
 --- !u!114 &-6138997394567051865

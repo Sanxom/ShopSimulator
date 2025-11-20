@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Pineapple
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 811ba23be057aa549aa42c04e83cd121, type: 2}
 --- !u!114 &-3693206871719287228

@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Lime Soda
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: df62539c5fc880e47a0c9f37644dbb78, type: 2}
 --- !u!114 &7741450274436811044

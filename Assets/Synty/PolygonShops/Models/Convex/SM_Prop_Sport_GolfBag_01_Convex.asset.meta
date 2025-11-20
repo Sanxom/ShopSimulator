@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 894a211c53a10684592fb7f4a0476237
+timeCreated: 1625192687
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Sport_GolfBag_01_Convex.asset
+  uploadId: 797894

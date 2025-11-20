@@ -1,4 +1,5 @@
 using PrimeTween;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,9 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Camera _camera;
+    [SerializeField] private CinemachineCamera _cam;
+    [SerializeField] private Camera _cardMachineCamera;
+    [SerializeField] private Camera _cashRegisterCamera;
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [Header("Movement Settings")]
@@ -113,6 +117,7 @@ public class PlayerController : MonoBehaviour
         {
             Controller = _controller,
             CameraTransform = _camera.transform,
+            CamTransform = _cam.transform,
             Transform = transform,
             MoveSpeed = _moveSpeed,
             LookSpeed = _lookSpeed,
@@ -162,6 +167,13 @@ public class PlayerController : MonoBehaviour
         _gameInput.UI.Enable();
         Cursor.lockState = CursorLockMode.None;
     }
+
+    public void DisablePlayerAndSwapToCardCamera()
+    {
+        _gameInput.Player.Disable();
+        _gameInput.UI.Enable();
+        Cursor.lockState = CursorLockMode.None;
+    }
     #endregion
 }
 
@@ -172,6 +184,7 @@ public class PlayerMovement
     {
         public CharacterController Controller;
         public Transform CameraTransform;
+        public Transform CamTransform;
         public Transform Transform;
         public float MoveSpeed;
         public float LookSpeed;
@@ -247,10 +260,11 @@ public class PlayerMovement
 
         _horizontalRotation += lookInput.x * deltaTime * _config.LookSpeed;
         _config.Transform.rotation = Quaternion.Euler(0f, _horizontalRotation, 0f);
+        //_config.Transform.rotation = Quaternion.Euler(0f, _config.CamTransform.rotation.y, 0f);
 
-        _verticalRotation -= lookInput.y * deltaTime * _config.LookSpeed;
-        _verticalRotation = Mathf.Clamp(_verticalRotation, _config.MinLookAngle, _config.MaxLookAngle);
-        _config.CameraTransform.localRotation = Quaternion.Euler(_verticalRotation, 0f, 0f);
+        //_verticalRotation -= lookInput.y * deltaTime * _config.LookSpeed;
+        //_verticalRotation = Mathf.Clamp(_verticalRotation, _config.MinLookAngle, _config.MaxLookAngle);
+        //_config.CamTransform.localRotation = Quaternion.Euler(_verticalRotation, 0f, 0f);
     }
 }
 

@@ -2672,8 +2672,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f309109e46555649839f5dbb54bdbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockBoxController
-  _displayName: Box of Stock
   _isEnabled: 1
+  <DisplayName>k__BackingField: Empty Box
   _bigDrinkPoints:
   - {fileID: 4494799186769896959}
   - {fileID: 8075437823103023498}

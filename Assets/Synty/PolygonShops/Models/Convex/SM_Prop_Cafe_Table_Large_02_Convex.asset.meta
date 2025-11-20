@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 921e2481af3e2e949bcb5a5ba494bdb7
+timeCreated: 1625189949
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Cafe_Table_Large_02_Convex.asset
+  uploadId: 797894

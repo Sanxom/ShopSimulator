@@ -39,7 +39,7 @@ public class StockBoxController : InteractableObject, ITrashable
     public bool IsBoxOpen { get; private set; }
     public bool IsTaking { get; private set; }
     public bool IsPlacingStock { get; private set; }
-    public bool CanTrash { get; private set; }
+    public bool CanTrash => StockInBox.Count == 0;
     #endregion
 
     #region Unity Lifecycle
@@ -159,7 +159,7 @@ public class StockBoxController : InteractableObject, ITrashable
     public void Release()
     {
         SetPhysicsState(false, true);
-        if (StockInBox.Count == MaxCapacity && IsBoxOpen)
+        if (StockInBox.Count > 0 && IsBoxOpen)
             OpenClose();
     }
 
@@ -334,20 +334,21 @@ public class StockBoxController : InteractableObject, ITrashable
 
     public void TrashObject()
     {
-        if (StockInBox.Count > 0) return;
+        if (!CanTrash) return;
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(10);
         ObjectPool<StockBoxController>.ReturnToPool(this);
     }
 
-    public override string GetInteractionPrompt()
+    public override string GetInteractionPrompt(PlayerInteraction player)
     {
-        if (StockInfo == null) return "Box of Stock";
         UIController.Instance.ShowInteractionPrompt();
-        StringBuilder sb = new();
-        sb.Append($"Box of {StockInBox.Count} {StockInfo.name}");
-        UIController.Instance.SetInteractionText(sb.ToString());
-        return sb.ToString();
+        if (StockInBox.Count == 0 || StockInfo == null)
+        {
+            return UIController.Instance.SetInteractionText($"{DisplayName}");
+        }
+
+        return UIController.Instance.SetInteractionText($"Box of {StockInBox.Count} {StockInfo.name}");
     }
 
     public override void OnInteract(PlayerInteraction player)

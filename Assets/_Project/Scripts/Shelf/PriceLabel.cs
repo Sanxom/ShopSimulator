@@ -22,10 +22,21 @@ public class PriceLabel : InteractableObject
     protected override void Awake()
     {
         base.Awake();
+        _outline.OutlineMode = Outline.Mode.OutlineAndSilhouette;
     }
     #endregion
 
     #region Public Methods
+    public override string GetInteractionPrompt(PlayerInteraction player)
+    {
+        UIController.Instance.ShowInteractionPrompt();
+
+        if (myShelf.ObjectsOnShelf.Count == 0 || player.IsHoldingSomething)
+            return UIController.Instance.SetInteractionText($"{DisplayName}");
+        else
+            return UIController.Instance.SetInteractionText($"Set price of {myShelf.StockInfo.name}");
+    }
+
     public override void OnInteract(PlayerInteraction player)
     {
         if (player.IsHoldingSomething) return; // TODO: We can remove this if we want to update prices even while holding something.  This might get annoying, though.

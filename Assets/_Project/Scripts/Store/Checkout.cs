@@ -31,8 +31,10 @@ public class Checkout : InteractableObject
     #endregion
 
     #region Properties
-    public List<Customer> CustomersInQueue => _customersInQueue;
+    [Header("Card Position")]
+    [field: SerializeField] public Transform CardMoveToPoint { get; private set; }
 
+    public List<Customer> CustomersInQueue => _customersInQueue;
     public List<Transform> CheckoutStockPositions { get => _checkoutStockPositions; private set => _checkoutStockPositions = value; }
     public List<StockObject> StockObjectsOnCounter { get => _stockObjectsOnCounter; set => _stockObjectsOnCounter = value; }
     public Transform ShoppingBagPlacementPoint { get => _shoppingBagPlacementPoint; private set => _shoppingBagPlacementPoint = value; }
@@ -165,6 +167,11 @@ public class Checkout : InteractableObject
     {
         if (_checkoutScreen != null)
             _checkoutScreen.SetActive(false);
+    }
+
+    public override string GetInteractionPrompt(PlayerInteraction player)
+    {
+        return base.GetInteractionPrompt(player);
     }
     #endregion
 }

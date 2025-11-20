@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d688428246f00a6428f00fc1da6df6b3
+timeCreated: 1625437475
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Bld_Awning_03_Small_Convex.asset
+  uploadId: 797894

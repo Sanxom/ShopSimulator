@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 45d3761120ddc364ab6d26dc1239a416
+timeCreated: 1625187687
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Food_Pineapple_Whole_01_Convex.asset
+  uploadId: 797894

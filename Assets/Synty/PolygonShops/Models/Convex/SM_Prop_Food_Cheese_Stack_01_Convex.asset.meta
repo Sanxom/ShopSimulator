@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e6d7e9caad1e822458fd1b2a8d471c58
+timeCreated: 1625187712
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Food_Cheese_Stack_01_Convex.asset
+  uploadId: 797894

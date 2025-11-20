@@ -117,9 +117,9 @@ public class UIController : MonoBehaviour
     #endregion
 
     #region Interaction Panel
-    public void SetInteractionText(string text)
+    public string SetInteractionText(string text)
     {
-        _interactionPromptText.text = text;
+        return _interactionPromptText.text = text;
     }
 
     public void ShowInteractionPrompt()

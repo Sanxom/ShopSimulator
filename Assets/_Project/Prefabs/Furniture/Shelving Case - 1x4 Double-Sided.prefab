@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  _displayName: Interact
   _isEnabled: 1
+  <DisplayName>k__BackingField: Interact
   _price: 500
   _shelves:
   - {fileID: 8879867497288652232}
@@ -127,8 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f164fa252051464fb02142ae542c708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureController
-  _displayName: Interact
   _isEnabled: 1
+  <DisplayName>k__BackingField: Interact
   _price: 500
   _shelves:
   - {fileID: 3119212320069560654}
@@ -902,34 +902,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-      propertyPath: _shelfNameText
-      value: 
-      objectReference: {fileID: 5414063757053238177}
-    - target: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-      propertyPath: _shelfCountText
-      value: 
-      objectReference: {fileID: 5207217786249476309}
-    - target: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-      propertyPath: _shelfPriceText
-      value: 
-      objectReference: {fileID: 1174178996611272707}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
---- !u!114 &1174178996611272707 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5419275777769764872, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-  m_PrefabInstance: {fileID: 6592890561385277451}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &3119212320069560654 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8085944974100758853, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
@@ -946,28 +923,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7359956435744295796, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
   m_PrefabInstance: {fileID: 6592890561385277451}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5207217786249476309 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1386378558558687454, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-  m_PrefabInstance: {fileID: 6592890561385277451}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &5414063757053238177 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1178880173733098410, guid: 3628024f2ce81cd428088e5d1b208a9e, type: 3}
-  m_PrefabInstance: {fileID: 6592890561385277451}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &6980134481046813615
 PrefabInstance:
   m_ObjectHideFlags: 0

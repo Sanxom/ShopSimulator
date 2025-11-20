@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 25097a2a80e8b2145b6ce1335e2100f9
+timeCreated: 1625190167
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Computer_Mouse_Box_01_Convex.asset
+  uploadId: 797894

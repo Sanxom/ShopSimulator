@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockItem
-  _displayName: Interact
+  _displayName: Orange Soda
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 1616273f182da6747a08802ce215c71f, type: 2}
 --- !u!114 &6571747431945379059

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ab4113eff301ac249a8b9483d973c798
+timeCreated: 1625192560
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Shop_Desk_03_Corner_01_Convex.asset
+  uploadId: 797894

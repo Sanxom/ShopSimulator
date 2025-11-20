@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d12e227ad552d3f4f80a70da1dc7a780
+timeCreated: 1625189612
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Barber_Clippers_Head_02_Convex.asset
+  uploadId: 797894

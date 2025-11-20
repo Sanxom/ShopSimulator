@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Whole Watermelon
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 76c3d98775403764993588a83d32e009, type: 2}
 --- !u!114 &-1071764347260562340

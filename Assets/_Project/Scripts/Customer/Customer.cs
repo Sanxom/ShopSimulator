@@ -2,6 +2,7 @@ using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Customer : MonoBehaviour
 {
@@ -31,10 +32,15 @@ public class Customer : MonoBehaviour
     [SerializeField] private List<StockObject> _stockInBag = new();
     [SerializeField] private GameObject _cashObject;
     [SerializeField] private GameObject _cardObject;
+
+    [Header("Payment")]
+    [SerializeField] private float _payWithCardChance = 0.7f;
     #endregion
 
     #region Private Fields
-    private const string IS_MOVING_ANIMATOR_PARAMETER = "isMoving";
+    private const string IS_MOVING_ANIM_NAME = "isMoving";
+    private const string IS_PAYING_ANIM_NAME = "isPaying";
+    private const string HAS_PAID_ANIM_NAME = "hasPaid";
 
     private CustomerState _currentState;
     private FurnitureController _currentShelfCase;
@@ -44,7 +50,12 @@ public class Customer : MonoBehaviour
     private float _currentWaitTime;
     private int _browsePointsRemaining;
     private bool _hasGrabbedItem;
+
+    #region Payment Variables
     private bool _isPayingWithCard = true;
+    private bool _isPaying; // For Animator
+    private bool _HasPaid; // For Animator
+    #endregion
     #endregion
 
     #region Properties
@@ -108,9 +119,8 @@ public class Customer : MonoBehaviour
         _stockInBag.Clear();
         _hasGrabbedItem = false;
 
-        float payWithCardChance = 0.70f;
         float randomValue = Random.Range(0f, 1f);
-        if (randomValue <= payWithCardChance)
+        if (randomValue <= _payWithCardChance)
             _isPayingWithCard = true;
         else
             _isPayingWithCard = false;
@@ -133,9 +143,9 @@ public class Customer : MonoBehaviour
         for (int i = 1; i < _navPoints.Count - 1; i++)
         {
             transform.LookAt(_navPoints[i].point.position);
-            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+            _animator.SetBool(IS_MOVING_ANIM_NAME, true);
             yield return Tween.PositionAtSpeed(transform, _navPoints[i].point.position, MoveSpeed, Ease.Linear).ToYieldInstruction();
-            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+            _animator.SetBool(IS_MOVING_ANIM_NAME, false);
             yield return new WaitForSeconds(_currentWaitTime);
         }
 
@@ -176,10 +186,10 @@ public class Customer : MonoBehaviour
         );
 
         transform.LookAt(targetPosition);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, true);
         yield return Tween.PositionAtSpeed(transform, targetPosition, MoveSpeed, Ease.Linear).ToYieldInstruction();
         transform.LookAt(_currentShelfCase.transform);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, false);
 
         if (_currentShelfCase != null && _currentShelfCase.IsHeld)
         {
@@ -328,12 +338,12 @@ public class Customer : MonoBehaviour
     private IEnumerator MoveToQueueCoroutine()
     {
         Tween.StopAll(this);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, true);
         transform.LookAt(_queuePoint);
         yield return Tween.PositionAtSpeed(transform, _queuePoint, MoveSpeed, Ease.Linear).ToYieldInstruction();
         transform.LookAt(_queuePointAhead);
         Checkout.Instance.CustomersInQueue[0].transform.LookAt(Checkout.Instance.transform);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, false);
         TransitionToCheckout();
     }
     #endregion
@@ -348,11 +358,11 @@ public class Customer : MonoBehaviour
     private IEnumerator MoveToCheckoutCoroutine()
     {
         Tween.StopAll(this);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, true);
         transform.LookAt(_queuePoint);
         yield return Tween.PositionAtSpeed(transform, _queuePoint, MoveSpeed, Ease.Linear).ToYieldInstruction();
         transform.LookAt(_queuePointAhead);
-        _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+        _animator.SetBool(IS_MOVING_ANIM_NAME, false);
         StartCoroutine(AtCheckoutCoroutine());
     }
 
@@ -386,13 +396,16 @@ public class Customer : MonoBehaviour
     {
         // Set Interactable Card Object active and hold up
         _cardObject.SetActive(true);
+        _animator.SetBool(IS_PAYING_ANIM_NAME, _isPaying);
+        yield return new WaitForSeconds(_animator.playbackTime);
+
         // Use PlayerController to check for Card Input on Interact pressed
         // Swap camera view to card machine with screen in view
         // Swipe or tap card (80% tap, 20% swipe chance for variety)
         // Player can interact with buttons on keypad to enter an amount to charge or use keyboard to type it
         // Once player presses Enter to submit the amount, the camera swaps back to normal view, this Customer transitions to leaving, and the Queue is updated
 
-        yield break;
+        _isPaying = false;
     }
 
     private IEnumerator PayWithCashCoroutine()
@@ -453,9 +466,9 @@ public class Customer : MonoBehaviour
         for (int i = 0; i < _navPoints.Count; i++)
         {
             transform.LookAt(_navPoints[i].point.position);
-            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, true);
+            _animator.SetBool(IS_MOVING_ANIM_NAME, true);
             yield return Tween.PositionAtSpeed(transform, _navPoints[i].point.position, MoveSpeed, Ease.Linear).ToYieldInstruction();
-            _animator.SetBool(IS_MOVING_ANIMATOR_PARAMETER, false);
+            _animator.SetBool(IS_MOVING_ANIM_NAME, false);
         }
 
         ObjectPool<Customer>.ReturnToPool(this);
@@ -465,6 +478,7 @@ public class Customer : MonoBehaviour
     #region Public Methods
     public void TransitionToPaymentOption()
     {
+        _isPaying = true;
         if (_isPayingWithCard)
         {
             _currentState = CustomerState.PayingWithCard;

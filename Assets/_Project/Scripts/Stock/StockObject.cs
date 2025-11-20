@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler, IPointerExitHandler
+public class StockObject : InteractableObject, ITrashable
 {
     #region Serialized Fields
     [SerializeField] private StockInfo _stockInfo;
@@ -24,7 +24,7 @@ public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler,
 
     public bool IsMoving { get; private set; }
     public bool IsOnCheckoutCounter { get; private set; }
-    public bool CanTrash { get; private set; }
+    public bool CanTrash { get; private set; } = true;
     #endregion
 
     #region Unity Lifecycle
@@ -38,6 +38,7 @@ public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler,
 
     private void Start()
     {
+        DisplayName = _stockInfo.name;
         RefreshStockInfo();
     }
     #endregion
@@ -163,6 +164,11 @@ public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler,
             _collider.enabled = colliderEnabled;
     }
 
+    public override string GetInteractionPrompt(PlayerInteraction player)
+    {
+        return base.GetInteractionPrompt(player);
+    }
+
     public override void OnInteract(PlayerInteraction player)
     {
         if (player.IsHoldingSomething) return;
@@ -177,17 +183,5 @@ public class StockObject : InteractableObject, ITrashable, IPointerEnterHandler,
         player.HeldObject = gameObject;
         Pickup(player.StockHoldPoint);
     }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        OnFocusGained();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        OnFocusLost();
-    }
-
-
     #endregion
 }

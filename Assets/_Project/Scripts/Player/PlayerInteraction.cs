@@ -16,7 +16,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private RaycastHit _hit;
     private IInteractable _currentInteractableObject;
-    private IPlaceable _placeableObject;
+    private IPlaceable _currentPlaceableObject;
 
     private bool _hasHitInteractable;
     private InputAction _interactAction;
@@ -44,11 +44,10 @@ public class PlayerInteraction : MonoBehaviour
         _currentInteractableObject = FindNearestInteractable();
         if (_currentInteractableObject == null)
             UIController.Instance.HideInteractionPrompt();
-        else 
-            _currentInteractableObject.GetInteractionPrompt();
-
+        else
+            _currentInteractableObject.GetInteractionPrompt(this);
         // Poll for Furniture objects
-        _placeableObject = FindNearestPlaceable();
+        _currentPlaceableObject = FindNearestPlaceable();
         if (HeldFurniture != null) return;
 
         if (IsFastPlacementActive)
@@ -131,9 +130,10 @@ public class PlayerInteraction : MonoBehaviour
         {
             HeldFurniture.PlaceObject();
             RemoveHeldObjectReference();
+            return;
         }
-        else
-            _placeableObject.Pickup(this);
+        
+        _currentPlaceableObject?.Pickup(this);
     }
 
     public void OnTakeStockPerformed(InputAction.CallbackContext context)
@@ -165,12 +165,8 @@ public class PlayerInteraction : MonoBehaviour
     #region Fast Placement
     private void ProcessFastPlacement()
     {
-        if (_currentInteractableObject == null)
-        {
-            IsFastPlacementActive = false;
-            return;
-        }
-        
+        if (_currentInteractableObject == null) return;
+
         if (HeldStock != null || HeldBox == null)
         {
             IsFastPlacementActive = false;
@@ -187,7 +183,7 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         if (_interactAction.IsPressed() || Mouse.current.leftButton.isPressed) // TODO: Fix this somehow. The Mouse is hard-coded because we need to do
-            _currentInteractableObject.OnInteract(this);                              // fast placement if you start with taking then let go of the modifier key
+            _currentInteractableObject?.OnInteract(this);                              // fast placement if you start with taking then let go of the modifier key
     }
     #endregion
 
@@ -216,7 +212,6 @@ public class PlayerInteraction : MonoBehaviour
     {
         //Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         Ray ray = new(_camera.transform.position, _camera.transform.forward);
-        Debug.DrawRay(_camera.transform.position, _camera.transform.forward * _interactionRange, Color.red);
         //RaycastHit[] hits = new RaycastHit[8];
         //Physics.RaycastNonAlloc(ray, hits, _interactionRange, _interactableLayer);
         if (!Physics.Raycast(ray, out _hit, _interactionRange, _interactableLayer))
@@ -249,7 +244,6 @@ public class PlayerInteraction : MonoBehaviour
 
             _currentInteractableObject = interactable;
         }
-        print(_currentInteractableObject.MyObject.name);
         return _currentInteractableObject;
     }
 
@@ -258,13 +252,23 @@ public class PlayerInteraction : MonoBehaviour
         //Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         Ray ray = new(_camera.transform.position, _camera.transform.forward);
 
-        RaycastHit[] hits = new RaycastHit[1];
-        Physics.RaycastNonAlloc(ray, hits, _interactionRange, _furnitureLayer);
-        Collider col = hits[0].collider;
-        if (col == null) return null;
-        if (!col.TryGetComponent(out IPlaceable placeable)) return null;
+        //RaycastHit[] hits = new RaycastHit[1];
+        //Physics.RaycastNonAlloc(ray, hits, _interactionRange, _furnitureLayer);
 
-        return placeable;
+        if (!Physics.Raycast(ray, out _hit, _interactionRange, _furnitureLayer))
+        {
+            return null;
+        }
+        //Collider col = hits[0].collider;
+        Collider col = _hit.collider;
+        if (!col.TryGetComponent(out IPlaceable placeable))
+        {
+            return null;
+        }
+
+        _currentPlaceableObject = placeable;
+
+        return _currentPlaceableObject;
     }
 
     private (bool, RaycastHit) TryRaycastForInteractable()

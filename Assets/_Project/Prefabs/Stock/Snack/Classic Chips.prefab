@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656a895ffa7c9f54b9792540fa57e1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StockObject
-  _displayName: Interact
+  _displayName: Classic Tube Chips
   _isEnabled: 1
   _stockInfo: {fileID: 11400000, guid: 22a09ff49f3ad54478fca60212abf619, type: 2}
 --- !u!114 &-1873861602823398594

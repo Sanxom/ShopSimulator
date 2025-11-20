@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4a0f2d801532d924ba30d3f94db6420c
+timeCreated: 1625187540
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Food_Chicken_Whole_Burnt_01_Convex.asset
+  uploadId: 797894

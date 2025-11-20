@@ -14,12 +14,11 @@ public class InteractableObject : MonoBehaviour, IInteractable
     #endregion
 
     #region Serialized Private Fields
-    [SerializeField] private string _displayName = "Interact";
     [SerializeField] private bool _isEnabled = true;
     #endregion
 
     #region Private Fields
-    private Outline _outline;
+    protected Outline _outline;
     #endregion
 
     #region Public Properties
@@ -34,7 +33,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
         {
             _outline = outline;
             _outline.OutlineColor = Color.green;
-            _outline.OutlineWidth = 20f;
+            _outline.OutlineWidth = 15f;
             _outline.OutlineMode = Outline.Mode.OutlineVisible;
             _outline.enabled = false;
         }
@@ -47,13 +46,14 @@ public class InteractableObject : MonoBehaviour, IInteractable
     #region Private Methods
     #endregion
 
-    public string DisplayName => _displayName;
+    [field: SerializeField] public string DisplayName { get; set; } = "Interact";
 
     public bool CanInteract() => _isEnabled;
 
-    public virtual string GetInteractionPrompt()
+    public virtual string GetInteractionPrompt(PlayerInteraction player)
     {
-        return DisplayName;
+        UIController.Instance.ShowInteractionPrompt();
+        return UIController.Instance.SetInteractionText(DisplayName);
     }
 
     public virtual void OnInteract(PlayerInteraction player)

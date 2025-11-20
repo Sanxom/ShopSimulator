@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3a6a4214ffbe85d4bb49e320f6d6726c
+timeCreated: 1625189621
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Bathroom_Light_01_Convex.asset
+  uploadId: 797894

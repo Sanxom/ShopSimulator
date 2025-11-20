@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f8b1eed7534241c40ab4770cdf5b7729
+timeCreated: 1625190660
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Mannequin_Stand_01_Convex.asset
+  uploadId: 797894

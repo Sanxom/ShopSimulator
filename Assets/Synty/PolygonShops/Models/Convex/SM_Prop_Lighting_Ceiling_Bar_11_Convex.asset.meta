@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d185ab0e0ce39a74a84a835d8d0c1509
+timeCreated: 1625190685
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Lighting_Ceiling_Bar_11_Convex.asset
+  uploadId: 797894

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 42613c9e77931f343923f3f4eb3d90e8
+timeCreated: 1625189985
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199026
+  packageName: POLYGON Shops Pack - Low Poly 3D Art by Synty
+  packageVersion: 1.6.0
+  assetPath: Assets/Synty/PolygonShops/Models/Convex/SM_Prop_Cafe_CoffeeCup_01_Convex.asset
+  uploadId: 797894
