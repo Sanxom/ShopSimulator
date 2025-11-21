@@ -128,6 +128,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CreditCard
   _isEnabled: 1
   <DisplayName>k__BackingField: Credit Card
+  _collider: {fileID: 1977481406618323002}
+  _originalPosition: {fileID: 0}
+  _myCustomer: {fileID: 0}
 --- !u!114 &2935455049816044426
 MonoBehaviour:
   m_ObjectHideFlags: 0

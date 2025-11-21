@@ -14,9 +14,6 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Camera _camera;
-    [SerializeField] private CinemachineCamera _cam;
-    [SerializeField] private Camera _cardMachineCamera;
-    [SerializeField] private Camera _cashRegisterCamera;
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [Header("Movement Settings")]
@@ -117,7 +114,6 @@ public class PlayerController : MonoBehaviour
         {
             Controller = _controller,
             CameraTransform = _camera.transform,
-            CamTransform = _cam.transform,
             Transform = transform,
             MoveSpeed = _moveSpeed,
             LookSpeed = _lookSpeed,

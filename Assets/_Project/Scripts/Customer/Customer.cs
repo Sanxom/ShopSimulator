@@ -53,7 +53,7 @@ public class Customer : MonoBehaviour
 
     #region Payment Variables
     private bool _isPayingWithCard = true;
-    private bool _isPaying; // For Animator
+    private bool _isPaying; // For Animator & waiting for Player Input
     private bool _HasPaid; // For Animator
     #endregion
     #endregion
@@ -63,6 +63,7 @@ public class Customer : MonoBehaviour
     public float MoveSpeed => _moveSpeed;
     public float BrowseTime => _browseTime;
     public int MaxBrowsePoints => _maxBrowsePoints;
+    public bool IsPaying => _isPaying;
 
     public GameObject ShoppingBag { get => _shoppingBag; private set => _shoppingBag = value; }
     public Transform ShoppingBagDefaultTransform { get => _shoppingBagDefaultTransform; private set => _shoppingBagDefaultTransform = value; }
@@ -404,8 +405,6 @@ public class Customer : MonoBehaviour
         // Swipe or tap card (80% tap, 20% swipe chance for variety)
         // Player can interact with buttons on keypad to enter an amount to charge or use keyboard to type it
         // Once player presses Enter to submit the amount, the camera swaps back to normal view, this Customer transitions to leaving, and the Queue is updated
-
-        _isPaying = false;
     }
 
     private IEnumerator PayWithCashCoroutine()

@@ -222,6 +222,11 @@ public class PlayerInteraction : MonoBehaviour
 
         //Collider col = hits[0].collider;
         Collider col = _hit.collider;
+        if (col == null)
+        {
+            _currentInteractableObject?.OnFocusLost();
+            return null;
+        }
         if (!col.TryGetComponent(out IInteractable interactable))
         {
             _currentInteractableObject?.OnFocusLost();

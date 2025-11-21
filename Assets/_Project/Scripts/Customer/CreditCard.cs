@@ -15,8 +15,9 @@ public class CreditCard : InteractableObject
 
     #region Serialized Private Fields
     [SerializeField] private Collider _collider;
-    [SerializeField] private Transform _originalPosition;
     [SerializeField] private Customer _myCustomer;
+    [SerializeField] private Vector3 _originalLocalPosition;
+    [SerializeField] private Vector3 _originalLocalRotation;
     #endregion
 
     #region Private Fields
@@ -49,7 +50,7 @@ public class CreditCard : InteractableObject
     {
         transform.SetParent(Checkout.Instance.CardMoveToPoint);
         yield return Tween.Rotation(transform, Quaternion.identity, 0f).ToYieldInstruction();
-        yield return Tween.Position(transform, Vector3.zero, 0.1f).ToYieldInstruction();
+        yield return Tween.LocalPosition(transform, Vector3.zero, 0.1f).ToYieldInstruction();
         // Start Credit Card Payment function(s)
         // Start Player Card Machine Interaction
         // Freeze Player

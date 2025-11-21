@@ -176,6 +176,17 @@ PrefabInstance:
       addedObject: {fileID: 6764335935748202189}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+--- !u!114 &2579402313560615986 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4336801784514551913, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
+  m_PrefabInstance: {fileID: 2298114001015196763}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f30807eb700f3254cb8b45999d34ab6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Customer
 --- !u!4 &4649210736268076088 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6873014243884279907, guid: 2ae9e0a205ae0294489e6162eea78cd5, type: 3}
@@ -248,6 +259,30 @@ PrefabInstance:
     - target: {fileID: 3958872306110612606, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _myCustomer
+      value: 
+      objectReference: {fileID: 2579402313560615986}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _originalLocalPosition.y
+      value: 0.00199
+      objectReference: {fileID: 0}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _originalLocalPosition.z
+      value: -0.00139
+      objectReference: {fileID: 0}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _originalLocalRotation.x
+      value: -0.000002561321
+      objectReference: {fileID: 0}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _originalLocalRotation.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6316311531756767776, guid: 1b1a2f56af134734fb1706d1463d042d, type: 3}
+      propertyPath: _originalLocalRotation.z
+      value: 22.412636
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

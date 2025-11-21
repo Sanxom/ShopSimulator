@@ -1,6 +1,7 @@
 using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ public class Checkout : InteractableObject
     #endregion
 
     #region Private Fields
+    private WaitForEndOfFrame _waitForEndOfFrame;
     private float _totalCurrentPriceAmount = 0f;
     #endregion
 
@@ -46,6 +48,7 @@ public class Checkout : InteractableObject
     {
         base.Awake();
         InitializeSingleton();
+        _waitForEndOfFrame = new WaitForEndOfFrame();
     }
 
     private void Start() => HideCheckoutScreen();
@@ -115,6 +118,11 @@ public class Checkout : InteractableObject
 
         Customer customer = _customersInQueue[0];
         customer.TransitionToPaymentOption();
+        while (customer.IsPaying)
+        {
+            yield return _waitForEndOfFrame;
+            print("Waiting...");
+        }
         // TODO:
         // Customer chooses to pay with cash or card
         // Take Cash/Card and do appropriate functions
